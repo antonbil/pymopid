@@ -128,6 +128,7 @@ class MenuScreen(BoxLayout):
         self.addButton("Mpd <--> Spotify",self.main.mpd_spotify)
         self.addButton("Playlists",self.main.popupPlaylists.display_tracks)
         self.addButton("Playlists tree",self.main.display_tracks_tree)
+        self.addButton("Similar artists",self.main.similarForPlayingArtist)
         self.addButton("Quit",self.main.quit)
         self.popup = Popup(title="Menu",content=self,size=(200, 400),size_hint=(None, None))
     def addButton(self,title,action):
@@ -414,9 +415,11 @@ class LoginScreen(BoxLayout):
         instance.popup.dismiss()
         self.popupSearch.popup.dismiss()
         #print(self.currentArtist)
-        self.similarartists=self.music_controller.do_mopidy_similar(self.currentArtist)
+        self.displaySimilarArtists(self.currentArtist)
+    def displaySimilarArtists(self, artist):
+        self.similarartists=self.music_controller.do_mopidy_similar(artist)
         #print(self.similarartists)
-        self.similarArtistsPopup.display_tracks(self.currentArtist)
+        self.similarArtistsPopup.display_tracks(artist)
         
     def addAlbum(self,instance):
         instance.popup.dismiss()
@@ -453,6 +456,10 @@ class LoginScreen(BoxLayout):
     def onLongpresssimilarArtistsPopup(self,instance,pos):
         pass
 
+    def similarForPlayingArtist(self,instance=None):
+        temp1= self.music_controller.do_mopidy_search(self.currentPlayingArtist)
+        self.currentArtist=temp1[0]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:","")
+        self.displaySimilarArtists(self.currentArtist)
    #following necessary for popupSearch
     def getSearch(self):
         temp1= self.music_controller.do_mopidy_search(self.popupSearch.artist)
