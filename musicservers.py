@@ -547,7 +547,8 @@ maxalbums = 120
 class SelectMpdAlbum:
     currentdir = ""
 
-    def __init__(self, music_controller, colors, popupSearch):
+    def __init__(self, music_controller, colors, popupSearch, parent):
+        self.parent = parent
         self.music_controller = music_controller
 
         self.popupSearch = popupSearch
@@ -614,8 +615,15 @@ class SelectMpdAlbum:
         self.display(instance.text + "/")
 
     def onLongClick(self, instance):
-        buttons = [["Add", self.addAlbum], ["Add and Play", self.addAndPlayAlbum], ["Spotify", self.albumSpotify]]
+        buttons = [["Add", self.addAlbum], ["Add and Play", self.addAndPlayAlbum], ["Spotify", self.albumSpotify],
+                   ["Similar", self.similarSpotify]]
         contextMenu(buttons, instance, self.colors)
+
+    def similarSpotify(self, instance):
+        instance.popup.dismiss()
+        temp = instance.item.text
+        temp = temp.split("-")[0].strip().lower()
+        self.parent.displaySimilarArtists(temp)
 
     def albumSpotify(self, instance):
         instance.popup.dismiss()

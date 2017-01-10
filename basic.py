@@ -321,7 +321,7 @@ class LoginScreen(BoxLayout):
         self.add_widget(h_layout0)
         self.add_widget(h_layout1)
         # list to select albums to play
-        self.selAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch)
+        self.selAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self)
         Clock.schedule_interval(self.update, 1)
 
     def display_tracks_tree(self, instance=None):
