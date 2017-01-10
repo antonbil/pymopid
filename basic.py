@@ -23,6 +23,7 @@ from kivy.uix.listview import ListView, ListItemButton
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.textinput import TextInput
+from smb.SMBConnection import SMBConnection
 
 import musicservers
 from musicservers import MeasureButtonOnTouch
@@ -264,6 +265,13 @@ class LoginScreen(BoxLayout):
     mode_title = True
 
     def __init__(self, **kwargs):
+        conn = SMBConnection("wieneke", "wieneke", "client", "", use_ntlm_v2=True)
+        assert conn.connect("192.168.2.8", 139)
+        pathlist = conn.listPath("FamilyLibrary", "TotalMusic", search=55, pattern='*', timeout=30)
+        for path in pathlist:
+            print(path.filename, path.isDirectory)
+
+
         try:
             self.port = serial.Serial("/dev/ttyACM0", baudrate=9600, timeout=0.8)
         except:
