@@ -1,58 +1,56 @@
-from kivy.app import App
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.label import Label
-from kivy.uix.textinput import TextInput
-from kivy.uix.image import AsyncImage
-from kivy.properties import *
-import time,threading
-from kivy.clock import Clock
-from functools import partial
-from kivy.uix import *
-import kivy
-import os, sys, traceback
+import os
 import random
+import serial
+import sys
+import traceback
+from time import sleep
+
+import requests
+from kivy.adapters.dictadapter import ListAdapter
+from kivy.app import App
+from kivy.clock import Clock
+from kivy.config import Config
+from kivy.core.window import Window
+from kivy.lang import Builder
+from kivy.properties import *
+from kivy.uix import *
+from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
-from kivy.core.window import Window
-import requests
-from kivy.uix.dropdown import DropDown
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.image import AsyncImage
+from kivy.uix.label import Label
+from kivy.uix.listview import ListView, ListItemButton
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
+from kivy.uix.textinput import TextInput
+
 import musicservers
 from musicservers import MeasureButtonOnTouch
-from kivy.uix.behaviors import ButtonBehavior
-import gc
-from kivy.config import Config
-from kivy.lang import Builder
-from time import sleep
-import serial
-from kivy.uix.listview import ListView, ListItemButton
-from kivy.adapters.dictadapter import ListAdapter
-from kivy.factory import Factory
 
-
-
-red = [1,0,0,1]
-green = [0,1,0,1]
+red = [1, 0, 0, 1]
+green = [0, 1, 0, 1]
 blue =  [0,0,1,1]
 purple = [1,0,1,1]
 colors = [red, green, blue, purple]
 
 buttons=[["1","<<"],["2","||"],["3",">"],["4",">>"],["5","Menu"],]
 
+
 class IconButton(ButtonBehavior, AsyncImage):
     pass
+
+
 class LabelButton(ButtonBehavior, Label):
     pass
 
 
-
 class PopList:
-    def __init__(self, maxtracks, getList,onpopup,processItem,onLongPress=None):
-        self.onLongPress=onLongPress
-        self.processItem=processItem
+    def __init__(self, maxtracks, getlist, onpopup, process_item, on_long_press=None):
+        self.onLongPress = on_long_press
+        self.processItem = process_item
         self.onpopup=onpopup
-        self.getList=getList
+        self.getList = getlist
         self.maxlist=maxtracks
         self.layout_popup = GridLayout(cols=1, spacing=10, size_hint_y=None, size=(400, Window.height), valign="top")
         self.layout_popup.bind(minimum_height=self.layout_popup.setter('height'))
@@ -81,9 +79,11 @@ class PopList:
 
     def mypopup(self,instance):
         self.onpopup(instance,instance.nr)
+
     def longpress(self,instance):
         if self.onLongPress:
             self.onLongPress(instance,instance.nr)
+
     def display_tracks(self,instance,start=None):
             if start==None:
                 self.popupOpened=False
@@ -112,9 +112,11 @@ class PopList:
             if not self.popupOpened:
                 self.popup.open()
             self.popupOpened=True
+
     def onHorizon(self,instance):
         #print("select"+instance.text)
         self.display_tracks(instance,int(instance.text))
+
 
 class MenuScreen(BoxLayout):
     def __init__(self, main,**kwargs):
