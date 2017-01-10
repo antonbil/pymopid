@@ -623,6 +623,8 @@ class SelectMpdAlbum:
         instance.popup.dismiss()
         temp = instance.item.text
         temp = temp.split("-")[0].strip().lower()
+        temp1 = self.music_controller.do_mopidy_search(temp)
+        temp = temp1[0]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
         self.parent.displaySimilarArtists(temp)
 
     def albumSpotify(self, instance):

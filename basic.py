@@ -13,7 +13,6 @@ from kivy.config import Config
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.properties import *
-from kivy.uix import *
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
