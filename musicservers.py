@@ -547,7 +547,15 @@ maxalbums = 120
 class SelectMpdAlbum:
     currentdir = ""
 
-    def __init__(self, music_controller, colors, popupSearch, parent):
+    def __init__(self, music_controller, colors, popupSearch, parent, getdir, is_directory, playdir):
+        # getdir=self.music_controller.mc.list_files(tempdir)
+        # def my_condition(self, x):
+        #    return "directory" in x
+        #            self.playDir(tempdir)
+
+
+        self.is_directory = is_directory
+        self.getdir = getdir
         self.parent = parent
         self.music_controller = music_controller
 
@@ -587,7 +595,7 @@ class SelectMpdAlbum:
                                    background_color=random.choice(self.colors))
         # self.dummybutton=self.dummybutton()
 
-    def onLongClick(self, instance):
+    def onLongClick(self, instance):  #cab be removed double declaration
         # print("longclick"+instance.text)
         self.playDir(self.currentdir)
 
@@ -603,7 +611,7 @@ class SelectMpdAlbum:
         if dir[-1:] == "/":
             dir = dir[:-1]
         try:
-            self.music_controller.mc.add(dir[1:])
+            self.playdir()
         except:
             pass
 
@@ -649,8 +657,6 @@ class SelectMpdAlbum:
         print("pos:", song_pos)
         self.music_controller.select_and_play_mpd(song_pos)
 
-    def my_condition(self, x):
-        return "directory" in x
 
     def optionButton(self, instance):
         try:
@@ -673,8 +679,8 @@ class SelectMpdAlbum:
             start = 0
         # print(self.music_controller.mc.list_files(dir))
         tempdir = (self.currentdir + dir).replace("//", "/")
-        playlist = self.music_controller.mc.list_files(tempdir)
-        numdirs = sum(1 for x in playlist if self.my_condition(x))
+        playlist = self.getdir(tempdir)
+        numdirs = sum(1 for x in playlist if self.is_directory(x))
         if numdirs == 0:
             # print("play:"+tempdir)
             self.playDir(tempdir)

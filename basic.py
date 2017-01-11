@@ -181,6 +181,7 @@ class ListArtist(GridLayout):
         closeButton.bind(on_press=self.action)
 
     def list_changed(self, list, *args):
+        '''dit is commentaar'''
         self.artist.text = list.selection[0].text
 
     def open(self, parent, listalbums):
@@ -190,8 +191,10 @@ class ListArtist(GridLayout):
         self.popup.open()
 
     def suggest(self, instance):
+        '''dit is  commentaar, wat hoort bij de bovenstaande functie'''
         # close the popup
         self.popup.dismiss()
+        '''dit is ander commentaar, wat hoort bij de bovenstaande code'''
         self.listalbums.artist = self.suggestButton.text
         self.listalbums.display_tracks(self.artist.text)
 
@@ -328,7 +331,10 @@ class LoginScreen(BoxLayout):
         self.add_widget(h_layout0)
         self.add_widget(h_layout1)
         # list to select albums to play
-        self.selAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self)
+        self.selAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
+                                                    getdir=lambda x: self.music_controller.mc.list_files(x),
+                                                    is_directory=lambda x: "directory" in x,
+                                                    playdir=lambda x: self.music_controller.mc.add(dir[1:]))
         Clock.schedule_interval(self.update, 1)
 
     def display_tracks_tree(self, instance=None):
