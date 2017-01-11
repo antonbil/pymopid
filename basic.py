@@ -261,6 +261,21 @@ class PopupBox(Popup):
         self.pop_up_text.text = p_message
 
 
+class SmbDir:
+    def __init__(self):
+        self.conn = SMBConnection("wieneke", "wieneke", "client", "", use_ntlm_v2=True)
+        assert self.conn.connect("192.168.2.8", 139)
+
+    def get_dir(self, dir):
+        pathlist = self.conn.listPath("FamilyLibrary", dir, search=55, pattern='*', timeout=30)
+        list = []
+        for path in pathlist:
+            print(path.filename, path.isDirectory)
+        return pathlist
+
+
+
+
 class LoginScreen(BoxLayout):
     image_source = ObjectProperty()
     previousimage = ""
@@ -268,12 +283,8 @@ class LoginScreen(BoxLayout):
     mode_title = True
 
     def __init__(self, **kwargs):
-        conn = SMBConnection("wieneke", "wieneke", "client", "", use_ntlm_v2=True)
-        assert conn.connect("192.168.2.8", 139)
-        pathlist = conn.listPath("FamilyLibrary", "TotalMusic", search=55, pattern='*', timeout=30)
-        for path in pathlist:
-            print(path.filename, path.isDirectory)
-
+        smb_dir = SmbDir()
+        smb_dir.get_dir("TotalMusic")
 
         try:
             self.port = serial.Serial("/dev/ttyACM0", baudrate=9600, timeout=0.8)
