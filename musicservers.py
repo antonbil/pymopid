@@ -674,6 +674,7 @@ class SelectMpdAlbum:
         return btn1
 
     def display(self, dir, start=None):
+        "display dir, with start"
         if start == None:
             # self.popupOpen=False
             start = 0
