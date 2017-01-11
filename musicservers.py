@@ -1,11 +1,11 @@
 import difflib
 import json
-import mpd
 import os
 import random
 import subprocess
 from itertools import islice
 
+import mpd
 import requests
 from kivy.clock import Clock
 from kivy.core.window import Window
@@ -547,14 +547,18 @@ maxalbums = 120
 class SelectMpdAlbum:
     currentdir = ""
 
-    def __init__(self, music_controller, colors, popupSearch, parent, getdir, is_directory, playdir):
+    def __init__(self, music_controller, colors, popupSearch, parent, getdir, is_directory, playdir, currentdir=None):
         # getdir=self.music_controller.mc.list_files(tempdir)
         # def my_condition(self, x):
         #    return "directory" in x
         #            self.playDir(tempdir)
 
 
+        if not currentdir == None:
+            self.currentdir = currentdir
+        print(self.currentdir)
         self.is_directory = is_directory
+        self.playdir = playdir
         self.getdir = getdir
         self.parent = parent
         self.music_controller = music_controller
@@ -611,7 +615,7 @@ class SelectMpdAlbum:
         if dir[-1:] == "/":
             dir = dir[:-1]
         try:
-            self.playdir()
+            self.playdir(dir)
         except:
             pass
 
@@ -619,7 +623,6 @@ class SelectMpdAlbum:
         self.display("", int(instance.text))
 
     def onClick(self, instance):
-        print("select" + instance.text)
         self.display(instance.text + "/")
 
     def onLongClick(self, instance):
@@ -683,7 +686,7 @@ class SelectMpdAlbum:
         playlist = self.getdir(tempdir)
         numdirs = sum(1 for x in playlist if self.is_directory(x))
         if numdirs == 0:
-            # print("play:"+tempdir)
+            print("play:" + tempdir)
             self.playDir(tempdir)
             return
 

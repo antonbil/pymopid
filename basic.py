@@ -2,6 +2,7 @@ import os
 import random
 import serial
 import sys
+import tempfile
 import traceback
 from time import sleep
 
@@ -27,6 +28,8 @@ from smb.SMBConnection import SMBConnection
 
 import musicservers
 from musicservers import MeasureButtonOnTouch
+
+SAMBA_SERVER = "192.168.2.8"
 
 red = [1, 0, 0, 1]
 green = [0, 1, 0, 1]
@@ -130,6 +133,7 @@ class MenuScreen(BoxLayout):
         self.addButton("Clear", self.main.music_controller.clear_tracks)
         self.addButton("Spotify", self.main.listArtistOpen)
         self.addButton("Mpd", self.main.list_files)
+        self.addButton("Mpd playlists", self.main.list_smb_files)
         self.addButton("Mpd <--> Spotify", self.main.mpd_spotify)
         self.addButton("Playlists", self.main.popupPlaylists.display_tracks)
         self.addButton("Playlists tree", self.main.display_tracks_tree)
@@ -264,14 +268,27 @@ class PopupBox(Popup):
 class SmbDir:
     def __init__(self):
         self.conn = SMBConnection("wieneke", "wieneke", "client", "", use_ntlm_v2=True)
-        assert self.conn.connect("192.168.2.8", 139)
+        assert self.conn.connect(SAMBA_SERVER, 139)
 
     def get_dir(self, dir):
         pathlist = self.conn.listPath("FamilyLibrary", dir, search=55, pattern='*', timeout=30)
         list = []
         for path in pathlist:
-            print(path.filename, path.isDirectory)
-        return pathlist
+            if path.filename[:1] == ".":
+                continue
+            if path.isDirectory:
+                path.directory = path.filename
+                list.append({'filename': path.filename, 'directory': path.directory})
+            else:
+                list.append({'filename': path.filename})
+        return list
+
+    def get_content_file(self, filename):
+        file_obj = tempfile.NamedTemporaryFile()
+        with open('local_file', 'wb') as fp:
+            self.conn.retrieveFile('FamilyLibrary', filename, fp)
+        return [line.rstrip('\n') for line in open('local_file')]
+
 
 
 
@@ -283,8 +300,8 @@ class LoginScreen(BoxLayout):
     mode_title = True
 
     def __init__(self, **kwargs):
-        smb_dir = SmbDir()
-        smb_dir.get_dir("TotalMusic")
+        self.smb_dir = SmbDir()
+        self.smb_dir.get_dir("TotalMusic")
 
         try:
             self.port = serial.Serial("/dev/ttyACM0", baudrate=9600, timeout=0.8)
@@ -345,8 +362,21 @@ class LoginScreen(BoxLayout):
         self.selAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
                                                     getdir=lambda x: self.music_controller.mc.list_files(x),
                                                     is_directory=lambda x: "directory" in x,
-                                                    playdir=lambda x: self.music_controller.mc.add(dir[1:]))
+                                                    playdir=lambda x: self.music_controller.mc.add(x[1:]))
+        self.selSmbAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
+                                                       getdir=lambda x: self.smb_dir.get_dir(x),
+                                                       is_directory=lambda x: "directory" in x,
+                                                       playdir=lambda x: self.play_samba_dir(x),
+                                                       currentdir="TotalMusic")
         Clock.schedule_interval(self.update, 1)
+
+    def play_samba_dir(self, dir):
+        filename = dir + "/mp3info.txt"
+        lines = self.smb_dir.get_content_file(filename)
+        del lines[0]
+        for item in lines:
+            fname = item.split("=== ")[0].replace("/home/wieneke/FamilyLibrary/FamilyMusic/", "")
+            self.music_controller.mc.add(fname)
 
     def display_tracks_tree(self, instance=None):
         try:
@@ -614,6 +644,10 @@ class LoginScreen(BoxLayout):
         self.selAlbum.display("/")
         # print(self.music_controller.mc.list_files("/"))
 
+    def list_smb_files(self, instance):
+        self.selSmbAlbum.popupOpen = False
+        self.selSmbAlbum.display("/")
+        # print(self.music_controller.mc.list_files("/"))
     def doAction(self, instance):
         # print ("action:")
         # print(instance.id)
