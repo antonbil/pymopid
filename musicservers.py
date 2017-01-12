@@ -547,13 +547,18 @@ maxalbums = 120
 class SelectMpdAlbum:
     currentdir = ""
 
-    def __init__(self, music_controller, colors, popupSearch, parent, getdir, is_directory, playdir, currentdir=None):
+    def __init__(self, music_controller, colors, popupSearch, parent, getdir, is_directory, playdir, currentdir=None,
+                 addAndPlayAlbum=None):
         # getdir=self.music_controller.mc.list_files(tempdir)
         # def my_condition(self, x):
         #    return "directory" in x
         #            self.playDir(tempdir)
 
 
+        if addAndPlayAlbum == None:
+            self.addAndPlayAlbum = self.addAndPlayMpdAlbum
+        else:
+            self.addAndPlayAlbum = addAndPlayAlbum
         if not currentdir == None:
             self.currentdir = currentdir
         print(self.currentdir)
@@ -626,7 +631,7 @@ class SelectMpdAlbum:
         self.display(instance.text + "/")
 
     def onLongClick(self, instance):
-        buttons = [["Add", self.addAlbum], ["Add and Play", self.addAndPlayAlbum], ["Spotify", self.albumSpotify],
+        buttons = [["Add", self.addAlbum], ["Add and Play", self.addAndPlayAlbumCall], ["Spotify", self.albumSpotify],
                    ["Similar", self.similarSpotify]]
         contextMenu(buttons, instance, self.colors)
 
@@ -652,12 +657,14 @@ class SelectMpdAlbum:
         tempdir = self.currentdir + instance.item.text
         self.playDir(tempdir)
 
-    def addAndPlayAlbum(self, instance):
+    def addAndPlayAlbumCall(self, instance):
         instance.popup.dismiss()
-        song_pos = self.music_controller.get_length_playlist_mpd()
         tempdir = self.currentdir + instance.item.text
+        self.addAndPlayAlbum(tempdir)
+
+    def addAndPlayMpdAlbum(self, tempdir):
+        song_pos = self.music_controller.get_length_playlist_mpd()
         self.playDir(tempdir)
-        print("pos:", song_pos)
         self.music_controller.select_and_play_mpd(song_pos)
 
 

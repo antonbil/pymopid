@@ -7,6 +7,7 @@ import traceback
 from time import sleep
 
 import requests
+from BeautifulSoup import BeautifulSoup as bs
 from kivy.adapters.dictadapter import ListAdapter
 from kivy.app import App
 from kivy.clock import Clock
@@ -124,10 +125,11 @@ class PopList:
         self.display_tracks(instance, int(instance.text))
 
 
-class MenuScreen(BoxLayout):
+class MenuScreen(GridLayout):
     def __init__(self, main, **kwargs):
         super(MenuScreen, self).__init__(**kwargs)
         self.main = main
+        self.cols = 2
         self.orientation = "vertical"
         self.addButton("Tracks", self.main.popupTracks.display_tracks)
         self.addButton("Clear", self.main.music_controller.clear_tracks)
@@ -137,9 +139,10 @@ class MenuScreen(BoxLayout):
         self.addButton("Mpd <--> Spotify", self.main.mpd_spotify)
         self.addButton("Playlists", self.main.popupPlaylists.display_tracks)
         self.addButton("Playlists tree", self.main.display_tracks_tree)
+        self.addButton("Spotify playlists", self.main.list_spotify_files)
         self.addButton("Similar artists", self.main.similarForPlayingArtist)
         self.addButton("Quit", self.main.quit)
-        self.popup = Popup(title="Menu", content=self, size=(200, 400), size_hint=(None, None))
+        self.popup = Popup(title="Menu", content=self, size=(400, 400), size_hint=(None, None))
 
     def addButton(self, title, action):
         btn = Button(text=title, id="0",
@@ -290,7 +293,49 @@ class SmbDir:
         return [line.rstrip('\n') for line in open('local_file')]
 
 
+class SpotifyPlaylist:
+    def __init__(self, music_controller):
+        self.music_controller = music_controller
 
+    def play_mopidy_playlist(self, url):
+        parts = url.split("/")
+        last = parts[len(parts) - 1]
+        print(last)
+        print(self.mopidy_playlists[last])
+        self.music_controller.playlist_add_mopidy(self.mopidy_playlists[last])
+
+    def get_mopify_playlist(self, url):
+        response = requests.get("http://" + url)
+        soup = bs(response.content)
+        list = []
+        for link in soup.findAll('a'):
+            if "/" in link['href'] and not "Parent" in link.string:
+                print (link.string, link['href'], link.text[:6])
+                list.append({'filename': link.string, 'directory': link.string})
+        if len(list) == 0:
+            print (response.content)
+            self.myurls = soup.findAll("div", {"class": "url"})
+            myartists = soup.findAll("div", {"class": "artist"})
+            myalbums = soup.findAll("div", {"class": "album"})
+            if len(myalbums) == 0:
+                return []
+            i = 0
+            self.mopidy_playlists = {}
+            for artist in myartists:
+                text = artist.text + "-" + myalbums[i].text
+                self.mopidy_playlists[text] = self.myurls[i].text
+                list.append({'filename': text, 'directory': text, "url": self.myurls[i].text})
+                i += 1
+            print("list is nu:", list)
+        return list
+        # print (response.status_code)
+        # print (response.content)
+
+    def addAndPlaySpotifyAlbum(self, tempdir):
+
+        song_pos = self.music_controller.get_length_playlist_mopidy()
+        self.play_mopidy_playlist(tempdir)
+        self.music_controller.select_and_play_mopidy(song_pos)
 
 
 class LoginScreen(BoxLayout):
@@ -363,6 +408,13 @@ class LoginScreen(BoxLayout):
                                                     getdir=lambda x: self.music_controller.mc.list_files(x),
                                                     is_directory=lambda x: "directory" in x,
                                                     playdir=lambda x: self.music_controller.mc.add(x[1:]))
+        spotify_playlist = SpotifyPlaylist(self.music_controller)
+        self.selMopidyAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
+                                                          getdir=lambda x: spotify_playlist.get_mopify_playlist(x),
+                                                          is_directory=lambda x: "directory" in x,
+                                                          playdir=lambda x: spotify_playlist.play_mopidy_playlist(x),
+                                                          currentdir="192.168.2.8/spotify/data",
+                                                          addAndPlayAlbum=spotify_playlist.addAndPlaySpotifyAlbum)
         self.selSmbAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
                                                        getdir=lambda x: self.smb_dir.get_dir(x),
                                                        is_directory=lambda x: "directory" in x,
@@ -370,6 +422,9 @@ class LoginScreen(BoxLayout):
                                                        currentdir="TotalMusic")
         Clock.schedule_interval(self.update, 1)
 
+    def list_spotify_files(self, instance):
+        self.selMopidyAlbum.popupOpen = False
+        self.selMopidyAlbum.display("/")
     def play_samba_dir(self, dir):
         filename = dir + "/mp3info.txt"
         lines = self.smb_dir.get_content_file(filename)
