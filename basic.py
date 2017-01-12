@@ -308,10 +308,8 @@ class SpotifyPlaylist:
         list = []
         for link in soup.findAll('a'):
             if "/" in link['href'] and not "Parent" in link.string:
-                print (link.string, link['href'], link.text[:6])
                 list.append({'filename': link.string, 'directory': link.string})
         if len(list) == 0:
-            print (response.content)
             self.myurls = soup.findAll("div", {"class": "url"})
             myartists = soup.findAll("div", {"class": "artist"})
             myalbums = soup.findAll("div", {"class": "album"})
