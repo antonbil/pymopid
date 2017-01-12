@@ -300,8 +300,6 @@ class SpotifyPlaylist:
     def play_mopidy_playlist(self, url):
         parts = url.split("/")
         last = parts[len(parts) - 1]
-        print(last)
-        print(self.mopidy_playlists[last])
         self.music_controller.playlist_add_mopidy(self.mopidy_playlists[last])
 
     def get_mopify_playlist(self, url):
@@ -326,13 +324,9 @@ class SpotifyPlaylist:
                 self.mopidy_playlists[text] = self.myurls[i].text
                 list.append({'filename': text, 'directory': text, "url": self.myurls[i].text})
                 i += 1
-            print("list is nu:", list)
         return list
-        # print (response.status_code)
-        # print (response.content)
 
     def addAndPlaySpotifyAlbum(self, tempdir):
-
         song_pos = self.music_controller.get_length_playlist_mopidy()
         self.play_mopidy_playlist(tempdir)
         self.music_controller.select_and_play_mopidy(song_pos)
