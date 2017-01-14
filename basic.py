@@ -342,9 +342,9 @@ class LoginScreen(BoxLayout):
         self.smb_dir = SmbDir()
         self.smb_dir.get_dir("TotalMusic")
 
+        self.music_controller = musiccontroller.music_controller()
         self.arduino=connectArduino.ConnectArduino(music_controller)
 
-        self.music_controller = musiccontroller.music_controller()
         super(LoginScreen, self).__init__(**kwargs)
         self.orientation = "vertical"
 
