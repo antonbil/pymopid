@@ -29,6 +29,7 @@ from smb.SMBConnection import SMBConnection
 
 import musicservers
 import musiccontroller
+import connectArduino
 from musicservers import MeasureButtonOnTouch
 
 SAMBA_SERVER = "192.168.2.8"
@@ -341,10 +342,8 @@ class LoginScreen(BoxLayout):
         self.smb_dir = SmbDir()
         self.smb_dir.get_dir("TotalMusic")
 
-        try:
-            self.port = serial.Serial("/dev/ttyACM0", baudrate=9600, timeout=0.8)
-        except:
-            pass
+        self.arduino=connectArduino.ConnectArduino(music_controller)
+
         self.music_controller = musiccontroller.music_controller()
         super(LoginScreen, self).__init__(**kwargs)
         self.orientation = "vertical"
@@ -639,11 +638,8 @@ class LoginScreen(BoxLayout):
     def update(self, dt):
         # print("st1:"+self.music_controller.nl)
         try:
-            status = self.music_controller.get_state()
-            try:
-                self.port.write(status['time1'])
-            except:
-                pass
+            status = self.arduino.exchange()#self.music_controller.get_state()
+
             # print("st:"+status)
             m, s = divmod(status["elapsed"], 60)
             self.time.text = '{f:02d}:{s:02d}'.format(f=m, s=s)
