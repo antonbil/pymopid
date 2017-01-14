@@ -1,4 +1,4 @@
-import mpd
+import mpd,json
 import requests
 mpdServerUrl = "192.168.2.74"
 
