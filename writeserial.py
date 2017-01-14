@@ -7,7 +7,7 @@ import serial
 import subprocess
 from itertools import permutations, islice
 import requests
-import json, mpd, musicservers
+import json, mpd, musiccontroller
 
 #main program
 #open serial port
@@ -16,7 +16,7 @@ port = serial.Serial("/dev/ttyACM0", baudrate=9600, timeout=0.1, xonxoff=False, 
 #port = serial.Serial("/dev/ttyACM0", timeout=None, baudrate=115000, xonxoff=False, rtscts=False, dsrdtr=False)
 #start main loop to run every second
 line = []
-music_controller=musicservers.music_controller()
+music_controller=musiccontroller.music_controller()
 
 while True:
     status=status=music_controller.get_state()

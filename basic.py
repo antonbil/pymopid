@@ -28,6 +28,7 @@ from kivy.uix.textinput import TextInput
 from smb.SMBConnection import SMBConnection
 
 import musicservers
+import musiccontroller
 from musicservers import MeasureButtonOnTouch
 
 SAMBA_SERVER = "192.168.2.8"
@@ -344,7 +345,7 @@ class LoginScreen(BoxLayout):
             self.port = serial.Serial("/dev/ttyACM0", baudrate=9600, timeout=0.8)
         except:
             pass
-        self.music_controller = musicservers.music_controller()
+        self.music_controller = musiccontroller.music_controller()
         super(LoginScreen, self).__init__(**kwargs)
         self.orientation = "vertical"
 
