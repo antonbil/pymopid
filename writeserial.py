@@ -3,6 +3,28 @@
 #mpd must be running
 """
 auto-start script if arduino is added:
+
+create service to start Arduino
+sudo nano /lib/systemd/startArduino.service
+
+[Unit]
+Description=Start Arduino Service
+
+[Service]
+Type=simple
+ExecStart=/home/pi/pymopid/writeserial.py
+
+[Install]
+WantedBy=multi-user.target
+
+sudo ln -s /lib/systemd/startArduino.service /etc/systemd/system/startArduino.service
+
+test by:
+sudo systemctl start startArduino
+sudo systemctl status startArduino
+
+now make rule to start service when usb is plugged in:
+
 in file:
 /etc/udev/rules.d/90-local.rules
 ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="2341", ATTR{idProduct}=="0043", RUN+="/usr/bin/python /home/pi/python/writeserial.py"
