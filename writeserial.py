@@ -27,7 +27,7 @@ now make rule to start service when usb is plugged in:
 
 in file:
 /etc/udev/rules.d/90-local.rules
-ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="2341", ATTR{idProduct}=="0043", RUN+="/usr/bin/python /home/pi/python/writeserial.py"
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="2341", ATTR{idProduct}=="0043", RUN+="/bin/systemctl start startArduino.service"
 
 reload rules:
 sudo udevadm control --reload-rules
