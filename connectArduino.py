@@ -2,7 +2,7 @@ import time ## Import 'time' library.  Allows us to use 'sleep'
 import serial
 import requests
 import mpd
-import re
+import re,os
 from threading import Thread
 
 class Caroussel:
@@ -72,7 +72,10 @@ class ConnectArduino:
                     self.music_controller.do_action(3)
                 if command=="Title":
                     self.sendTitle=True
-                #print("Line: " + command+".")
+                if command=="Select":
+                    os.system('sudo shutdown -h now')
+                #os.system('sudo shutdown now -P')
+                print("Line: " + command+".")
                 self.line = []
                 break
             else:
