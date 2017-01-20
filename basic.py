@@ -681,7 +681,7 @@ class LoginScreen(BoxLayout):
     def update(self, dt):
         # print("st1:"+self.music_controller.nl)
         try:
-            status = self.arduino.exchange()#self.music_controller.get_state()
+            status = self.music_controller.get_state()#self.arduino.exchange()
 
             # print("st:"+status)
             m, s = divmod(status["elapsed"], 60)
