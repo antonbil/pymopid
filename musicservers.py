@@ -201,6 +201,7 @@ class SelectMpdAlbum:
 
         self.popupSearch = popupSearch
         self.colors = colors
+        self.sortlist=True
         self.layout_popup = GridLayout(cols=1, spacing=10, size_hint_y=None, size=(400, Window.height))
         self.layout_popup.bind(minimum_height=self.layout_popup.setter('height'))
 
@@ -341,8 +342,8 @@ class SelectMpdAlbum:
         i = 0
         self.layout_popup.add_widget(self.close_button)
         # self.layout_popup.add_widget(self.dummybutton)
-
-        playlist.sort(key=lambda k: ("directory" not in k, k.get("directory", None)))
+        if self.sortlist:
+            playlist.sort(key=lambda k: ("directory" not in k, k.get("directory", None)))
         i = 0
         for item in playlist:
             if "directory" in item and i >= start and i < maxalbums + start:

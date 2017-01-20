@@ -311,11 +311,10 @@ class SpotifyPlaylist:
         self.music_controller.select_and_play_mopidy(song_pos)
 
 
-    def add_mopidy_release(self, url):
-        last=url[-1:]
+    def add_mopidy_release(self, release):
+        last=release[-1:]
         if last=="/":
-            url=url[:-1]
-        release=url[3:]
+            release=release[:-1]
         url=self.mopidy_releases[release]
         self.music_controller.playlist_add_mopidy(url)
 
@@ -332,7 +331,7 @@ class SpotifyPlaylist:
             for release in res:
                 text =  release['name']
                 self.mopidy_releases[text] = release['uri']
-                list.append({'filename': release['name'], 'directory': (""+str(i)).zfill(3)+release['name'], "url": release['uri']})
+                list.append({'filename': release['name'], 'directory': release['name'], "url": release['uri']})
                 i += 1
             return list
 
@@ -643,6 +642,7 @@ class LoginScreen(BoxLayout):
 #
     def spotify_browse(self, instance=None):
         self.selMopidyReleases.popupOpen = False
+        self.selMopidyReleases.sortlist=False
         self.selMopidyReleases.display("")
 
         #self.music_controller.browse_mopidy("spotifytunigo:releases")
