@@ -645,8 +645,6 @@ class LoginScreen(BoxLayout):
         self.selMopidyReleases.sortlist=False
         self.selMopidyReleases.display("")
 
-        #self.music_controller.browse_mopidy("spotifytunigo:releases")
-        #self.music_controller.browse_mopidy("spotifytunigo:directory")
     def similarForPlayingArtist(self, instance=None):
         temp1 = self.music_controller.do_mopidy_search(self.currentPlayingArtist)
         self.currentArtist = temp1[0]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
