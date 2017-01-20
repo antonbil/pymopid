@@ -144,6 +144,8 @@ class MenuScreen(GridLayout):
         self.addButton("Spotify playlists", self.main.list_spotify_files)
         self.addButton("Similar artists", self.main.similarForPlayingArtist)
         self.addButton("New Releases", self.main.spotify_browse)
+        self.addButton("Spotify Genres", self.main.spotify_genres)
+        #
         self.addButton("Quit", self.main.quit)
         self.popup = Popup(title="Menu", content=self, size=(400, 400), size_hint=(None, None))
 
@@ -297,8 +299,9 @@ class SmbDir:
 
 
 class SpotifyPlaylist:
-    def __init__(self, music_controller):
+    def __init__(self, music_controller,parent):
         self.music_controller = music_controller
+        self.parent=parent
 
     def play_mopidy_playlist(self, url):
         parts = url.split("/")
@@ -325,7 +328,8 @@ class SpotifyPlaylist:
             
         else:
             self.mopidy_releases={}
-            res = self.music_controller.browse_mopidy("spotifytunigo:releases")
+            res = self.music_controller.browse_mopidy(self.parent.selMopidyReleases.startDir)#"spotifytunigo:releases")
+            print res
             i = 0
             list=[]
             for release in res:
@@ -432,7 +436,7 @@ class LoginScreen(BoxLayout):
                                                     getdir=lambda x: self.music_controller.mc.list_files(x),
                                                     is_directory=lambda x: "directory" in x,
                                                     playdir=lambda x: self.music_controller.mc.add(x[1:]))
-        spotify_playlist = SpotifyPlaylist(self.music_controller)
+        spotify_playlist = SpotifyPlaylist(self.music_controller,self)
         self.selMopidyAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
                                                           getdir=lambda x: spotify_playlist.get_mopify_playlist(x),
                                                           is_directory=lambda x: "directory" in x,
@@ -643,8 +647,16 @@ class LoginScreen(BoxLayout):
     def spotify_browse(self, instance=None):
         self.selMopidyReleases.popupOpen = False
         self.selMopidyReleases.sortlist=False
+        self.selMopidyReleases.startDir="spotifytunigo:releases"#"spotifytunigo:releases"
         self.selMopidyReleases.display("")
+        #'spotifytunigo:toplists','spotifytunigo:genres'
 
+    def spotify_genres(self, instance=None):
+        self.selMopidyReleases.popupOpen = False
+        self.selMopidyReleases.sortlist=False
+        self.selMopidyReleases.startDir='spotifytunigo:toplists'#"spotifytunigo:releases"
+        self.selMopidyReleases.display("")
+        #'spotifytunigo:toplists','spotifytunigo:genres'
     def similarForPlayingArtist(self, instance=None):
         temp1 = self.music_controller.do_mopidy_search(self.currentPlayingArtist)
         self.currentArtist = temp1[0]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
