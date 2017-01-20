@@ -143,6 +143,7 @@ class MenuScreen(GridLayout):
         self.addButton("Playlists tree", self.main.display_tracks_tree)
         self.addButton("Spotify playlists", self.main.list_spotify_files)
         self.addButton("Similar artists", self.main.similarForPlayingArtist)
+        self.addButton("New Releases", self.main.spotify_browse)
         self.addButton("Quit", self.main.quit)
         self.popup = Popup(title="Menu", content=self, size=(400, 400), size_hint=(None, None))
 
@@ -304,6 +305,38 @@ class SpotifyPlaylist:
         last = parts[len(parts) - 1]
         self.music_controller.playlist_add_mopidy(self.mopidy_playlists[last])
 
+    def play_mopidy_release(self, url):
+        song_pos = self.music_controller.get_length_playlist_mopidy()
+        self.add_mopidy_release(url)
+        self.music_controller.select_and_play_mopidy(song_pos)
+
+
+    def add_mopidy_release(self, url):
+        last=url[-1:]
+        if last=="/":
+            url=url[:-1]
+        release=url[3:]
+        url=self.mopidy_releases[release]
+        self.music_controller.playlist_add_mopidy(url)
+
+    def browse_mopidy(self, uri=""):
+        if len(uri)>0:
+            self.add_mopidy_release(uri)
+            #item chosen, play album
+            
+        else:
+            self.mopidy_releases={}
+            res = self.music_controller.browse_mopidy("spotifytunigo:releases")
+            i = 0
+            list=[]
+            for release in res:
+                text =  release['name']
+                self.mopidy_releases[text] = release['uri']
+                list.append({'filename': release['name'], 'directory': (""+str(i)).zfill(3)+release['name'], "url": release['uri']})
+                i += 1
+            return list
+
+
     def get_mopify_playlist(self, url):
         response = requests.get("http://" + url)
         soup = bs(response.content)
@@ -412,6 +445,12 @@ class LoginScreen(BoxLayout):
                                                        is_directory=lambda x: "directory" in x,
                                                        playdir=lambda x: self.play_samba_dir(x),
                                                        currentdir="TotalMusic")
+        self.selMopidyReleases = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
+                                                          getdir=lambda x: spotify_playlist.browse_mopidy(x),
+                                                          is_directory=lambda x: True,
+                                                          playdir=lambda x: spotify_playlist.add_mopidy_release(x),
+                                                          currentdir="",
+                                                          addAndPlayAlbum=spotify_playlist.play_mopidy_release)
         Clock.schedule_interval(self.update, 1)
 
     def list_spotify_files(self, instance):
@@ -601,7 +640,13 @@ class LoginScreen(BoxLayout):
 
     def onLongpresssimilarArtistsPopup(self, instance, pos):
         pass
+#
+    def spotify_browse(self, instance=None):
+        self.selMopidyReleases.popupOpen = False
+        self.selMopidyReleases.display("")
 
+        #self.music_controller.browse_mopidy("spotifytunigo:releases")
+        #self.music_controller.browse_mopidy("spotifytunigo:directory")
     def similarForPlayingArtist(self, instance=None):
         temp1 = self.music_controller.do_mopidy_search(self.currentPlayingArtist)
         self.currentArtist = temp1[0]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")

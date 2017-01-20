@@ -322,7 +322,10 @@ class SelectMpdAlbum:
         # print(self.music_controller.mc.list_files(dir))
         tempdir = (self.currentdir + dir).replace("//", "/")
         playlist = self.getdir(tempdir)
-        numdirs = sum(1 for x in playlist if self.is_directory(x))
+        try:
+            numdirs = sum(1 for x in playlist if self.is_directory(x))
+        except:
+            numdirs=0
         if numdirs == 0:
             print("play:" + tempdir)
             self.playDir(tempdir)
