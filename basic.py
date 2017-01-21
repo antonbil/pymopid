@@ -333,12 +333,9 @@ class SpotifyPlaylist:
             playurl=""
         if len(playurl)>0 and (playurl.find("album") == -1 and playurl.find("playlist") == -1):
             self.parent.selMopidyReleases.startDir=playurl
-            print "now display:"+self.parent.selMopidyReleases.startDir
-            
         else:
             if len(playurl)>0 :
 
-                print "now play:"+playurl
                 self.music_controller.playlist_add_mopidy(playurl)
                 #self.add_mopidy_release(uri)
                 return
@@ -346,7 +343,6 @@ class SpotifyPlaylist:
             
         self.mopidy_releases={}
         res = self.music_controller.browse_mopidy(self.parent.selMopidyReleases.startDir)#"spotifytunigo:releases")
-        print res
         i = 0
         list=[]
         for release in res:
