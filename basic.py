@@ -144,7 +144,7 @@ class MenuScreen(GridLayout):
         self.addButton("Spotify playlists", self.main.list_spotify_files)
         self.addButton("Similar artists", self.main.similarForPlayingArtist)
         self.addButton("New Releases", self.main.spotify_browse)
-        self.addButton("Spotify Genres", self.main.spotify_genres)
+        self.addButton("Spotify Directory", self.main.spotify_genres)
         #
         self.addButton("Quit", self.main.quit)
         self.popup = Popup(title="Menu", content=self, size=(400, 400), size_hint=(None, None))
@@ -322,22 +322,38 @@ class SpotifyPlaylist:
         self.music_controller.playlist_add_mopidy(url)
 
     def browse_mopidy(self, uri=""):
-        if len(uri)>0:
-            self.add_mopidy_release(uri)
-            #item chosen, play album
+        try:
+            last=uri[-1:]
+            if last=="/":
+                uri=uri[:-1]
+            l=uri.split("/")
+            playurl=self.mopidy_releases[l[len(l)-1]]
+        except:
+            playurl=""
+        if len(playurl)>0 and (playurl.find("album") == -1 and playurl.find("playlist") == -1):
+            self.parent.selMopidyReleases.startDir=playurl
+            print "now display:"+self.parent.selMopidyReleases.startDir
             
         else:
-            self.mopidy_releases={}
-            res = self.music_controller.browse_mopidy(self.parent.selMopidyReleases.startDir)#"spotifytunigo:releases")
-            print res
-            i = 0
-            list=[]
-            for release in res:
-                text =  release['name']
-                self.mopidy_releases[text] = release['uri']
-                list.append({'filename': release['name'], 'directory': release['name'], "url": release['uri']})
-                i += 1
-            return list
+            if len(playurl)>0 :
+
+                print "now play:"+playurl
+                self.music_controller.playlist_add_mopidy(playurl)
+                #self.add_mopidy_release(uri)
+                return
+            #item chosen, play album
+            
+        self.mopidy_releases={}
+        res = self.music_controller.browse_mopidy(self.parent.selMopidyReleases.startDir)#"spotifytunigo:releases")
+        print res
+        i = 0
+        list=[]
+        for release in res:
+            text =  release['name']
+            self.mopidy_releases[text] = release['uri']
+            list.append({'filename': release['name'], 'directory': release['name'], "url": release['uri']})
+            i += 1
+        return list
 
 
     def get_mopify_playlist(self, url):
@@ -654,7 +670,7 @@ class LoginScreen(BoxLayout):
     def spotify_genres(self, instance=None):
         self.selMopidyReleases.popupOpen = False
         self.selMopidyReleases.sortlist=False
-        self.selMopidyReleases.startDir='spotifytunigo:toplists'#"spotifytunigo:releases"
+        self.selMopidyReleases.startDir='spotifytunigo:directory'#"spotifytunigo:releases"
         self.selMopidyReleases.display("")
         #'spotifytunigo:toplists','spotifytunigo:genres'
     def similarForPlayingArtist(self, instance=None):
