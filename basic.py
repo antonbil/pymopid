@@ -144,6 +144,7 @@ class MenuScreen(GridLayout):
         self.addButton("Spotify playlists", self.main.list_spotify_files)
         self.addButton("Similar artists", self.main.similarForPlayingArtist)
         self.addButton("New Releases", self.main.spotify_browse)
+        self.addButton("Spotify Users", self.main.spotify_users)
         self.addButton("Spotify Directory", self.main.spotify_genres)
         #
         self.addButton("Quit", self.main.quit)
@@ -321,6 +322,8 @@ class SpotifyPlaylist:
         l=release.split("/")
         url=self.mopidy_releases[l[len(l)-1]]
         self.music_controller.playlist_add_mopidy(url)
+    def user_mopidy(self, uri=""):
+        pass
 
     def browse_mopidy(self, uri=""):
         try:
@@ -379,6 +382,30 @@ class SpotifyPlaylist:
         song_pos = self.music_controller.get_length_playlist_mopidy()
         self.play_mopidy_playlist(tempdir)
         self.music_controller.select_and_play_mopidy(song_pos)
+
+class MusicPlaylister:
+    def __init__(self, **kwargs):
+        self.userURIs = [
+            
+            'spotify',
+            'bbc_playlister',
+            'filtr',
+            'arminvanbuurenofficial',
+            'dominorecords',
+            'spinninrecordsofficial',
+            'ulyssestone',
+            'seaninsound'
+	]
+        
+    def getUserPlaylist(self,user):
+        uri="https://api.spotify.com/v1/users/spotify:user:"+user+"/playlists"
+    def getUserPlaylists(self):
+        list=[]
+        for user in self.userURIs:
+            list.add(self.getUserPlaylist(user))
+        return list
+    
+    #MusicPlaylister().getUserPlaylists()
 
 
 class LoginScreen(BoxLayout):
@@ -467,6 +494,13 @@ class LoginScreen(BoxLayout):
                                                           playdir=lambda x: spotify_playlist.add_mopidy_release(x),
                                                           currentdir="",
                                                           addAndPlayAlbum=spotify_playlist.play_mopidy_release)
+        self.selMopidyUsers = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
+                                                          getdir=lambda x: spotify_playlist.user_mopidy(x),
+                                                          is_directory=lambda x: True,
+                                                          playdir=lambda x: spotify_playlist.add_mopidy_release(x),
+                                                          currentdir="",
+                                                          addAndPlayAlbum=spotify_playlist.play_mopidy_release)
+        
         Clock.schedule_interval(self.update, 1)
 
     def list_spotify_files(self, instance):
@@ -656,7 +690,13 @@ class LoginScreen(BoxLayout):
 
     def onLongpresssimilarArtistsPopup(self, instance, pos):
         pass
-#
+#spotify_users
+    def spotify_users(self, instance=None):
+        #MusicPlaylister().getUserPlaylists()
+        self.selMopidyUsers.popupOpen = False
+        self.selMopidyUsers.sortlist=False
+        self.selMopidyUsers.startDir="spotifytunigo:releases"#"spotifytunigo:releases"
+        self.selMopidyUsers.display("")
     def spotify_browse(self, instance=None):
         self.selMopidyReleases.popupOpen = False
         self.selMopidyReleases.sortlist=False
