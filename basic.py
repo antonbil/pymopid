@@ -318,7 +318,8 @@ class SpotifyPlaylist:
         last=release[-1:]
         if last=="/":
             release=release[:-1]
-        url=self.mopidy_releases[release]
+        l=release.split("/")
+        url=self.mopidy_releases[l[len(l)-1]]
         self.music_controller.playlist_add_mopidy(url)
 
     def browse_mopidy(self, uri=""):
