@@ -409,7 +409,8 @@ class MusicPlaylister(MopidyPlaylister):
             ['spotify','Spotify'],
             ['bbc_playlister','BBC Music Playlists'],
             ['filtr','filtr'],
-            ['arminvanbuurenofficial','Armin van Buuren'],
+            ['nederlandse_top_40','Nederlandse Top 40'],
+            ['billboard.com','Billboard']
             ['dominorecords','Domino Recording Company'],
             ['spinninrecordsofficial','Spinnin Records'],
             ['ulyssestone','Ulysses Classical'],
