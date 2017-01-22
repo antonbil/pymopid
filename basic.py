@@ -166,13 +166,14 @@ class MenuScreen(GridLayout):
 class SubMenuScreen(MenuScreen):
     def __init__(self, main, **kwargs):
         super(SubMenuScreen, self).__init__(main,**kwargs)
+        self.popup.title = "Spotify Playlists Menu"
         
     def addButtons(self):
-        self.addButton("Spotify Playlists", self.main.popupPlaylists.display_tracks)
-        self.addButton("Playlists Tree", self.main.display_tracks_tree)
-        self.addButton("Playlists Server", self.main.list_spotify_files)
+        self.addButton("Simple Browse", self.main.popupPlaylists.display_tracks)
+        self.addButton("Browse Tree", self.main.display_tracks_tree)
+        self.addButton("On Local Server", self.main.list_spotify_files)
         self.addButton("Users Playlists", self.main.spotify_users)
-        self.addButton("Directory", self.main.spotify_genres)
+        self.addButton("Main Directory", self.main.spotify_genres)
 
 maxtracks = 30  # max number of tracks displayed in playlist
 
