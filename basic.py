@@ -394,6 +394,8 @@ class SpotifyPlaylist:
         song_pos = self.music_controller.get_length_playlist_mopidy()
         self.play_mopidy_playlist(tempdir)
         self.music_controller.select_and_play_mopidy(song_pos)
+        
+        
 class MopidyPlaylister:
     def __init__(self):
         pass
