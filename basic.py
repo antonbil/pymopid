@@ -133,22 +133,22 @@ class MenuScreen(GridLayout):
         self.main = main
         self.cols = 2
         self.orientation = "vertical"
+        self.addButtons()
+        self.popup = Popup(title="Menu", content=self, size=(400, 400), size_hint=(None, None))
+        
+    def addButtons(self):
+        self.submenu=SubMenuScreen(self.main)
         self.addButton("Tracks", self.main.popupTracks.display_tracks)
-        self.addButton("Clear", self.main.music_controller.clear_tracks)
-        self.addButton("Spotify", self.main.listArtistOpen)
-        self.addButton("Mpd", self.main.list_files)
+        self.addButton("Tracks Clear", self.main.music_controller.clear_tracks)
+        self.addButton("Search Spotify", self.main.listArtistOpen)
+        self.addButton("Browse Mpd", self.main.list_files)
         self.addButton("Mpd playlists", self.main.list_smb_files)
         self.addButton("Mpd <--> Spotify", self.main.mpd_spotify)
-        self.addButton("Playlists", self.main.popupPlaylists.display_tracks)
-        self.addButton("Playlists tree", self.main.display_tracks_tree)
-        self.addButton("Spotify playlists", self.main.list_spotify_files)
         self.addButton("Similar artists", self.main.similarForPlayingArtist)
         self.addButton("New Releases", self.main.spotify_browse)
-        self.addButton("Spotify Users", self.main.spotify_users)
-        self.addButton("Spotify Directory", self.main.spotify_genres)
+        self.addButton("Spotify SubMenu", self.submenu.open)
         #
         self.addButton("Quit", self.main.quit)
-        self.popup = Popup(title="Menu", content=self, size=(400, 400), size_hint=(None, None))
 
     def addButton(self, title, action):
         btn = Button(text=title, id="0",
@@ -163,6 +163,16 @@ class MenuScreen(GridLayout):
         # open the popup
         self.popup.open()
 
+class SubMenuScreen(MenuScreen):
+    def __init__(self, main, **kwargs):
+        super(SubMenuScreen, self).__init__(main,**kwargs)
+        
+    def addButtons(self):
+        self.addButton("Spotify Playlists", self.main.popupPlaylists.display_tracks)
+        self.addButton("Playlists Tree", self.main.display_tracks_tree)
+        self.addButton("Playlists Server", self.main.list_spotify_files)
+        self.addButton("Users Playlists", self.main.spotify_users)
+        self.addButton("Directory", self.main.spotify_genres)
 
 maxtracks = 30  # max number of tracks displayed in playlist
 
