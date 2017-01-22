@@ -7,7 +7,7 @@ import traceback
 from time import sleep
 
 import requests
-from BeautifulSoup import BeautifulSoup as bs
+from bs4 import SoupStrainer, BeautifulSoup as bs
 from kivy.adapters.dictadapter import ListAdapter
 from kivy.app import App
 from kivy.clock import Clock
@@ -391,21 +391,21 @@ class MusicPlaylister(MopidyPlaylister):
         self.parent=parent
         #super(MusicPlaylister,self).__init__()
         self.userURIs = [
-            
-            ['spotify','spotify'],#0 is url, #1 = description
-            ['bbc_playlister','bbc_playlister'],
+            #0 is url, #1 = description
+            ['spotify','Spotify'],
+            ['bbc_playlister','BBC Music Playlists'],
             ['filtr','filtr'],
-            ['arminvanbuurenofficial','arminvanbuurenofficial'],
-            ['dominorecords','dominorecords'],
-            ['spinninrecordsofficial','spinninrecordsofficial'],
-            ['ulyssestone','ulyssestone'],
-            ['seaninsound','seaninsound']
+            ['arminvanbuurenofficial','Armin van Buuren'],
+            ['dominorecords','Domino Recording Company'],
+            ['spinninrecordsofficial','Spinnin Records'],
+            ['ulyssestone','Ulysses Classical'],
+            ['seaninsound','Drowned in Sound']
 	]
         
     def getUserPlaylist(self,url):
-        #media-object-playlist
         uri="https://open.spotify.com/user/"+url
         return uri
+    #main functions
     def getUserPlaylists(self,dir=""):
         if len(dir)<2:
             list=[]
@@ -413,17 +413,18 @@ class MusicPlaylister(MopidyPlaylister):
             for user in self.userURIs:
                 self.urls[user[1]]=self.getUserPlaylist(user[0])
                 list.append({'filename': user[1], 'directory': user[1]})
-                #   
-            print self.urls
+  
             return list
         else:
             url=self.getKey(dir)
             if ":playlist" in url:
                 self.parent.music_controller.playlist_add_mopidy(url)
                 return
-            #print url
+            
             response = requests.get(url)
-            soup = bs(response.content)
+            mlinks = SoupStrainer("div", "mo-image-wrapper")
+            soup = bs(response.content, "lxml", parse_only=mlinks)
+
             self.urls={}
             list=[]
             for link in soup.findAll('a'):
@@ -435,39 +436,37 @@ class MusicPlaylister(MopidyPlaylister):
                     name=link['data-drag-text']
                     if name==None:
                         continue
-                    print link
-                    print url
-                    print name
+
                     self.urls[name]=url
                     list.append({'filename': name, 'directory': name})
               except:
                 pass
             return list
 
-            #playlists = soup.findAll("div", {"class": "media-object-playlist"})
-            #print playlists
-            #print "play:"+url
-    
-    #MusicPlaylister().getUserPlaylists()
-    def getKey(self,dir):
-            last=dir[-1:]
-            if last=="/":
-                dir=dir[:-1]
-            dir=dir.split("/")
-            dir=dir[len(dir)-1]
-            url=self.urls[dir]
-            return url
-
-    def add_mopidy_playlist(self,dir):
-            url=self.getKey(dir)
-            self.parent.music_controller.playlist_add_mopidy(url)
     def playPlaylist(self, url):
         self.add_mopidy_playlist(url)
+        
     def addAndPlayPlaylist(self, url):
         song_pos = self.parent.music_controller.get_length_playlist_mopidy()
         self.add_mopidy_playlist(url)
         self.parent.music_controller.select_and_play_mopidy(song_pos)
 
+    #utility-functions
+    def getKey(self,dir):
+        #clean up key
+        last=dir[-1:]
+        if last=="/":
+            dir=dir[:-1]
+        dir=dir.split("/")
+        dir=dir[len(dir)-1]
+        #calc value
+        url=self.urls[dir]
+        return url
+
+    def add_mopidy_playlist(self,dir):
+        url=self.getKey(dir)
+        self.parent.music_controller.playlist_add_mopidy(url)
+            
 
 class LoginScreen(BoxLayout):
     image_source = ObjectProperty()
