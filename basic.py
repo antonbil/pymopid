@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import random
 import serial
@@ -410,7 +411,11 @@ class MusicPlaylister(MopidyPlaylister):
             ['dominorecords','Domino Recording Company'],
             ['spinninrecordsofficial','Spinnin Records'],
             ['ulyssestone','Ulysses Classical'],
-            ['seaninsound','Drowned in Sound']
+            ['seaninsound','Drowned in Sound'],
+            ['lemonheadboy','Michael Alan Perry'],
+            ['pontus_white',u'Simon Theßeling'],
+            ['ga8','ga8'],
+            ['progreport','progreport']
 	]
         
     def getUserPlaylist(self,url):
