@@ -364,7 +364,7 @@ class SavePlaylist(Popup):
             except:
                 artist=self.description_text.text
                 album=""
-            url=('http://192.168.2.8/spotify/data/genre/{}/addlink.php?url={}&artist={}&artistsort={}&album={}'.format(self.category_text.text, artist,self.id_text.text, self.sort_text.text,album)).replace(" ","%20")
+            url=('http://192.168.2.8/spotify/data/genre/{}/addlink.php?url={}&artist={}&artistsort={}&album={}'.format(self.category_text.text, self.id_text.text,artist, self.sort_text.text,album)).replace(" ","%20")
             requests.get(url)
             self.dispatch('on_ok')
             self.dismiss()
