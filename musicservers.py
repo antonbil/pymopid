@@ -179,7 +179,7 @@ class SelectMpdAlbum:
     currentdir = ""
 
     def __init__(self, music_controller, colors, popupSearch, parent, getdir, is_directory, playdir, currentdir=None,
-                 addAndPlayAlbum=None):
+                 addAndPlayAlbum=None, savePlaylist=None):
         # getdir=self.music_controller.mc.list_files(tempdir)
         # def my_condition(self, x):
         #    return "directory" in x
@@ -192,6 +192,8 @@ class SelectMpdAlbum:
             self.addAndPlayAlbum = addAndPlayAlbum
         if not currentdir == None:
             self.currentdir = currentdir
+        self.savePlaylist = savePlaylist
+
         print(self.currentdir)
         self.is_directory = is_directory
         self.playdir = playdir
@@ -265,6 +267,8 @@ class SelectMpdAlbum:
     def onLongClick(self, instance):
         buttons = [["Add", self.addAlbum], ["Add and Play", self.addAndPlayAlbumCall], ["Spotify", self.albumSpotify],
                    ["Similar", self.similarSpotify]]
+        if not self.savePlaylist==None:
+            buttons.append(["Save Playlist",self.savePlaylist])
         contextMenu(buttons, instance, self.colors)
 
     def similarSpotify(self, instance):

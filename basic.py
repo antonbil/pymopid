@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# encoding=utf8
 import os
 import random
 import serial
@@ -6,6 +6,7 @@ import sys
 import tempfile
 import traceback
 from time import sleep
+import urllib
 
 import requests
 from bs4 import SoupStrainer, BeautifulSoup as bs
@@ -24,6 +25,9 @@ from kivy.uix.image import AsyncImage
 from kivy.uix.label import Label
 from kivy.uix.listview import ListView, ListItemButton
 from kivy.uix.popup import Popup
+from kivy.uix.spinner import Spinner
+from kivy.uix.modalview import ModalView
+
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.textinput import TextInput
 from smb.SMBConnection import SMBConnection
@@ -32,7 +36,9 @@ import musicservers
 import musiccontroller
 import connectArduino
 from musicservers import MeasureButtonOnTouch
-
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 SAMBA_SERVER = "192.168.2.8"
 
 red = [1, 0, 0, 1]
@@ -262,6 +268,116 @@ class ScrollableLabel(ScrollView):
 
     def __init__(self, **kwargs):
         super(ScrollableLabel, self).__init__(**kwargs)
+        
+Builder.load_string("""
+<SavePlaylist>:
+        description_text: _description_text
+        id_text: _id_text
+        sort_text: _sort_text
+        category_text:_category_text
+        GridLayout:
+                cols: 1
+                padding: '12dp'
+
+
+                
+                canvas:
+                        Color:
+                                rgba: root.background_color[:3] + [root.background_color[-1] * root._anim_alpha]
+                        Rectangle:
+                                size: root._window.size if root._window else (0, 0)
+
+                        Color:
+                                rgb: 1, 1, 1
+                        BorderImage:
+                                source: root.background
+                                border: root.border
+                                pos: self.pos
+                                size: self.size
+        
+                GridLayout:
+                        cols: 2
+                        Label:
+                                text: 'Description playlist'
+                                size_hint_y: None
+                                height: self.texture_size[1] + dp(16)
+                                text_size: self.width - dp(16), None
+                                halign: 'center'
+                        TextInput:
+                                text:'Hello world'
+                                id: _description_text
+                        Label:
+                                text: 'Sort Key'
+                                size_hint_y: None
+                                height: self.texture_size[1] + dp(16)
+                                text_size: self.width - dp(16), None
+                                halign: 'center'
+                        TextInput:
+                                text:'Hello world'
+                                id: _sort_text
+                        Label:
+                                text: 'id playlist'
+                                size_hint_y: None
+                                height: self.texture_size[1] + dp(16)
+                                text_size: self.width - dp(16), None
+                                halign: 'center'
+                        TextInput:
+                                text:'Hello world'
+                                id: _id_text
+                
+                BoxLayout:
+                        size_hint_y: None
+                        height: sp(48)
+                
+                        Button:
+                                text: root.cancel_text
+                                on_press: root.cancel()
+                        Button:
+                                text: root.ok_text
+                                on_press: root.ok()
+                        Spinner:
+                                id: _category_text
+                                values:('New Links', 'Progressive rock', 'acoustic', 'alternative', 'ambient', 'americana', 'blues', 'classical', 'country', 'electronic'                                    , 'folk', 'funk', 'hip-hop' , 'indie pop','indie rock', 'instrumental', 'jazz', 'metal', 'pop', 'progressive', 'punk', 'rnb', 'rock', 'shoegaze', 'singer-songwriter', 'soul', 'techno')
+                                text:'New Links'
+""")
+class SavePlaylist(Popup):
+    description_text = ObjectProperty()
+    id_text = ObjectProperty()
+    sort_text = ObjectProperty()
+    category_text = ObjectProperty()
+	
+    ok_text = StringProperty('OK')
+    cancel_text = StringProperty('Cancel')
+	
+    __events__ = ('on_ok', 'on_cancel')
+    def __init__(self, text1,text2, **kwargs):
+        super(SavePlaylist,self).__init__(**kwargs)
+        self.description_text.text = text1
+        self.sort_text.text = text1
+        self.id_text.text = text2
+
+    def ok(self):
+            split=(self.description_text.text).split("-")
+            try:
+                artist=split[0]
+                album=split[1]
+            except:
+                artist=self.description_text.text
+                album=""
+            url=('http://192.168.2.8/spotify/data/genre/{}/addlink.php?url={}&artist={}&artistsort={}&album={}'.format(self.category_text.text, self.id_text.text,artist,self.sort_text.text,album)).replace(" ","%20")
+            requests.get(url)
+            self.dispatch('on_ok')
+            self.dismiss()
+    
+    def cancel(self):
+            self.dispatch('on_cancel')
+            self.dismiss()
+    
+    def on_ok(self):
+            pass
+    
+    def on_cancel(self):
+            pass
 
 
 Builder.load_string("""
@@ -277,7 +393,8 @@ Builder.load_string("""
             id: _pop_up_text
             text: ''
 """)
-
+#view = ModalView(size_hint=(None, None), size=(400, 400))
+#DropDown
 
 class PopupBox(Popup):
     pop_up_text = ObjectProperty()
@@ -316,6 +433,9 @@ class SpotifyPlaylist:
         self.music_controller = music_controller
         self.parent=parent
 
+    def savePlaylist(self, instance):
+        SavePlaylist(instance.item.text,self.mopidy_releases[instance.item.text]).open()
+        
     def play_mopidy_playlist(self, url):
         parts = url.split("/")
         last = parts[len(parts) - 1]
@@ -469,7 +589,11 @@ class MusicPlaylister(MopidyPlaylister):
         song_pos = self.parent.music_controller.get_length_playlist_mopidy()
         self.add_mopidy_playlist(url)
         self.parent.music_controller.select_and_play_mopidy(song_pos)
-
+        
+    def savePlaylist(self, instance):
+        print instance
+        print "Save playlist:"+instance.item.text+self.urls[instance.item.text]
+ 
     #utility-functions
     def getKey(self,dir):
         #clean up key
@@ -573,13 +697,13 @@ class LoginScreen(BoxLayout):
                                                           is_directory=lambda x: True,
                                                           playdir=lambda x: spotify_playlist.add_mopidy_release(x),
                                                           currentdir="",
-                                                          addAndPlayAlbum=spotify_playlist.play_mopidy_release)
+                                                          addAndPlayAlbum=spotify_playlist.play_mopidy_release, savePlaylist=spotify_playlist.savePlaylist)
         self.selMopidyUsers = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
                                                           getdir=lambda x: self.musicPlaylister.getUserPlaylists(x),
                                                           is_directory=lambda x: True,
                                                           playdir=lambda x: self.musicPlaylister.playPlaylist(x),
                                                           currentdir="",
-                                                          addAndPlayAlbum=self.musicPlaylister.addAndPlayPlaylist)
+                                                          addAndPlayAlbum=self.musicPlaylister.addAndPlayPlaylist, savePlaylist=self.musicPlaylister.savePlaylist)
         
         Clock.schedule_interval(self.update, 1)
 
