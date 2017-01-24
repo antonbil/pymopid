@@ -373,8 +373,8 @@ class SavePlaylist(Popup):
             artist = split[0].strip()
             album = split[1].strip()
         except:
-            self.artist = text1
-            self.album = ""
+            artist = text1
+            album = ""
         self.artist_text.text = artist
         self.album_text.text = album
         self.sort_text.text = artist
@@ -609,9 +609,9 @@ class MusicPlaylister(MopidyPlaylister):
         self.parent.music_controller.select_and_play_mopidy(song_pos)
         
     def savePlaylist(self, instance):
-        print instance
-        print "Save playlist:"+instance.item.text+self.urls[instance.item.text]
- 
+        #print instance
+        #print "Save playlist:"+instance.item.text+self.urls[instance.item.text]
+        SavePlaylist(instance.item.text,self.urls[instance.item.text]).open() 
     #utility-functions
     def getKey(self,dir):
         #clean up key
