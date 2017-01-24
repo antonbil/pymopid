@@ -370,8 +370,8 @@ class SavePlaylist(Popup):
 
         split = (text1).split("-")
         try:
-            artist = split[0]
-            album = split[1]
+            artist = split[0].strip()
+            album = split[1].strip()
         except:
             self.artist = text1
             self.album = ""
