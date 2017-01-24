@@ -1,12 +1,10 @@
 # encoding=utf8
 import os
 import random
-import serial
 import sys
 import tempfile
 import traceback
 from time import sleep
-import urllib
 
 import requests
 from bs4 import SoupStrainer, BeautifulSoup as bs
@@ -25,18 +23,15 @@ from kivy.uix.image import AsyncImage
 from kivy.uix.label import Label
 from kivy.uix.listview import ListView, ListItemButton
 from kivy.uix.popup import Popup
-from kivy.uix.spinner import Spinner
-from kivy.uix.modalview import ModalView
-
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.textinput import TextInput
 from smb.SMBConnection import SMBConnection
 
-import musicservers
-import musiccontroller
 import connectArduino
+import musiccontroller
+import musicservers
 from musicservers import MeasureButtonOnTouch
-import sys
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 SAMBA_SERVER = "192.168.2.8"
@@ -271,7 +266,8 @@ class ScrollableLabel(ScrollView):
         
 Builder.load_string("""
 <SavePlaylist>:
-        description_text: _description_text
+        artist_text: _artist_text
+        album_text: _album_text
         id_text: _id_text
         sort_text: _sort_text
         category_text:_category_text
@@ -298,14 +294,23 @@ Builder.load_string("""
                 GridLayout:
                         cols: 2
                         Label:
-                                text: 'Description playlist'
+                                text: 'Artist'
                                 size_hint_y: None
                                 height: self.texture_size[1] + dp(16)
                                 text_size: self.width - dp(16), None
                                 halign: 'center'
                         TextInput:
                                 text:'Hello world'
-                                id: _description_text
+                                id: _artist_text
+                        Label:
+                                text: 'Album'
+                                size_hint_y: None
+                                height: self.texture_size[1] + dp(16)
+                                text_size: self.width - dp(16), None
+                                halign: 'center'
+                        TextInput:
+                                text:'Hello world'
+                                id: _album_text
                         Label:
                                 text: 'Sort Key'
                                 size_hint_y: None
@@ -321,10 +326,23 @@ Builder.load_string("""
                                 height: self.texture_size[1] + dp(16)
                                 text_size: self.width - dp(16), None
                                 halign: 'center'
-                        TextInput:
+                        Label:
                                 text:'Hello world'
                                 id: _id_text
-                
+                        Label:
+                                text: 'Category'
+                                size_hint_y: None
+                                height: self.texture_size[1] + dp(16)
+                                text_size: self.width - dp(16), None
+                                halign: 'center'
+                        Spinner:
+                                id: _category_text
+                                values:('New Links', 'Progressive rock', 'acoustic', 'alternative', 'ambient', 'americana',\
+                                'blues', 'classical', 'country', 'electronic', 'folk', 'funk', 'hip-hop' ,\
+                                'indie pop','indie rock', 'instrumental', 'jazz', 'metal', 'pop', 'progressive', 'punk', 'rnb', 'rock',\
+                                'shoegaze', 'singer-songwriter', 'soul', 'techno')
+                                text:'New Links'
+
                 BoxLayout:
                         size_hint_y: None
                         height: sp(48)
@@ -335,13 +353,10 @@ Builder.load_string("""
                         Button:
                                 text: root.ok_text
                                 on_press: root.ok()
-                        Spinner:
-                                id: _category_text
-                                values:('New Links', 'Progressive rock', 'acoustic', 'alternative', 'ambient', 'americana', 'blues', 'classical', 'country', 'electronic'                                    , 'folk', 'funk', 'hip-hop' , 'indie pop','indie rock', 'instrumental', 'jazz', 'metal', 'pop', 'progressive', 'punk', 'rnb', 'rock', 'shoegaze', 'singer-songwriter', 'soul', 'techno')
-                                text:'New Links'
 """)
 class SavePlaylist(Popup):
-    description_text = ObjectProperty()
+    artist_text = ObjectProperty()
+    album_text = ObjectProperty()
     id_text = ObjectProperty()
     sort_text = ObjectProperty()
     category_text = ObjectProperty()
@@ -352,19 +367,24 @@ class SavePlaylist(Popup):
     __events__ = ('on_ok', 'on_cancel')
     def __init__(self, text1,text2, **kwargs):
         super(SavePlaylist,self).__init__(**kwargs)
-        self.description_text.text = text1
-        self.sort_text.text = text1
+
+        split = (text1).split("-")
+        try:
+            artist = split[0]
+            album = split[1]
+        except:
+            self.artist = text1
+            self.album = ""
+        self.artist_text.text = artist
+        self.album_text.text = album
+        self.sort_text.text = artist
         self.id_text.text = text2
 
     def ok(self):
-            split=(self.description_text.text).split("-")
-            try:
-                artist=split[0]
-                album=split[1]
-            except:
-                artist=self.description_text.text
-                album=""
-            url=('http://192.168.2.8/spotify/data/genre/{}/addlink.php?url={}&artist={}&artistsort={}&album={}'.format(self.category_text.text, self.id_text.text,artist, self.sort_text.text,album)).replace(" ","%20")
+        url = ('http://192.168.2.8/spotify/data/genre/{}/addlink.php?url={}&artist={}&artistsort={}&album={}'
+               .format(self.category_text.text, self.id_text.text, self.artist_text.text, self.sort_text.text,
+                       self.album_text.text)) \
+            .replace(" ", "%20")
             requests.get(url)
             self.dispatch('on_ok')
             self.dismiss()
@@ -393,8 +413,7 @@ Builder.load_string("""
             id: _pop_up_text
             text: ''
 """)
-#view = ModalView(size_hint=(None, None), size=(400, 400))
-#DropDown
+
 
 class PopupBox(Popup):
     pop_up_text = ObjectProperty()
