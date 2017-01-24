@@ -384,9 +384,9 @@ class SavePlaylist(Popup):
         url = ('http://192.168.2.8/spotify/data/genre/{}/addlink.php?url={}&artist={}&artistsort={}&album={}'
                .format(self.category_text.text, self.id_text.text, self.artist_text.text, self.sort_text.text,
                        self.album_text.text)).replace(" ", "%20")
-            requests.get(url)
-            self.dispatch('on_ok')
-            self.dismiss()
+        requests.get(url)
+        self.dispatch('on_ok')
+        self.dismiss()
     
     def cancel(self):
             self.dispatch('on_cancel')
