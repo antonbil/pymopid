@@ -1,18 +1,20 @@
-import mpd,json
+import json
+import mpd
 import requests
+
 mpdServerUrl = "192.168.2.74"
 
 
 class mpd_controller:
     def __init__(self):
-        self.client = mpd.MPDClient()
+        self.connect_mpd()
 
+    def connect_mpd(self):
+        self.client = mpd.MPDClient()
         try:
             self.client.connect(mpdServerUrl, 6600)
         except mpd.ConnectionError:
             pass
-
-            # self.client.disconnect()
 
     def get_client(self):
         try:
@@ -30,8 +32,6 @@ class mpd_controller:
 
     def get_status(self):
         mpd_status = self.get_client().status()
-        # print "status = " + str(mpd_status)
-        # self.release_client()
         volume = (int(mpd_status['volume']) - 80) / 2
         currentsong = self.get_client().currentsong()
         numbers = currentsong["track"].rsplit('/', 1)
@@ -40,8 +40,6 @@ class mpd_controller:
             totaltracks = int(numbers[1])  # total tracks
         except:
             totaltracks = 0
-        # print "currentsong = " + str(currentsong)
-        # self.release_client()
         try:
             elapsed = int(mpd_status['elapsed'][:-4])
         except:
@@ -95,8 +93,6 @@ class music_controller:
     nl = "2"
 
     def __init__(self):
-        # self.mc = mpd_controller()
-        # print ("mc defined")
         self.mpdswitcher = {
             0: self.mc.previous,
             1: self.mc.pause,
@@ -120,7 +116,6 @@ class music_controller:
             data["params"] = params
         headers = {'content-type': 'application/json'}
         url = 'http://' + mpdServerUrl + ':6680/mopidy/rpc'
-        # url = 'http://192.168.2.74:6680/mopidy/rpc'
 
         data1 = json.dumps(data)
         res = requests.post(url, data=data1, headers=headers).json()
@@ -143,10 +138,8 @@ class music_controller:
             self.mc.play(songpos)
         else:
             self.play_mopidy(songpos)
-            # response = self.do_mopidy_call("core.playback.change_track")
 
     def browse_mopidy(self, uri):
-        # core.library.browse(uri)
         res = self.do_param_mopidy_call("core.library.browse", {'uri': uri})
         return res["result"]
 
@@ -195,7 +188,6 @@ class music_controller:
         data = {"jsonrpc": "2.0", "id": 1, "method": mopidyaction}
         headers = {'content-type': 'application/json'}
         url = 'http://' + mpdServerUrl + ':6680/mopidy/rpc'
-        # url = 'http://192.168.2.74:6680/mopidy/rpc'
 
         data1 = json.dumps(data)
         return requests.post(url, data=data1, headers=headers).json()["result"]
@@ -211,12 +203,10 @@ class music_controller:
         return res
 
     def do_mopidy_search(self, artist):
-        # mopidy.backend.library.search
         data = {"jsonrpc": "2.0", "id": 1, "params": {'query': {'artist': [artist]}}, "exact": "True",
                 "method": "core.library.search"}
         headers = {'content-type': 'application/json'}
         url = 'http://' + mpdServerUrl + ':6680/mopidy/rpc'
-        # url = 'http://192.168.2.74:6680/mopidy/rpc'
 
         data1 = json.dumps(data)
         res = requests.post(url, data=data1, headers=headers).json()
@@ -227,16 +217,12 @@ class music_controller:
             self.mc.clear_tracks()
 
         else:
-            # core.tracklist.clear
             self.do_mopidy_call("core.tracklist.clear")
 
     def do_action(self, action):
         if action == 4:
             # App.get_running_app().stop()
             return  # menu-button
-        # print("engine is now:"+self.engine)
-        # print(self.do_mopidy_search("Eagles"))
-        # return
         if self.engine == "mpd":
             # Get the function from switcher dictionary
             func = self.mpdswitcher.get(action, lambda: "nothing")

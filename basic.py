@@ -640,12 +640,11 @@ class LoginScreen(BoxLayout):
     def __init__(self, **kwargs):
         self.smb_dir = SmbDir()
         self.smb_dir.get_dir("TotalMusic")
-        myconfig = settings.get_config()
-        musiccontroller.mpdServerUrl = myconfig["mainserver"]
-
 
         self.music_controller = musiccontroller.music_controller()
         self.arduino=connectArduino.ConnectArduino(self.music_controller)
+        myconfig = settings.get_config()
+        self.set_server_ip(myconfig["mainserver"])
 
         super(LoginScreen, self).__init__(**kwargs)
         self.orientation = "vertical"
@@ -735,8 +734,16 @@ class LoginScreen(BoxLayout):
         settings.open()
 
     def change_settings(self, settings):
-        print("new server:" + settings.server_text.text)
-        musiccontroller.mpdServerUrl = settings.server_text.text
+        self.set_server_ip(settings.server_text.text)
+
+    def set_server_ip(self, server):
+        server = server.split("(")[0]
+        musiccontroller.mpdServerUrl = server
+        self.music_controller.mc.connect_mpd()
+        return
+
+
+
 
     def list_spotify_files(self, instance):
         self.selMopidyAlbum.popupOpen = False
