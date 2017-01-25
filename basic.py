@@ -139,9 +139,9 @@ class MenuScreen(GridLayout):
         self.orientation = "vertical"
         self.addButtons()
         self.popup = Popup(title="Menu", content=self, size=(400, 400), size_hint=(None, None))
-        
+
     def addButtons(self):
-        self.submenu=SubMenuScreen(self.main)
+        self.submenu = SubMenuScreen(self.main)
         self.addButton("Tracks", self.main.popupTracks.display_tracks)
         self.addButton("Tracks Clear", self.main.music_controller.clear_tracks)
         self.addButton("Search Spotify", self.main.listArtistOpen)
@@ -167,17 +167,19 @@ class MenuScreen(GridLayout):
         # open the popup
         self.popup.open()
 
+
 class SubMenuScreen(MenuScreen):
     def __init__(self, main, **kwargs):
-        super(SubMenuScreen, self).__init__(main,**kwargs)
+        super(SubMenuScreen, self).__init__(main, **kwargs)
         self.popup.title = "Spotify Playlists Menu"
-        
+
     def addButtons(self):
         self.addButton("Simple Browse", self.main.popupPlaylists.display_tracks)
         self.addButton("Browse Tree", self.main.display_tracks_tree)
         self.addButton("On Local Server", self.main.list_spotify_files)
         self.addButton("Users Playlists", self.main.spotify_users)
         self.addButton("Main Directory", self.main.spotify_genres)
+
 
 maxtracks = 30  # max number of tracks displayed in playlist
 
@@ -265,7 +267,8 @@ class ScrollableLabel(ScrollView):
 
     def __init__(self, **kwargs):
         super(ScrollableLabel, self).__init__(**kwargs)
-        
+
+
 Builder.load_string("""
 <SavePlaylist>:
         artist_text: _artist_text
@@ -356,19 +359,22 @@ Builder.load_string("""
                                 text: root.ok_text
                                 on_press: root.ok()
 """)
+
+
 class SavePlaylist(Popup):
     artist_text = ObjectProperty()
     album_text = ObjectProperty()
     id_text = ObjectProperty()
     sort_text = ObjectProperty()
     category_text = ObjectProperty()
-	
+
     ok_text = StringProperty('OK')
     cancel_text = StringProperty('Cancel')
-	
+
     __events__ = ('on_ok', 'on_cancel')
-    def __init__(self, text1,text2, **kwargs):
-        super(SavePlaylist,self).__init__(**kwargs)
+
+    def __init__(self, text1, text2, **kwargs):
+        super(SavePlaylist, self).__init__(**kwargs)
 
         split = (text1).split("-")
         try:
@@ -389,16 +395,16 @@ class SavePlaylist(Popup):
         requests.get(url)
         self.dispatch('on_ok')
         self.dismiss()
-    
+
     def cancel(self):
-            self.dispatch('on_cancel')
-            self.dismiss()
-    
+        self.dispatch('on_cancel')
+        self.dismiss()
+
     def on_ok(self):
-            pass
-    
+        pass
+
     def on_cancel(self):
-            pass
+        pass
 
 
 Builder.load_string("""
@@ -449,13 +455,13 @@ class SmbDir:
 
 
 class SpotifyPlaylist:
-    def __init__(self, music_controller,parent):
+    def __init__(self, music_controller, parent):
         self.music_controller = music_controller
-        self.parent=parent
+        self.parent = parent
 
     def savePlaylist(self, instance):
-        SavePlaylist(instance.item.text,self.mopidy_releases[instance.item.text]).open()
-        
+        SavePlaylist(instance.item.text, self.mopidy_releases[instance.item.text]).open()
+
     def play_mopidy_playlist(self, url):
         parts = url.split("/")
         last = parts[len(parts) - 1]
@@ -466,47 +472,45 @@ class SpotifyPlaylist:
         self.add_mopidy_release(url)
         self.music_controller.select_and_play_mopidy(song_pos)
 
-
     def add_mopidy_release(self, release):
-        last=release[-1:]
-        if last=="/":
-            release=release[:-1]
-        l=release.split("/")
-        url=self.mopidy_releases[l[len(l)-1]]
+        last = release[-1:]
+        if last == "/":
+            release = release[:-1]
+        l = release.split("/")
+        url = self.mopidy_releases[l[len(l) - 1]]
         self.music_controller.playlist_add_mopidy(url)
+
     def user_mopidy(self, uri=""):
         pass
 
     def browse_mopidy(self, uri=""):
         try:
-            last=uri[-1:]
-            if last=="/":
-                uri=uri[:-1]
-            l=uri.split("/")
-            playurl=self.mopidy_releases[l[len(l)-1]]
+            last = uri[-1:]
+            if last == "/":
+                uri = uri[:-1]
+            l = uri.split("/")
+            playurl = self.mopidy_releases[l[len(l) - 1]]
         except:
-            playurl=""
-        if len(playurl)>0 and (playurl.find("album") == -1 and playurl.find("playlist") == -1):
-            self.parent.selMopidyReleases.startDir=playurl
+            playurl = ""
+        if len(playurl) > 0 and (playurl.find("album") == -1 and playurl.find("playlist") == -1):
+            self.parent.selMopidyReleases.startDir = playurl
         else:
-            if len(playurl)>0 :
-
+            if len(playurl) > 0:
                 self.music_controller.playlist_add_mopidy(playurl)
-                #self.add_mopidy_release(uri)
+                # self.add_mopidy_release(uri)
                 return
-            #item chosen, play album
-            
-        self.mopidy_releases={}
-        res = self.music_controller.browse_mopidy(self.parent.selMopidyReleases.startDir)#"spotifytunigo:releases")
+                # item chosen, play album
+
+        self.mopidy_releases = {}
+        res = self.music_controller.browse_mopidy(self.parent.selMopidyReleases.startDir)  # "spotifytunigo:releases")
         i = 0
-        list=[]
+        list = []
         for release in res:
-            text =  release['name']
+            text = release['name']
             self.mopidy_releases[text] = release['uri']
             list.append({'filename': release['name'], 'directory': release['name'], "url": release['uri']})
             i += 1
         return list
-
 
     def get_mopify_playlist(self, url):
         response = requests.get("http://" + url)
@@ -534,102 +538,105 @@ class SpotifyPlaylist:
         song_pos = self.music_controller.get_length_playlist_mopidy()
         self.play_mopidy_playlist(tempdir)
         self.music_controller.select_and_play_mopidy(song_pos)
-        
-        
+
+
 class MopidyPlaylister:
     def __init__(self):
         pass
-    
+
+
 class MusicPlaylister(MopidyPlaylister):
-    def __init__(self,parent):
-        self.parent=parent
-        #super(MusicPlaylister,self).__init__()
+    def __init__(self, parent):
+        self.parent = parent
+        # super(MusicPlaylister,self).__init__()
         self.userURIs = [
-            #0 is url, #1 = description
-            ['spotify','Spotify'],
-            ['bbc_playlister','BBC Music Playlists'],
-            ['filtr','filtr'],
-            ['nederlandse_top_40','Nederlandse Top 40'],
-            ['billboard.com','Billboard'],
-            ['dominorecords','Domino Recording Company'],
-            ['spinninrecordsofficial','Spinnin Records'],
-            ['ulyssestone','Ulysses Classical'],
-            ['seaninsound','Drowned in Sound'],
-            ['lemonheadboy','Michael Alan Perry'],
-            ['pontus_white',u'Simon Theßeling'],
-            ['ga8','ga8'],
-            ['progreport','progreport']
-	]
-        
-    def getUserPlaylist(self,url):
-        uri="https://open.spotify.com/user/"+url
+            # 0 is url, #1 = description
+            ['spotify', 'Spotify'],
+            ['bbc_playlister', 'BBC Music Playlists'],
+            ['filtr', 'filtr'],
+            ['nederlandse_top_40', 'Nederlandse Top 40'],
+            ['billboard.com', 'Billboard'],
+            ['dominorecords', 'Domino Recording Company'],
+            ['spinninrecordsofficial', 'Spinnin Records'],
+            ['ulyssestone', 'Ulysses Classical'],
+            ['seaninsound', 'Drowned in Sound'],
+            ['lemonheadboy', 'Michael Alan Perry'],
+            ['pontus_white', u'Simon Theßeling'],
+            ['ga8', 'ga8'],
+            ['progreport', 'progreport']
+        ]
+
+    def getUserPlaylist(self, url):
+        uri = "https://open.spotify.com/user/" + url
         return uri
-    #main functions
-    def getUserPlaylists(self,dir=""):
-        if len(dir)<2:
-            list=[]
-            self.urls={}
+
+    # main functions
+    def getUserPlaylists(self, dir=""):
+        if len(dir) < 2:
+            list = []
+            self.urls = {}
             for user in self.userURIs:
-                self.urls[user[1]]=self.getUserPlaylist(user[0])
+                self.urls[user[1]] = self.getUserPlaylist(user[0])
                 list.append({'filename': user[1], 'directory': user[1]})
-  
+
             return list
         else:
-            url=self.getKey(dir)
+            url = self.getKey(dir)
             if ":playlist" in url:
                 self.parent.music_controller.playlist_add_mopidy(url)
                 return
-            
+
             response = requests.get(url)
             mlinks = SoupStrainer("div", "mo-image-wrapper")
             soup = bs(response.content, "lxml", parse_only=mlinks)
 
-            self.urls={}
-            list=[]
+            self.urls = {}
+            list = []
             for link in soup.findAll('a'):
-              try:  
-                url=link['data-uri']
-                if url==None:
-                    continue
-                if ":playlist:" in url:
-                    name=link['data-drag-text']
-                    if name==None:
+                try:
+                    url = link['data-uri']
+                    if url == None:
                         continue
+                    if ":playlist:" in url:
+                        name = link['data-drag-text']
+                        if name == None:
+                            continue
 
-                    self.urls[name]=url
-                    list.append({'filename': name, 'directory': name})
-              except:
-                pass
+                        self.urls[name] = url
+                        list.append({'filename': name, 'directory': name})
+                except:
+                    pass
             return list
 
     def playPlaylist(self, url):
         self.add_mopidy_playlist(url)
-        
+
     def addAndPlayPlaylist(self, url):
         song_pos = self.parent.music_controller.get_length_playlist_mopidy()
         self.add_mopidy_playlist(url)
         self.parent.music_controller.select_and_play_mopidy(song_pos)
-        
+
     def savePlaylist(self, instance):
-        #print instance
-        #print "Save playlist:"+instance.item.text+self.urls[instance.item.text]
-        SavePlaylist(instance.item.text,self.urls[instance.item.text]).open() 
-    #utility-functions
-    def getKey(self,dir):
-        #clean up key
-        last=dir[-1:]
-        if last=="/":
-            dir=dir[:-1]
-        dir=dir.split("/")
-        dir=dir[len(dir)-1]
-        #calc value
-        url=self.urls[dir]
+        # print instance
+        # print "Save playlist:"+instance.item.text+self.urls[instance.item.text]
+        SavePlaylist(instance.item.text, self.urls[instance.item.text]).open()
+        # utility-functions
+
+    def getKey(self, dir):
+        # clean up key
+        last = dir[-1:]
+        if last == "/":
+            dir = dir[:-1]
+        dir = dir.split("/")
+        dir = dir[len(dir) - 1]
+        # calc value
+        url = self.urls[dir]
         return url
 
-    def add_mopidy_playlist(self,dir):
-        url=self.getKey(dir)
+    def add_mopidy_playlist(self, dir):
+        url = self.getKey(dir)
         self.parent.music_controller.playlist_add_mopidy(url)
-            
+
 
 class LoginScreen(BoxLayout):
     image_source = ObjectProperty()
@@ -642,7 +649,7 @@ class LoginScreen(BoxLayout):
         self.smb_dir.get_dir("TotalMusic")
 
         self.music_controller = musiccontroller.music_controller()
-        self.arduino=connectArduino.ConnectArduino(self.music_controller)
+        self.arduino = connectArduino.ConnectArduino(self.music_controller)
         myconfig = settings.get_config()
         self.set_server_ip(myconfig["mainserver"])
 
@@ -697,12 +704,12 @@ class LoginScreen(BoxLayout):
         self.add_widget(h_layout0)
         self.add_widget(h_layout1)
         # list to select albums to play
-        self.musicPlaylister=MusicPlaylister(self)
+        self.musicPlaylister = MusicPlaylister(self)
         self.selAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
                                                     getdir=lambda x: self.music_controller.mc.list_files(x),
                                                     is_directory=lambda x: "directory" in x,
                                                     playdir=lambda x: self.music_controller.mc.add(x[1:]))
-        spotify_playlist = SpotifyPlaylist(self.music_controller,self)
+        spotify_playlist = SpotifyPlaylist(self.music_controller, self)
         self.selMopidyAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
                                                           getdir=lambda x: spotify_playlist.get_mopify_playlist(x),
                                                           is_directory=lambda x: "directory" in x,
@@ -715,18 +722,20 @@ class LoginScreen(BoxLayout):
                                                        playdir=lambda x: self.play_samba_dir(x),
                                                        currentdir="TotalMusic")
         self.selMopidyReleases = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
-                                                          getdir=lambda x: spotify_playlist.browse_mopidy(x),
-                                                          is_directory=lambda x: True,
-                                                          playdir=lambda x: spotify_playlist.add_mopidy_release(x),
-                                                          currentdir="",
-                                                          addAndPlayAlbum=spotify_playlist.play_mopidy_release, savePlaylist=spotify_playlist.savePlaylist)
+                                                             getdir=lambda x: spotify_playlist.browse_mopidy(x),
+                                                             is_directory=lambda x: True,
+                                                             playdir=lambda x: spotify_playlist.add_mopidy_release(x),
+                                                             currentdir="",
+                                                             addAndPlayAlbum=spotify_playlist.play_mopidy_release,
+                                                             savePlaylist=spotify_playlist.savePlaylist)
         self.selMopidyUsers = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
                                                           getdir=lambda x: self.musicPlaylister.getUserPlaylists(x),
                                                           is_directory=lambda x: True,
                                                           playdir=lambda x: self.musicPlaylister.playPlaylist(x),
                                                           currentdir="",
-                                                          addAndPlayAlbum=self.musicPlaylister.addAndPlayPlaylist, savePlaylist=self.musicPlaylister.savePlaylist)
-        
+                                                          addAndPlayAlbum=self.musicPlaylister.addAndPlayPlaylist,
+                                                          savePlaylist=self.musicPlaylister.savePlaylist)
+
         Clock.schedule_interval(self.update, 1)
 
     def settings(self, instance):
@@ -742,12 +751,10 @@ class LoginScreen(BoxLayout):
         self.music_controller.mc.connect_mpd()
         return
 
-
-
-
     def list_spotify_files(self, instance):
         self.selMopidyAlbum.popupOpen = False
         self.selMopidyAlbum.display("/")
+
     def play_samba_dir(self, dir):
         filename = dir + "/mp3info.txt"
         lines = self.smb_dir.get_content_file(filename)
@@ -932,27 +939,30 @@ class LoginScreen(BoxLayout):
 
     def onLongpresssimilarArtistsPopup(self, instance, pos):
         pass
-#spotify_users
+
+    # spotify_users
     def spotify_users(self, instance=None):
-        #MusicPlaylister().getUserPlaylists()
+        # MusicPlaylister().getUserPlaylists()
         self.selMopidyUsers.currentdir = ""
         self.selMopidyUsers.popupOpen = False
-        self.selMopidyUsers.sortlist=False
-        self.selMopidyUsers.startDir="spotifytunigo:releases"#"spotifytunigo:releases"
+        self.selMopidyUsers.sortlist = False
+        self.selMopidyUsers.startDir = "spotifytunigo:releases"  # "spotifytunigo:releases"
         self.selMopidyUsers.display("")
+
     def spotify_browse(self, instance=None):
         self.selMopidyReleases.popupOpen = False
-        self.selMopidyReleases.sortlist=False
-        self.selMopidyReleases.startDir="spotifytunigo:releases"#"spotifytunigo:releases"
+        self.selMopidyReleases.sortlist = False
+        self.selMopidyReleases.startDir = "spotifytunigo:releases"  # "spotifytunigo:releases"
         self.selMopidyReleases.display("")
-        #'spotifytunigo:toplists','spotifytunigo:genres'
+        # 'spotifytunigo:toplists','spotifytunigo:genres'
 
     def spotify_genres(self, instance=None):
         self.selMopidyReleases.popupOpen = False
-        self.selMopidyReleases.sortlist=False
-        self.selMopidyReleases.startDir='spotifytunigo:directory'#"spotifytunigo:releases"
+        self.selMopidyReleases.sortlist = False
+        self.selMopidyReleases.startDir = 'spotifytunigo:directory'  # "spotifytunigo:releases"
         self.selMopidyReleases.display("")
-        #'spotifytunigo:toplists','spotifytunigo:genres'
+        # 'spotifytunigo:toplists','spotifytunigo:genres'
+
     def similarForPlayingArtist(self, instance=None):
         temp1 = self.music_controller.do_mopidy_search(self.currentPlayingArtist)
         self.currentArtist = temp1[0]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
@@ -989,7 +999,7 @@ class LoginScreen(BoxLayout):
     def update(self, dt):
         # print("st1:"+self.music_controller.nl)
         try:
-            status = self.music_controller.get_state()#self.arduino.exchange()
+            status = self.music_controller.get_state()  # self.arduino.exchange()
 
             # print("st:"+status)
             m, s = divmod(status["elapsed"], 60)
@@ -1043,6 +1053,7 @@ class LoginScreen(BoxLayout):
         self.selSmbAlbum.popupOpen = False
         self.selSmbAlbum.display("/")
         # print(self.music_controller.mc.list_files("/"))
+
     def doAction(self, instance):
         # print ("action:")
         # print(instance.id)

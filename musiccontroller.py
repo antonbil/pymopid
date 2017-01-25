@@ -1,4 +1,5 @@
 import json
+
 import mpd
 import requests
 
@@ -87,6 +88,8 @@ class mpd_controller:
     def list_artists(self):
         return self.get_client().list("artist")
         # $pl->delete( $song [, $song [...] ] );
+
+
 class music_controller:
     mc = mpd_controller()
 
@@ -355,4 +358,3 @@ class music_controller:
 
         status["time1"] = time1
         return status
- 

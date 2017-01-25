@@ -1,11 +1,8 @@
-import difflib
-import json
 import os
 import random
 import subprocess
 from itertools import islice
 
-import requests
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.lang import Builder
@@ -16,9 +13,6 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.treeview import TreeViewLabel, TreeView
-
-
-
 
 # Remove the specified $song numbers (starting from 0) from the current playlist. No return value.
 
@@ -170,8 +164,6 @@ def contextMenu(buttons, instance, colors, text=None):
     popup.open()
 
 
-
-
 maxalbums = 120
 
 
@@ -203,7 +195,7 @@ class SelectMpdAlbum:
 
         self.popupSearch = popupSearch
         self.colors = colors
-        self.sortlist=True
+        self.sortlist = True
         self.layout_popup = GridLayout(cols=1, spacing=10, size_hint_y=None, size=(400, Window.height))
         self.layout_popup.bind(minimum_height=self.layout_popup.setter('height'))
 
@@ -238,7 +230,7 @@ class SelectMpdAlbum:
                                    background_color=random.choice(self.colors))
         # self.dummybutton=self.dummybutton()
 
-    def onLongClick(self, instance):  #cab be removed double declaration
+    def onLongClick(self, instance):  # cab be removed double declaration
         # print("longclick"+instance.text)
         self.playDir(self.currentdir)
 
@@ -267,8 +259,8 @@ class SelectMpdAlbum:
     def onLongClick(self, instance):
         buttons = [["Add", self.addAlbum], ["Add and Play", self.addAndPlayAlbumCall], ["Spotify", self.albumSpotify],
                    ["Similar", self.similarSpotify]]
-        if not self.savePlaylist==None:
-            buttons.append(["Save Playlist",self.savePlaylist])
+        if not self.savePlaylist == None:
+            buttons.append(["Save Playlist", self.savePlaylist])
         contextMenu(buttons, instance, self.colors)
 
     def similarSpotify(self, instance):
@@ -303,7 +295,6 @@ class SelectMpdAlbum:
         self.playDir(tempdir)
         self.music_controller.select_and_play_mpd(song_pos)
 
-
     def optionButton(self, instance):
         try:
             tempdir = self.currentdir + instance.prevButton.text
@@ -330,7 +321,7 @@ class SelectMpdAlbum:
         try:
             numdirs = sum(1 for x in playlist if self.is_directory(x))
         except:
-            numdirs=0
+            numdirs = 0
         if numdirs == 0:
             print("play:" + tempdir)
             self.playDir(tempdir)
