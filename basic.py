@@ -30,7 +30,9 @@ from smb.SMBConnection import SMBConnection
 import connectArduino
 import musiccontroller
 import musicservers
+import settings
 from musicservers import MeasureButtonOnTouch
+from settings import Settings
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -147,9 +149,9 @@ class MenuScreen(GridLayout):
         self.addButton("Mpd playlists", self.main.list_smb_files)
         self.addButton("Mpd <--> Spotify", self.main.mpd_spotify)
         self.addButton("Similar artists", self.main.similarForPlayingArtist)
-        self.addButton("New Releases", self.main.spotify_browse)
+        self.addButton("New Releases", self.main.spotify_browse)  #
         self.addButton("Spotify SubMenu", self.submenu.open)
-        #
+        self.addButton("Settings", self.main.settings)
         self.addButton("Quit", self.main.quit)
 
     def addButton(self, title, action):
@@ -638,6 +640,9 @@ class LoginScreen(BoxLayout):
     def __init__(self, **kwargs):
         self.smb_dir = SmbDir()
         self.smb_dir.get_dir("TotalMusic")
+        myconfig = settings.get_config()
+        musiccontroller.mpdServerUrl = myconfig["mainserver"]
+
 
         self.music_controller = musiccontroller.music_controller()
         self.arduino=connectArduino.ConnectArduino(self.music_controller)
@@ -724,6 +729,14 @@ class LoginScreen(BoxLayout):
                                                           addAndPlayAlbum=self.musicPlaylister.addAndPlayPlaylist, savePlaylist=self.musicPlaylister.savePlaylist)
         
         Clock.schedule_interval(self.update, 1)
+
+    def settings(self, instance):
+        settings = Settings(self.change_settings)
+        settings.open()
+
+    def change_settings(self, settings):
+        print("new server:" + settings.server_text.text)
+        musiccontroller.mpdServerUrl = settings.server_text.text
 
     def list_spotify_files(self, instance):
         self.selMopidyAlbum.popupOpen = False

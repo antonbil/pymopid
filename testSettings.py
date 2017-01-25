@@ -12,8 +12,11 @@ class MyApp(App):
         return btn1
 
     def test(self, instance):
-        settings = Settings()
+        settings = Settings(self.change_settings)
         settings.open()
+
+    def change_settings(self, settings):
+        print("new server:" + settings.server_text.text)
 
 
 if __name__ == '__main__':

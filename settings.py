@@ -1,5 +1,6 @@
-from kivy.lang import Builder
+import ConfigParser
 
+from kivy.lang import Builder
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.popup import Popup
 
@@ -41,8 +42,8 @@ Builder.load_string("""
                                 halign: 'center'
                         Spinner:
                                 id: _server_text
-                                values:('192.168.2.16(keuken)', '192.168.2.9(kamer)', '192.168.2.12(studeer)', '192.168.2.62(losse pi)', '192.168.2.134(schuur)')
-                                text:'192.168.2.16(keuken)'
+                                values:('192.168.2.16(keuken)', '192.168.2.9(kamer)', '192.168.2.74(studeer)', '192.168.2.12(losse pi)', '192.168.2.134(schuur)')
+                                text:'192.168.2.74(studeer)'
 
                 BoxLayout:
                         size_hint_y: None
@@ -56,6 +57,20 @@ Builder.load_string("""
                                 on_press: root.ok()
 """)
 
+path = 'pgp.ini'
+
+
+def get_config():
+    config = ConfigParser.SafeConfigParser(
+        defaults={'mainserver': '192.168.2.74(studeer)'})
+    main_server = '192.168.2.74(studeer)'
+    config.read(path)
+    try:
+        main_server = config.get('Servers', 'mainserver')
+    except:
+        pass
+    return {"mainserver": main_server}
+
 
 class Settings(Popup):
     server_text = ObjectProperty()
@@ -65,10 +80,22 @@ class Settings(Popup):
 
     __events__ = ('on_ok', 'on_cancel')
 
-    def __init__(self, **kwargs):
+    def __init__(self, change_settings, **kwargs):
         super(Settings, self).__init__(**kwargs)
+        self.change_settings = change_settings
+        myconfig = get_config()
+        self.server_text.text = myconfig["mainserver"]
 
     def ok(self):
+        config = ConfigParser.SafeConfigParser()
+        try:
+            config.add_section('Servers')
+        except:
+            pass
+        config.set('Servers', 'mainserver', self.server_text.text)
+        self.change_settings(self)
+        with open(path, "wb") as config_file:
+            config.write(config_file)
         self.dispatch('on_ok')
         self.dismiss()
 
