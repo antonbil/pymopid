@@ -42,7 +42,7 @@ Builder.load_string("""
                                 halign: 'center'
                         Spinner:
                                 id: _server_text
-                                values:('192.168.2.16(keuken)', '192.168.2.9(kamer)', '192.168.2.74(studeer)', '192.168.2.12(losse pi)', '192.168.2.134(schuur)')
+                                values:('192.168.2.16(keuken)', '192.168.2.9(kamer)', '192.168.2.74(studeer)', '192.168.2.12(losse pi)', '192.168.2.134(schuur)', 'localhost(home)')
                                 text:'192.168.2.74(studeer)'
 
                 BoxLayout:
