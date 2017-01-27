@@ -3,26 +3,25 @@ import ConfigParser
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.popup import Popup
+from kivy.core.window import Window
+
 
 Builder.load_string("""
 <Settings>:
         server_text: _server_text
-        size:(550, 300)
         size_hint:(None,None)
 
         GridLayout:
                 cols: 1
                 padding: '12dp'
-                size_hint:(None,None)
-                size: (500,200)
+                pos: (self.parent.width-self.width)/2, (self.parent.height-self.height)/2
+                size_hint: 1, 1
 
 
 
                 canvas:
                         Color:
                                 rgba: root.background_color[:3] + [root.background_color[-1] * root._anim_alpha]
-                        Rectangle:
-                                size: (500,100)
 
                         Color:
                                 rgb: 1, 1, 1
@@ -36,8 +35,6 @@ Builder.load_string("""
                         cols: 2
                         Label:
                                 text: 'Category'
-                                size_hint_y: None
-                                height: self.texture_size[1] + dp(16)
                                 text_size: self.width - dp(16), None
                                 halign: 'center'
                         Spinner:
@@ -46,7 +43,7 @@ Builder.load_string("""
                                 text:'192.168.2.74(studeer)'
 
                 BoxLayout:
-                        size_hint_y: None
+                        size_hint_y: 0.5
                         height: sp(48)
 
                         Button:
@@ -81,6 +78,7 @@ class Settings(Popup):
     __events__ = ('on_ok', 'on_cancel')
 
     def __init__(self, change_settings, **kwargs):
+        self.size=(Window.width/2,Window.height/2)
         super(Settings, self).__init__(**kwargs)
         self.change_settings = change_settings
         myconfig = get_config()

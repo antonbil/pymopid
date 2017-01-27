@@ -6,8 +6,12 @@ import tempfile
 import traceback
 from time import sleep
 
-import requests
-from bs4 import SoupStrainer, BeautifulSoup as bs
+import requests.api as requests
+try:  
+    from bs4 import SoupStrainer, BeautifulSoup as bs
+except:
+    pass
+from ehp import *
 from kivy.adapters.dictadapter import ListAdapter
 from kivy.app import App
 from kivy.clock import Clock
@@ -25,9 +29,12 @@ from kivy.uix.listview import ListView, ListItemButton
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.textinput import TextInput
-from smb.SMBConnection import SMBConnection
+try:
+    from smb.SMBConnection import SMBConnection
+except:
+    pass
 
-import connectArduino
+#import connectArduino
 import musiccontroller
 import musicservers
 import settings
@@ -62,12 +69,12 @@ class PopList:
         self.onpopup = onpopup
         self.getList = getlist
         self.maxlist = maxtracks
-        self.layout_popup = GridLayout(cols=1, spacing=10, size_hint_y=None, size=(400, Window.height), valign="top")
+        self.layout_popup = GridLayout(cols=1, spacing=10, size_hint_y=None, size=(Window.width/2-100, Window.height), valign="top")
         self.layout_popup.bind(minimum_height=self.layout_popup.setter('height'))
-        root = ScrollView(size_hint=(1, None), size=(400, Window.height - 80), scroll_timeout=250, valign="top")
+        root = ScrollView(size_hint=(1, None), size=(Window.width/2-30, Window.height - 20), scroll_timeout=250, valign="top")
         root.add_widget(self.layout_popup)
         grid = BoxLayout(orientation='vertical', size=(
-            450, Window.height - 20))  # (cols=1, spacing=10, size_hint_y=None, size=(400, Window.height))
+            Window.width/2-120, Window.height - 80))  # (cols=1, spacing=10, size_hint_y=None, size=(400, Window.height))
         grid.add_widget(root)
         self.horizon = BoxLayout(orientation='horizontal')
         self.horizons = []
@@ -79,12 +86,12 @@ class PopList:
             self.horizon.add_widget(btn1)
         grid.add_widget(self.horizon)
         self.popup = Popup(title="", separator_height=0, content=grid, size_hint=(None, None),
-                           size=(450, Window.height))
+                           size=(Window.width/2, Window.height))
         # create buttons so they can be re-used
         self.buttons = []
         for i in range(maxtracks):
-            btn1 = MeasureButtonOnTouch(text="", id=str(i), size_hint_y=None, text_size=(400, 40), valign='middle',
-                                        halign='left', size=(400, 45), background_color=random.choice(colors))
+            btn1 = MeasureButtonOnTouch(text="", id=str(i), size_hint_y=None, text_size=(Window.width/2-100, Window.height/8), valign='middle',
+                                        halign='left', size=(Window.width/2-120, Window.height/8), background_color=random.choice(colors))
             btn1.onShortPress = self.mypopup
             btn1.onLongPress = self.longpress
 
@@ -138,7 +145,7 @@ class MenuScreen(GridLayout):
         self.cols = 2
         self.orientation = "vertical"
         self.addButtons()
-        self.popup = Popup(title="Menu", content=self, size=(400, 400), size_hint=(None, None))
+        self.popup = Popup(title="Menu", content=self, size=(Window.width/2, (Window.height/4)*3), size_hint=(None, None))
 
     def addButtons(self):
         self.submenu = SubMenuScreen(self.main)
@@ -156,7 +163,7 @@ class MenuScreen(GridLayout):
 
     def addButton(self, title, action):
         btn = Button(text=title, id="0",
-                     background_color=random.choice(colors), size=(200, 50)
+                     background_color=random.choice(colors), size=(Window.width/4-60, (Window.height/4)/10)
                      )
         self.add_widget(btn)
         # btn.onShortPress=action
@@ -188,17 +195,17 @@ class ListArtist(GridLayout):
     def __init__(self, **kwargs):
         super(ListArtist, self).__init__(**kwargs)
         self.cols = 2
-        self.size = (200, 200)
+        self.size = (Window.width/2, Window.height/4)
         # create content and add to the popup
-        closeButton = Button(text='OK', size=(100, 50), size_hint=(None, None))
+        closeButton = Button(text='OK', size=(100, Window.height/8), size_hint=(None, None))
         self.popup = Popup(title="Search artist", content=self, size=(340, 400), size_hint=(None, None),
                            pos_hint={'right': .5, 'top': 1})
         self.add_widget(Label(text="Artist:", size=(100, 50), size_hint=(None, None)))
-        self.artist = TextInput(multiline=False, size=(170, 50), size_hint=(None, None))
+        self.artist = TextInput(multiline=False, size=(170, Window.height/8), size_hint=(None, None))
         self.artist.bind(text=self.on_text)
         self.add_widget(self.artist)
         self.add_widget(closeButton)
-        self.suggestButton = Button(text='', size=(200, 50), size_hint=(None, None))
+        self.suggestButton = Button(text='', size=(Window.width/4, Window.height/8), size_hint=(None, None))
         self.suggestButton.bind(on_press=self.suggest)
         self.list_adapter = ListAdapter(data=[], cls=ListItemButton, sorted_keys=[])
         self.list_adapter.bind(on_selection_change=self.list_changed)
@@ -514,15 +521,42 @@ class SpotifyPlaylist:
 
     def get_mopify_playlist(self, url):
         response = requests.get("http://" + url)
-        soup = bs(response.content)
+        html = Html()
+        dom = html.feed(response.content)
+        #soup = bs(response.content)
         list = []
-        for link in soup.findAll('a'):
-            if "/" in link['href'] and not "Parent" in link.string:
-                list.append({'filename': link.string, 'directory': link.string})
+        #for link in soup.findAll('a'):
+        for link in dom.find('a'):
+            href=link.attr['href']
+            text=link.text()
+            #if "/" in link['href'] and not "Parent" in link.string:
+            if "/" in href and not "Parent" in text:
+                list.append({'filename': text, 'directory': text})
         if len(list) == 0:
-            self.myurls = soup.findAll("div", {"class": "url"})
-            myartists = soup.findAll("div", {"class": "artist"})
-            myalbums = soup.findAll("div", {"class": "album"})
+            #self.myurls = soup.findAll("div", {"class": "url"})
+            #myartists = soup.findAll("div", {"class": "artist"})
+            #myalbums = soup.findAll("div", {"class": "album"})
+            self.myurls = []
+            myartists = []
+            myalbums = []
+            for link in dom.find('div'):
+                print(link)
+                class Object(object):
+                    pass
+
+                a = Object()
+                a.text=link.text()
+
+                try:
+                    mclass=link.attr["class"]
+                except:
+                    mclass=""
+                if "url" in mclass:
+                    self.myurls.append(a)
+                if "artist" in mclass:
+                    myartists.append(a)
+                if "album" in mclass:
+                    myalbums.append(a)
             if len(myalbums) == 0:
                 return []
             i = 0
@@ -645,11 +679,14 @@ class LoginScreen(BoxLayout):
     mode_title = True
 
     def __init__(self, **kwargs):
-        self.smb_dir = SmbDir()
-        self.smb_dir.get_dir("TotalMusic")
+        try:
+            self.smb_dir = SmbDir()
+            self.smb_dir.get_dir("TotalMusic")
+        except:
+            pass
 
         self.music_controller = musiccontroller.music_controller()
-        self.arduino = connectArduino.ConnectArduino(self.music_controller)
+        #self.arduino = connectArduino.ConnectArduino(self.music_controller)
         myconfig = settings.get_config()
         self.set_server_ip(myconfig["mainserver"])
 

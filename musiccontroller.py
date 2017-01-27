@@ -1,7 +1,7 @@
 import json
 
-import mpd
-import requests
+import mpd.base as mpd
+import requests.api as requests
 
 mpdServerUrl = "192.168.2.74"
 
