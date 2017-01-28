@@ -703,6 +703,7 @@ class LoginScreen(BoxLayout):
     mode_title = True
 
     def __init__(self, **kwargs):
+        self.connected=False
         try:
             self.smb_dir = SmbDir()
             self.smb_dir.get_dir("TotalMusic")
@@ -807,10 +808,15 @@ class LoginScreen(BoxLayout):
         self.set_server_ip(settings.server_text.text)
 
     def set_server_ip(self, server):
-        server = server.split("(")[0]
-        musiccontroller.mpdServerUrl = server
-        self.music_controller.mc.connect_mpd()
-        return
+        try:
+            server = server.split("(")[0]
+            musiccontroller.mpdServerUrl = server
+            self.music_controller.mc.connect_mpd()
+            self.connected=True
+            return
+        except:
+            self.connected=False
+            pass
 
     def list_spotify_files(self, instance):
         self.selMopidyAlbum.popupOpen = False
@@ -1058,6 +1064,8 @@ class LoginScreen(BoxLayout):
         self.mode_title = not self.mode_title
 
     def update(self, dt):
+        if not self.connected:
+            return
         # print("st1:"+self.music_controller.nl)
         try:
             status = self.music_controller.get_state()  # self.arduino.exchange()
