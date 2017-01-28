@@ -7,10 +7,10 @@ import traceback
 from time import sleep
 
 import requests.api as requests
-try:  
-    from bs4 import SoupStrainer, BeautifulSoup as bs
-except:
-    pass
+#try:  
+#    from bs4 import SoupStrainer, BeautifulSoup as bs
+#except:
+#    pass
 from ehp import *
 from kivy.adapters.dictadapter import ListAdapter
 from kivy.app import App
@@ -197,17 +197,17 @@ class ListArtist(GridLayout):
     def __init__(self, **kwargs):
         super(ListArtist, self).__init__(**kwargs)
         self.cols = 2
-        self.size = (Window.width/2, Window.height/4)
+        self.size = (Window.width/2, Window.height/2)
         # create content and add to the popup
-        closeButton = Button(text='OK', size=(100, Window.height/8), size_hint=(None, None))
+        closeButton = Button(text='OK', size=(100, (Window.height/8*3)-40), size_hint=(None, None))
         self.popup = Popup(title="Search artist", content=self, size=(Window.width/2, Window.height/2), size_hint=(None, None),
                            pos_hint={'right': .5, 'top': 1})
-        self.add_widget(Label(text="Artist:", size=(Window.width/4, Window.height/8), size_hint=(None, None)))
-        self.artist = TextInput(multiline=False, size=(Window.width/4, Window.height/8), size_hint=(None, None))
+        self.add_widget(Label(text="Artist:", size=(Window.width/4-20, Window.height/8-40), size_hint=(None, None)))
+        self.artist = TextInput(multiline=False, size=(Window.width/4-20, Window.height/8-40), size_hint=(None, None))
         self.artist.bind(text=self.on_text)
         self.add_widget(self.artist)
         self.add_widget(closeButton)
-        self.suggestButton = Button(text='', size=(Window.width/4, Window.height/8), size_hint=(None, None))
+        self.suggestButton = Button(text='', size=(Window.width/4-20, Window.height/8*3-40), size_hint=(None, None))
         self.suggestButton.bind(on_press=self.suggest)
         self.list_adapter = ListAdapter(data=[], cls=ListItemButton, sorted_keys=[])
         self.list_adapter.bind(on_selection_change=self.list_changed)
@@ -230,10 +230,10 @@ class ListArtist(GridLayout):
         self.popup.open()
 
     def suggest(self, instance):
-        '''dit is  commentaar, wat hoort bij de bovenstaande functie'''
+        
         # close the popup
         self.popup.dismiss()
-        '''dit is ander commentaar, wat hoort bij de bovenstaande code'''
+
         self.listalbums.artist = self.suggestButton.text
         self.listalbums.display_tracks(self.artist.text)
 
@@ -245,10 +245,11 @@ class ListArtist(GridLayout):
         self.listalbums.display_tracks(self.artist.text)
 
     def on_text(self, instance, value):
-        print("find:" + value, self.parent)
+        #print("find:" + value, self.parent)
         try:
             # print("find:"+value,self.parent.music_controller)
             list, find = self.parent.music_controller.find_artist(value)
+            print (list)
             list.sort(key=lambda x: 0 if value in x else 1)
             # a if condition else b
             self.suggestButton.text = find
@@ -623,19 +624,31 @@ class MusicPlaylister(MopidyPlaylister):
                 return
 
             response = requests.get(url)
-            mlinks = SoupStrainer("div", "mo-image-wrapper")
-            soup = bs(response.content, "lxml", parse_only=mlinks)
+            #mlinks = SoupStrainer("div", "mo-image-wrapper")
+            #soup = bs(response.content, "lxml", parse_only=mlinks)
 
             self.urls = {}
             list = []
-            for link in soup.findAll('a'):
+            #nosoup
+            html = Html()
+            dom = html.feed(response.content)
+            #soup = bs(response.content)
+            list = []
+            #for link in soup.findAll('a'):
+            for link in dom.find('a'):
+                href=link.attr['href']
+                #nosoup
+                #for link in soup.findAll('a'):
                 try:
-                    url = link['data-uri']
+                    #url = link['data-uri']
+                    url = link.attr['data-uri']
                     if url == None:
                         continue
                     if ":playlist:" in url:
-                        name = link['data-drag-text']
-                        if name == None:
+                        #name = link['data-drag-text']
+                        name = link.attr['data-drag-text']
+                        print (":"+name+":")
+                        if name == None or len(name)==0:
                             continue
 
                         self.urls[name] = url

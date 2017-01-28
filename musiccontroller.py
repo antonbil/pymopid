@@ -2,6 +2,7 @@ import json
 
 import mpd.base as mpd
 import requests.api as requests
+import difflib
 
 mpdServerUrl = "192.168.2.74"
 
@@ -280,7 +281,7 @@ class music_controller:
         # no_integers = [x for x in s if len(x)>0]
         # print(no_integers)
         res = difflib.get_close_matches(search, self.listArtists, 25)
-        print (res)
+        #print (res)
         find = res[0]
         for item in res:
             if search in item:
