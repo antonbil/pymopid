@@ -65,8 +65,8 @@ class Alert:
 
         popup = Popup(title=title,pos_hint={'x': 10.0 / Window.width, 
                             'y':10.0 /  Window.height},
-        content=Label(text= str(e)+"\n"+str(exc_value)+"\n"+str(exc_traceback)),
-        size_hint=(None, None), size=(Window.width/2, Window.height/2))
+        content=Label(text=message),#text= str(e)+"\n"+str(exc_value)+"\n"+str(exc_traceback)),
+            size_hint=(None, None), size=(Window.width/2, Window.height/2))
         popup.open()
 
 
@@ -451,8 +451,17 @@ class PopupBox(Popup):
 
 class SmbDir:
     def __init__(self):
-        self.conn = SMBConnection("wieneke", "wieneke", "client", "", use_ntlm_v2=True)
-        assert self.conn.connect(SAMBA_SERVER, 139)
+        '''server_name = '192.168.2.8'  
+        conn = SMBConnection(username="wieneke", password="wieneke", 
+                        use_ntlm_v2=True,
+                        sign_options=SMBConnection.SIGN_WHEN_SUPPORTED, is_direct_tcp=True)
+        connected = conn.connect(SAMBA_SERVER, 445)
+        # obtain a list of shares:
+        Response = conn.listShares(timeout=30)  # !!!working, shows e.g.('  Share[', 20, '] =', u'JBW_in')
+        print(Response)'''
+
+        self.conn = SMBConnection("wieneke", "wieneke", "client", "", use_ntlm_v2=True, is_direct_tcp=True)
+        assert self.conn.connect(SAMBA_SERVER, 445)
 
     def get_dir(self, dir):
         pathlist = self.conn.listPath("FamilyLibrary", dir, search=55, pattern='*', timeout=30)
@@ -717,7 +726,7 @@ class LoginScreen(BoxLayout):
             self.smb_dir = SmbDir()
             self.smb_dir.get_dir("TotalMusic")
         except:
-            Alert("No action","not implemented yet")
+            #Alert("No action","not implemented yet")
             pass
 
         self.music_controller = musiccontroller.music_controller()
