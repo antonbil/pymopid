@@ -178,8 +178,6 @@ class music_controller:
             response = self.get_mopidy_playlist()
             playlist = []
             for item in response:
-                print(item)
-            for item in response:
               try:
                 m, s = divmod(item['length'] / 1000, 60)
                 # track_no
