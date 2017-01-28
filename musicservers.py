@@ -199,15 +199,15 @@ class SelectMpdAlbum:
         self.layout_popup = GridLayout(cols=1, spacing=10, size_hint_y=None, size=(Window.width/2, Window.height))
         self.layout_popup.bind(minimum_height=self.layout_popup.setter('height'))
 
-        root = ScrollView(size_hint=(1, None), size=(Window.width/2-40, Window.height - 80), scroll_timeout=250)
+        root = ScrollView(size_hint=(1, None), size=(Window.width/2-40, Window.height -Window.height/6), scroll_timeout=250)
         root.add_widget(self.layout_popup)
         grid = BoxLayout(orientation='vertical', size=(
-            450, Window.height - 20))  # (cols=1, spacing=10, size_hint_y=None, size=(400, Window.height))
+            Window.width/2-20, Window.height - 20))  # (cols=1, spacing=10, size_hint_y=None, size=(400, Window.height))
         grid.add_widget(root)
-        self.horizon = BoxLayout(orientation='horizontal')
+        self.horizon = BoxLayout(orientation='horizontal', size=(Window.width/2-40, Window.height/8))
         self.horizons = []
         for i in range(5):
-            btn1 = Button(text="" + str(i * maxalbums), background_color=random.choice(self.colors))
+            btn1 = Button(text="" + str(i * maxalbums), size=(Window.width/2-60, Window.height/8),background_color=random.choice(self.colors))
             btn1.bind(on_press=lambda x: self.onHorizon(x))
             self.horizons.append(btn1)
 

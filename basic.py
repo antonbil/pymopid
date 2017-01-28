@@ -71,15 +71,17 @@ class PopList:
         self.maxlist = maxtracks
         self.layout_popup = GridLayout(cols=1, spacing=10, size_hint_y=None, size=(Window.width/2-100, Window.height), valign="top")
         self.layout_popup.bind(minimum_height=self.layout_popup.setter('height'))
-        root = ScrollView(size_hint=(1, None), size=(Window.width/2-30, Window.height - 20), scroll_timeout=250, valign="top")
+        root = ScrollView(size_hint=(1, None), size=(Window.width/2-30, Window.height -Window.height/6), scroll_timeout=250, valign="top")
         root.add_widget(self.layout_popup)
         grid = BoxLayout(orientation='vertical', size=(
             Window.width/2-120, Window.height - 80))  # (cols=1, spacing=10, size_hint_y=None, size=(400, Window.height))
         grid.add_widget(root)
-        self.horizon = BoxLayout(orientation='horizontal')
+        self.horizon = BoxLayout(orientation='horizontal', size=(
+            Window.width/2-120, Window.height - 80))
         self.horizons = []
         for i in range(10):
-            btn1 = Button(text="" + str(i * self.maxlist), background_color=random.choice(colors))
+            btn1 = Button(text="" + str(i * self.maxlist), background_color=random.choice(colors),size=(
+            Window.width/2-120, Window.height/8))
             btn1.bind(on_press=self.onHorizon)
             self.horizons.append(btn1)
 
@@ -198,10 +200,10 @@ class ListArtist(GridLayout):
         self.size = (Window.width/2, Window.height/4)
         # create content and add to the popup
         closeButton = Button(text='OK', size=(100, Window.height/8), size_hint=(None, None))
-        self.popup = Popup(title="Search artist", content=self, size=(340, 400), size_hint=(None, None),
+        self.popup = Popup(title="Search artist", content=self, size=(Window.width/2, Window.height/2), size_hint=(None, None),
                            pos_hint={'right': .5, 'top': 1})
-        self.add_widget(Label(text="Artist:", size=(100, 50), size_hint=(None, None)))
-        self.artist = TextInput(multiline=False, size=(170, Window.height/8), size_hint=(None, None))
+        self.add_widget(Label(text="Artist:", size=(Window.width/4, Window.height/8), size_hint=(None, None)))
+        self.artist = TextInput(multiline=False, size=(Window.width/4, Window.height/8), size_hint=(None, None))
         self.artist.bind(text=self.on_text)
         self.add_widget(self.artist)
         self.add_widget(closeButton)
@@ -696,7 +698,7 @@ class LoginScreen(BoxLayout):
         h_layout0 = BoxLayout(padding=10, size_hint=(1.0, 0.2))
         for i in range(5):
             btn = Button(text=buttons[i][1], id=buttons[i][0],
-                         background_color=random.choice(colors), size=(100, 50)
+                         background_color=random.choice(colors), size=(100, Window.height/8)
                          )
             buttons[i].append(btn)
             btn.bind(on_press=self.doAction)
