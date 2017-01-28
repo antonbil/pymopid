@@ -451,17 +451,12 @@ class PopupBox(Popup):
 
 class SmbDir:
     def __init__(self):
-        '''server_name = '192.168.2.8'  
-        conn = SMBConnection(username="wieneke", password="wieneke", 
-                        use_ntlm_v2=True,
-                        sign_options=SMBConnection.SIGN_WHEN_SUPPORTED, is_direct_tcp=True)
-        connected = conn.connect(SAMBA_SERVER, 445)
-        # obtain a list of shares:
-        Response = conn.listShares(timeout=30)  # !!!working, shows e.g.('  Share[', 20, '] =', u'JBW_in')
-        print(Response)'''
-
+        '''
         self.conn = SMBConnection("wieneke", "wieneke", "client", "", use_ntlm_v2=True, is_direct_tcp=True)
-        assert self.conn.connect(SAMBA_SERVER, 445)
+        assert self.conn.connect(SAMBA_SERVER, 445)'''
+
+        self.conn = SMBConnection("wieneke", "wieneke", "client", "")#, use_ntlm_v2=True)
+        assert self.conn.connect(SAMBA_SERVER, 139)
 
     def get_dir(self, dir):
         pathlist = self.conn.listPath("FamilyLibrary", dir, search=55, pattern='*', timeout=30)
