@@ -7,10 +7,6 @@ import traceback
 from time import sleep
 
 import requests.api as requests
-try:  
-    from bs4 import SoupStrainer, BeautifulSoup as bs
-except:
-    pass
 from ehp import *
 from kivy.adapters.dictadapter import ListAdapter
 from kivy.app import App
@@ -60,6 +56,18 @@ class IconButton(ButtonBehavior, AsyncImage):
 
 class LabelButton(ButtonBehavior, Label):
     pass
+
+
+class Alert:
+    def __init__(self, title,message):
+        e = sys.exc_info()[0]
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+
+        popup = Popup(title=title,pos_hint={'x': 10.0 / Window.width, 
+                            'y':10.0 /  Window.height},
+        content=Label(text= str(e)+"\n"+str(exc_value)+"\n"+str(exc_traceback)),
+        size_hint=(None, None), size=(Window.width/2, Window.height/2))
+        popup.open()
 
 
 class PopList:
@@ -404,7 +412,7 @@ class SavePlaylist(Popup):
         url = ('http://192.168.2.8/spotify/data/genre/{}/addlink.php?url={}&artist={}&artistsort={}&album={}'
                .format(self.category_text.text, self.id_text.text, self.artist_text.text, self.sort_text.text,
                        self.album_text.text)).replace(" ", "%20")
-        requests.get(url)
+        requests.get(url, verify=False)
         self.dispatch('on_ok')
         self.dismiss()
 
@@ -525,7 +533,7 @@ class SpotifyPlaylist:
         return list
 
     def get_mopify_playlist(self, url):
-        response = requests.get("http://" + url)
+        response = requests.get("http://" + url, verify=False)
         html = Html()
         dom = html.feed(response.content)
         #soup = bs(response.content)
@@ -626,7 +634,7 @@ class MusicPlaylister(MopidyPlaylister):
                     self.parent.music_controller.playlist_add_mopidy(url)
                     return
 
-                response = requests.get(url)
+                response = requests.get(url, verify=False)
                 #mlinks = SoupStrainer("div", "mo-image-wrapper")
                 #soup = bs(response.content, "lxml", parse_only=mlinks)
 
@@ -664,6 +672,7 @@ class MusicPlaylister(MopidyPlaylister):
                 print(e)
                 exc_type, exc_value, exc_traceback = sys.exc_info()
                 print repr(traceback.extract_tb(exc_traceback))
+                Alert("No action","not implemented yet")
                 pass
 
     def playPlaylist(self, url):
@@ -708,6 +717,7 @@ class LoginScreen(BoxLayout):
             self.smb_dir = SmbDir()
             self.smb_dir.get_dir("TotalMusic")
         except:
+            Alert("No action","not implemented yet")
             pass
 
         self.music_controller = musiccontroller.music_controller()
@@ -966,9 +976,12 @@ class LoginScreen(BoxLayout):
         self.displaySimilarArtists(self.currentArtist)
 
     def displaySimilarArtists(self, artist):
-        self.similarartists = self.music_controller.do_mopidy_similar(artist)
-        # print(self.similarartists)
-        self.similarArtistsPopup.display_tracks(artist)
+        try:
+            self.similarartists = self.music_controller.do_mopidy_similar(artist)
+            # print(self.similarartists)
+            self.similarArtistsPopup.display_tracks(artist)
+        except:
+            Alert("Notification","not implemented yet")
 
     def addAlbum(self, instance):
         instance.popup.dismiss()
@@ -1091,7 +1104,7 @@ class LoginScreen(BoxLayout):
                 if self.previousimage != img:
                     try:
                         url = "https://api.spotify.com/v1/albums/" + (img.rsplit(':', 2)[2])
-                        response = requests.get(url)
+                        response = requests.get(url, verify=False)
                         url = (response.json()["images"][0]["url"])
                         self.get_image(url)
                         self.previousimage = img
@@ -1119,8 +1132,12 @@ class LoginScreen(BoxLayout):
         # print(self.music_controller.mc.list_files("/"))
 
     def list_smb_files(self, instance):
+      try:
         self.selSmbAlbum.popupOpen = False
         self.selSmbAlbum.display("/")
+      except:
+        Alert("No action","not implemented yet")
+        pass
         # print(self.music_controller.mc.list_files("/"))
 
     def doAction(self, instance):

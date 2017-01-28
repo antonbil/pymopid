@@ -209,7 +209,7 @@ class music_controller:
 
     def do_mopidy_similar(self, artist):
         url = "https://api.spotify.com/v1/artists/" + artist + "/related-artists"
-        res = requests.get(url).json()
+        res = requests.get(url, verify=False).json()
         return res
 
     def do_mopidy_search(self, artist):
