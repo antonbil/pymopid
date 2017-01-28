@@ -178,7 +178,10 @@ class music_controller:
             response = self.get_mopidy_playlist()
             playlist = []
             for item in response:
-                m, s = divmod(item["length"] / 1000, 60)
+                print(item)
+            for item in response:
+              try:
+                m, s = divmod(item['length'] / 1000, 60)
                 # track_no
                 t = item["track_no"]
                 text = '{t:02d}-{artist}-{title}({f:02d}:{s:02d})'.format(f=m, s=s, t=t,
@@ -186,6 +189,8 @@ class music_controller:
                                                                               'utf-8'),
                                                                           title=item["name"].encode('utf-8'))
                 playlist.append(text)
+              except:
+                  pass
             return playlist
 
     def do_mopidy_call(self, mopidyaction):

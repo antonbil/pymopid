@@ -7,10 +7,10 @@ import traceback
 from time import sleep
 
 import requests.api as requests
-#try:  
-#    from bs4 import SoupStrainer, BeautifulSoup as bs
-#except:
-#    pass
+try:  
+    from bs4 import SoupStrainer, BeautifulSoup as bs
+except:
+    pass
 from ehp import *
 from kivy.adapters.dictadapter import ListAdapter
 from kivy.app import App
@@ -209,7 +209,9 @@ class ListArtist(GridLayout):
         self.add_widget(closeButton)
         self.suggestButton = Button(text='', size=(Window.width/4-20, Window.height/8*3-40), size_hint=(None, None))
         self.suggestButton.bind(on_press=self.suggest)
-        self.list_adapter = ListAdapter(data=[], cls=ListItemButton, sorted_keys=[])
+        args_converter = lambda row_index, an_obj: {'text': an_obj,
+                                         'size_hint_y': None,'height': Window.height/10}
+        self.list_adapter = ListAdapter(data=[], cls=ListItemButton, sorted_keys=[],args_converter=args_converter)
         self.list_adapter.bind(on_selection_change=self.list_changed)
         # list_view = ListView(adapter=self.list_adapter)
         self.list = ListView(adapter=self.list_adapter)
@@ -618,44 +620,51 @@ class MusicPlaylister(MopidyPlaylister):
 
             return list
         else:
-            url = self.getKey(dir)
-            if ":playlist" in url:
-                self.parent.music_controller.playlist_add_mopidy(url)
-                return
+            try:
+                url = self.getKey(dir)
+                if ":playlist" in url:
+                    self.parent.music_controller.playlist_add_mopidy(url)
+                    return
 
-            response = requests.get(url)
-            #mlinks = SoupStrainer("div", "mo-image-wrapper")
-            #soup = bs(response.content, "lxml", parse_only=mlinks)
+                response = requests.get(url)
+                #mlinks = SoupStrainer("div", "mo-image-wrapper")
+                #soup = bs(response.content, "lxml", parse_only=mlinks)
 
-            self.urls = {}
-            list = []
-            #nosoup
-            html = Html()
-            dom = html.feed(response.content)
-            #soup = bs(response.content)
-            list = []
-            #for link in soup.findAll('a'):
-            for link in dom.find('a'):
-                href=link.attr['href']
+                self.urls = {}
+                list = []
                 #nosoup
+                html = Html()
+                dom = html.feed(response.content)
+                #soup = bs(response.content)
+                list = []
                 #for link in soup.findAll('a'):
-                try:
-                    #url = link['data-uri']
-                    url = link.attr['data-uri']
-                    if url == None:
-                        continue
-                    if ":playlist:" in url:
-                        #name = link['data-drag-text']
-                        name = link.attr['data-drag-text']
-                        print (":"+name+":")
-                        if name == None or len(name)==0:
+                for link in dom.find('a'):
+                    href=link.attr['href']
+                    #nosoup
+                    #for link in soup.findAll('a'):
+                    try:
+                        #url = link['data-uri']
+                        url = link.attr['data-uri']
+                        if url == None:
                             continue
+                        if ":playlist:" in url:
+                            #name = link['data-drag-text']
+                            name = link.attr['data-drag-text']
+                            print (":"+name+":")
+                            if name == None or len(name)==0:
+                                continue
 
-                        self.urls[name] = url
-                        list.append({'filename': name, 'directory': name})
-                except:
-                    pass
-            return list
+                            self.urls[name] = url
+                            list.append({'filename': name, 'directory': name})
+                    except:
+                        pass
+                return list
+            except:
+                e = sys.exc_info()[0]
+                print(e)
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                print repr(traceback.extract_tb(exc_traceback))
+                pass
 
     def playPlaylist(self, url):
         self.add_mopidy_playlist(url)
@@ -736,7 +745,7 @@ class LoginScreen(BoxLayout):
         h_layout1 = BoxLayout(padding=10)
         h_layout2 = BoxLayout(padding=10)
 
-        self.label = ScrollableLabel(size_hint=(1, None), size=(400, 250))
+        self.label = ScrollableLabel(size_hint=(1, None), size=(400,Window.height/2))
 
         v_layout.add_widget(self.label)
         h_layout1.add_widget(v_layout)
