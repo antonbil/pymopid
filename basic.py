@@ -1176,8 +1176,6 @@ def list_smb_files(self, instance):
         self.selSmbAlbum.display("/")
     except:
         utils.Alert("No action", "not implemented yet")
-    pass
-    # print(self.music_controller.mc.list_files("/"))
 
 
 def doAction(self, instance):
