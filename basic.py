@@ -60,31 +60,36 @@ class PopList:
         self.onpopup = onpopup
         self.getList = getlist
         self.maxlist = maxtracks
-        self.layout_popup = GridLayout(cols=1, spacing=10, size_hint_y=None, size=(Window.width/2-100, Window.height), valign="top")
+        self.layout_popup = GridLayout(cols=1, spacing=10, size_hint_y=None,
+                                       size=(Window.width / 2 - 100, Window.height), valign="top")
         self.layout_popup.bind(minimum_height=self.layout_popup.setter('height'))
-        root = ScrollView(size_hint=(1, None), size=(Window.width/2-30, Window.height -Window.height/6), scroll_timeout=250, valign="top")
+        root = ScrollView(size_hint=(1, None), size=(Window.width / 2 - 30, Window.height - Window.height / 6),
+                          scroll_timeout=250, valign="top")
         root.add_widget(self.layout_popup)
         grid = BoxLayout(orientation='vertical', size=(
-            Window.width/2-120, Window.height - 80))  # (cols=1, spacing=10, size_hint_y=None, size=(400, Window.height))
+            Window.width / 2 - 120,
+            Window.height - 80))  # (cols=1, spacing=10, size_hint_y=None, size=(400, Window.height))
         grid.add_widget(root)
         self.horizon = BoxLayout(orientation='horizontal', size=(
-            Window.width/2-120, Window.height - 80))
+            Window.width / 2 - 120, Window.height - 80))
         self.horizons = []
         for i in range(10):
-            btn1 = Button(text="" + str(i * self.maxlist), background_color=random.choice(colors),size=(
-            Window.width/2-120, Window.height/8))
+            btn1 = Button(text="" + str(i * self.maxlist), background_color=random.choice(colors), size=(
+                Window.width / 2 - 120, Window.height / 8))
             btn1.bind(on_press=self.onHorizon)
             self.horizons.append(btn1)
 
             self.horizon.add_widget(btn1)
         grid.add_widget(self.horizon)
         self.popup = Popup(title="", separator_height=0, content=grid, size_hint=(None, None),
-                           size=(Window.width/2, Window.height))
+                           size=(Window.width / 2, Window.height))
         # create buttons so they can be re-used
         self.buttons = []
         for i in range(maxtracks):
-            btn1 = MeasureButtonOnTouch(text="", id=str(i), size_hint_y=None, text_size=(Window.width/2-100, Window.height/8), valign='middle',
-                                        halign='left', size=(Window.width/2-120, Window.height/8), background_color=random.choice(colors))
+            btn1 = MeasureButtonOnTouch(text="", id=str(i), size_hint_y=None,
+                                        text_size=(Window.width / 2 - 100, Window.height / 8), valign='middle',
+                                        halign='left', size=(Window.width / 2 - 120, Window.height / 8),
+                                        background_color=random.choice(colors))
             btn1.onShortPress = self.mypopup
             btn1.onLongPress = self.longpress
 
@@ -138,7 +143,8 @@ class MenuScreen(GridLayout):
         self.cols = 2
         self.orientation = "vertical"
         self.addButtons()
-        self.popup = Popup(title="Menu", content=self, size=(Window.width/2, (Window.height/4)*3), size_hint=(None, None))
+        self.popup = Popup(title="Menu", content=self, size=(Window.width / 2, (Window.height / 4) * 3),
+                           size_hint=(None, None))
 
     def addButtons(self):
         self.submenu = SubMenuScreen(self.main)
@@ -156,7 +162,7 @@ class MenuScreen(GridLayout):
 
     def addButton(self, title, action):
         btn = Button(text=title, id="0",
-                     background_color=random.choice(colors), size=(Window.width/4-60, (Window.height/4)/10)
+                     background_color=random.choice(colors), size=(Window.width / 4 - 60, (Window.height / 4) / 10)
                      )
         self.add_widget(btn)
         # btn.onShortPress=action
@@ -188,21 +194,25 @@ class ListArtist(GridLayout):
     def __init__(self, **kwargs):
         super(ListArtist, self).__init__(**kwargs)
         self.cols = 2
-        self.size = (Window.width/2, Window.height/2)
+        self.size = (Window.width / 2, Window.height / 2)
         # create content and add to the popup
-        closeButton = Button(text='OK', size=(100, (Window.height/8*3)-40), size_hint=(None, None))
-        self.popup = Popup(title="Search artist", content=self, size=(Window.width/2, Window.height/2), size_hint=(None, None),
+        closeButton = Button(text='OK', size=(100, (Window.height / 8 * 3) - 40), size_hint=(None, None))
+        self.popup = Popup(title="Search artist", content=self, size=(Window.width / 2, Window.height / 2),
+                           size_hint=(None, None),
                            pos_hint={'right': .5, 'top': 1})
-        self.add_widget(Label(text="Artist:", size=(Window.width/4-20, Window.height/8-40), size_hint=(None, None)))
-        self.artist = TextInput(multiline=False, size=(Window.width/4-20, Window.height/8-40), size_hint=(None, None))
+        self.add_widget(
+            Label(text="Artist:", size=(Window.width / 4 - 20, Window.height / 8 - 40), size_hint=(None, None)))
+        self.artist = TextInput(multiline=False, size=(Window.width / 4 - 20, Window.height / 8 - 40),
+                                size_hint=(None, None))
         self.artist.bind(text=self.on_text)
         self.add_widget(self.artist)
         self.add_widget(closeButton)
-        self.suggestButton = Button(text='', size=(Window.width/4-20, Window.height/8*3-40), size_hint=(None, None))
+        self.suggestButton = Button(text='', size=(Window.width / 4 - 20, Window.height / 8 * 3 - 40),
+                                    size_hint=(None, None))
         self.suggestButton.bind(on_press=self.suggest)
         args_converter = lambda row_index, an_obj: {'text': an_obj,
-                                         'size_hint_y': None,'height': Window.height/10}
-        self.list_adapter = ListAdapter(data=[], cls=ListItemButton, sorted_keys=[],args_converter=args_converter)
+                                                    'size_hint_y': None, 'height': Window.height / 10}
+        self.list_adapter = ListAdapter(data=[], cls=ListItemButton, sorted_keys=[], args_converter=args_converter)
         self.list_adapter.bind(on_selection_change=self.list_changed)
         # list_view = ListView(adapter=self.list_adapter)
         self.list = ListView(adapter=self.list_adapter)
@@ -223,7 +233,7 @@ class ListArtist(GridLayout):
         self.popup.open()
 
     def suggest(self, instance):
-        
+
         # close the popup
         self.popup.dismiss()
 
@@ -238,7 +248,7 @@ class ListArtist(GridLayout):
         self.listalbums.display_tracks(self.artist.text)
 
     def on_text(self, instance, value):
-        #print("find:" + value, self.parent)
+        # print("find:" + value, self.parent)
         try:
             # print("find:"+value,self.parent.music_controller)
             list, find = self.parent.music_controller.find_artist(value)
@@ -498,15 +508,15 @@ class SpotifyPlaylist:
         list = []
         #for link in soup.findAll('a'):
         for link in dom.find('a'):
-            href=link.attr['href']
-            text=link.text()
+            href = link.attr['href']
+            text = link.text()
             #if "/" in link['href'] and not "Parent" in link.string:
             if "/" in href and not "Parent" in text:
-                item={'filename': utils.remove_slash_at_end(text), 'directory': utils.remove_slash_at_end(text)}
+                item = {'filename': utils.remove_slash_at_end(text), 'directory': utils.remove_slash_at_end(text)}
                 list.append(item)
         if len(list) == 0:
-            #self.myurls = soup.findAll("div", {"class": "url"})
-            #myartists = soup.findAll("div", {"class": "artist"})
+            # self.myurls = soup.findAll("div", {"class": "url"})
+            # myartists = soup.findAll("div", {"class": "artist"})
             #myalbums = soup.findAll("div", {"class": "album"})
             self.myurls = []
             myartists = []
@@ -517,10 +527,10 @@ class SpotifyPlaylist:
                     pass
 
                 a = Object()
-                a.text=link.text()
+                a.text = link.text()
 
                 try:
-                    mclass=link.attr["class"]
+                    mclass = link.attr["class"]
                 except:
                     mclass=""
                 if "url" in mclass:
@@ -594,7 +604,7 @@ class MusicPlaylister(MopidyPlaylister):
                     return
 
                 response = requests.get(url, verify=False)
-                #mlinks = SoupStrainer("div", "mo-image-wrapper")
+                # mlinks = SoupStrainer("div", "mo-image-wrapper")
                 #soup = bs(response.content, "lxml", parse_only=mlinks)
 
                 self.urls = {}
@@ -606,8 +616,8 @@ class MusicPlaylister(MopidyPlaylister):
                 list = []
                 #for link in soup.findAll('a'):
                 for link in dom.find('a'):
-                    href=link.attr['href']
-                    #nosoup
+                    href = link.attr['href']
+                    # nosoup
                     #for link in soup.findAll('a'):
                     try:
                         #url = link['data-uri']
@@ -617,7 +627,7 @@ class MusicPlaylister(MopidyPlaylister):
                         if ":playlist:" in url:
                             #name = link['data-drag-text']
                             name = link.attr['data-drag-text']
-                            print (":"+name+":")
+                            print (":" + name + ":")
                             if name == None or len(name)==0:
                                 continue
 
@@ -666,100 +676,102 @@ class LoginScreen(BoxLayout):
     mode_title = True
 
     def __init__(self, **kwargs):
-      try:
-        self.connected=False
-        self.music_controller = musiccontroller.music_controller()
-        #self.arduino = connectArduino.ConnectArduino(self.music_controller)
-        myconfig = settings.get_config()
-        self.set_server_ip(myconfig["mainserver"])
+        try:
+            self.connected = False
+            self.music_controller = musiccontroller.music_controller()
+            # self.arduino = connectArduino.ConnectArduino(self.music_controller)
+            myconfig = settings.get_config()
+            self.set_server_ip(myconfig["mainserver"])
 
-        super(LoginScreen, self).__init__(**kwargs)
-        self.orientation = "vertical"
+            super(LoginScreen, self).__init__(**kwargs)
+            self.orientation = "vertical"
 
-        h_layout0 = BoxLayout(padding=10, size_hint=(1.0, 0.2))
-        for i in range(5):
-            btn = Button(text=buttons[i][1], id=buttons[i][0],
-                         background_color=random.choice(colors), size=(100, Window.height/8)
-                         )
-            buttons[i].append(btn)
-            btn.bind(on_press=self.doAction)
+            h_layout0 = BoxLayout(padding=10, size_hint=(1.0, 0.2))
+            for i in range(5):
+                btn = Button(text=buttons[i][1], id=buttons[i][0],
+                             background_color=random.choice(colors), size=(100, Window.height / 8)
+                             )
+                buttons[i].append(btn)
+                btn.bind(on_press=self.doAction)
 
-            h_layout0.add_widget(btn)
+                h_layout0.add_widget(btn)
 
-        # define popup for tracks
-        self.popupTracks = PopList(maxtracks, self.getTracks, self.onSelectTrackAction, self.processItem,
-                                   self.onLongpressTrack)
-        self.popupPlaylists = PopList(80, self.getPlaylists, self.onSelectPlaylistAction, self.processPlaylist,
-                                      self.onLongpressPlaylist)
-        self.popupSearch = PopList(maxtracks, self.getSearch, self.onSelectSearchAction, self.processSearch,
-                                   self.onLongpressSearch)
-        self.similarArtistsPopup = PopList(maxtracks, self.getsimilarArtistsPopup, self.onSelectsimilarArtistsPopup,
-                                           self.processsimilarArtistsPopup, self.onLongpresssimilarArtistsPopup)
-        self.listArtist = ListArtist()
-        self.menuScreen = MenuScreen(self)
-        self.menuScreen.main = self
-        buttons[4][2].bind(on_release=self.menuScreen.open)
-        v_layout = BoxLayout(padding=10)
-        v_layout.orientation = "vertical"
-        h_layout1 = BoxLayout(padding=10)
-        h_layout2 = BoxLayout(padding=10)
+            # define popup for tracks
+            self.popupTracks = PopList(maxtracks, self.getTracks, self.onSelectTrackAction, self.processItem,
+                                       self.onLongpressTrack)
+            self.popupPlaylists = PopList(80, self.getPlaylists, self.onSelectPlaylistAction, self.processPlaylist,
+                                          self.onLongpressPlaylist)
+            self.popupSearch = PopList(maxtracks, self.getSearch, self.onSelectSearchAction, self.processSearch,
+                                       self.onLongpressSearch)
+            self.similarArtistsPopup = PopList(maxtracks, self.getsimilarArtistsPopup, self.onSelectsimilarArtistsPopup,
+                                               self.processsimilarArtistsPopup, self.onLongpresssimilarArtistsPopup)
+            self.listArtist = ListArtist()
+            self.menuScreen = MenuScreen(self)
+            self.menuScreen.main = self
+            buttons[4][2].bind(on_release=self.menuScreen.open)
+            v_layout = BoxLayout(padding=10)
+            v_layout.orientation = "vertical"
+            h_layout1 = BoxLayout(padding=10)
+            h_layout2 = BoxLayout(padding=10)
 
-        self.label = ScrollableLabel(size_hint=(1, None), size=(400,Window.height/2))
+            self.label = ScrollableLabel(size_hint=(1, None), size=(400, Window.height / 2))
 
-        v_layout.add_widget(self.label)
-        h_layout1.add_widget(v_layout)
-        # sudo kate  /usr/lib/python2.7/dist-packages/kivy/core/image/img_pil.py regel 86, verander img_tmp.mode.lower(), img_tmp.tostring()) , tostring()in tobytes()
-        self.image_source = IconButton(allow_stretch=True)
+            v_layout.add_widget(self.label)
+            h_layout1.add_widget(v_layout)
+            # sudo kate  /usr/lib/python2.7/dist-packages/kivy/core/image/img_pil.py regel 86, verander img_tmp.mode.lower(), img_tmp.tostring()) , tostring()in tobytes()
+            self.image_source = IconButton(allow_stretch=True)
 
-        h_layout1.add_widget(self.image_source)
-        self.time = Label(font_size='45sp')
-        h_layout2.add_widget(self.time)
-        self.tracknr = Label(font_size='45sp')
-        h_layout2.add_widget(self.tracknr)
-        self.totaltime = LabelButton(font_size='45sp')
-        # self.totaltime.bind(on_release=self.listArtistOpen )
-        self.totaltime.bind(on_press=self.mode_title)
-        h_layout2.add_widget(self.totaltime)
-        v_layout.add_widget(h_layout2)
-        self.add_widget(h_layout0)
-        self.add_widget(h_layout1)
-        # list to select albums to play
-        self.musicPlaylister = MusicPlaylister(self)
-        self.selAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
-                                                    getdir=lambda x: self.music_controller.mc.list_files(x),
-                                                    is_directory=lambda x: "directory" in x,
-                                                    playdir=lambda x: self.music_controller.mc.add(x[1:]))
-        spotify_playlist = SpotifyPlaylist(self.music_controller, self)
-        self.selMopidyAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
-                                                          getdir=lambda x: spotify_playlist.get_mopify_playlist(x),
-                                                          is_directory=lambda x: "directory" in x,
-                                                          playdir=lambda x: spotify_playlist.play_mopidy_playlist(x),
-                                                          currentdir="192.168.2.8/spotify/data",
-                                                          addAndPlayAlbum=spotify_playlist.addAndPlaySpotifyAlbum)
-        self.selSmbAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
-                                                          getdir=lambda x: spotify_playlist.get_mopify_playlist(x),
-                                                          is_directory=lambda x: "directory" in x,
-                                                          playdir=lambda x: self.play_mpd_playlist(x),
-                                                          currentdir="192.168.2.8/spotify/mpd",
-                                                          addAndPlayAlbum=self.add_and_play_mpd_playlist)
+            h_layout1.add_widget(self.image_source)
+            self.time = Label(font_size='45sp')
+            h_layout2.add_widget(self.time)
+            self.tracknr = Label(font_size='45sp')
+            h_layout2.add_widget(self.tracknr)
+            self.totaltime = LabelButton(font_size='45sp')
+            # self.totaltime.bind(on_release=self.listArtistOpen )
+            self.totaltime.bind(on_press=self.mode_title)
+            h_layout2.add_widget(self.totaltime)
+            v_layout.add_widget(h_layout2)
+            self.add_widget(h_layout0)
+            self.add_widget(h_layout1)
+            # list to select albums to play
+            self.musicPlaylister = MusicPlaylister(self)
+            self.selAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
+                                                        getdir=lambda x: self.music_controller.mc.list_files(x),
+                                                        is_directory=lambda x: "directory" in x,
+                                                        playdir=lambda x: self.music_controller.mc.add(x[1:]))
+            spotify_playlist = SpotifyPlaylist(self.music_controller, self)
+            self.selMopidyAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
+                                                              getdir=lambda x: spotify_playlist.get_mopify_playlist(x),
+                                                              is_directory=lambda x: "directory" in x,
+                                                              playdir=lambda x: spotify_playlist.play_mopidy_playlist(
+                                                                  x),
+                                                              currentdir="192.168.2.8/spotify/data",
+                                                              addAndPlayAlbum=spotify_playlist.addAndPlaySpotifyAlbum)
+            self.selSmbAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
+                                                           getdir=lambda x: spotify_playlist.get_mopify_playlist(x),
+                                                           is_directory=lambda x: "directory" in x,
+                                                           playdir=lambda x: self.play_mpd_playlist(x),
+                                                           currentdir="192.168.2.8/spotify/mpd",
+                                                           addAndPlayAlbum=self.add_and_play_mpd_playlist)
 
-        self.selMopidyReleases = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
-                                                             getdir=lambda x: spotify_playlist.browse_mopidy(x),
-                                                             is_directory=lambda x: True,
-                                                             playdir=lambda x: spotify_playlist.add_mopidy_release(x),
-                                                             currentdir="",
-                                                             addAndPlayAlbum=spotify_playlist.play_mopidy_release,
-                                                             savePlaylist=spotify_playlist.savePlaylist)
-        self.selMopidyUsers = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
-                                                          getdir=lambda x: self.musicPlaylister.getUserPlaylists(x),
-                                                          is_directory=lambda x: True,
-                                                          playdir=lambda x: self.musicPlaylister.playPlaylist(x),
-                                                          currentdir="",
-                                                          addAndPlayAlbum=self.musicPlaylister.addAndPlayPlaylist,
-                                                          savePlaylist=self.musicPlaylister.savePlaylist)
+            self.selMopidyReleases = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
+                                                                 getdir=lambda x: spotify_playlist.browse_mopidy(x),
+                                                                 is_directory=lambda x: True,
+                                                                 playdir=lambda x: spotify_playlist.add_mopidy_release(
+                                                                     x),
+                                                                 currentdir="",
+                                                                 addAndPlayAlbum=spotify_playlist.play_mopidy_release,
+                                                                 savePlaylist=spotify_playlist.savePlaylist)
+            self.selMopidyUsers = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
+                                                              getdir=lambda x: self.musicPlaylister.getUserPlaylists(x),
+                                                              is_directory=lambda x: True,
+                                                              playdir=lambda x: self.musicPlaylister.playPlaylist(x),
+                                                              currentdir="",
+                                                              addAndPlayAlbum=self.musicPlaylister.addAndPlayPlaylist,
+                                                              savePlaylist=self.musicPlaylister.savePlaylist)
 
-        Clock.schedule_interval(self.update, 1)
-      except:
+            Clock.schedule_interval(self.update, 1)
+        except:
             utils.AlertError()
 
     def settings(self, instance):
@@ -774,10 +786,10 @@ class LoginScreen(BoxLayout):
             server = server.split("(")[0]
             musiccontroller.mpdServerUrl = server
             self.music_controller.mc.connect_mpd()
-            self.connected=True
+            self.connected = True
             return
         except:
-            self.connected=False
+            self.connected = False
             pass
 
     def list_spotify_files(self, instance):
@@ -794,21 +806,22 @@ class LoginScreen(BoxLayout):
                 self.music_controller.select_and_play_mpd(0)
             except:
                 pass
-    
+
     def play_mpd_playlist(self, dir):
         try:
-            filename = "http://"+(dir + "/mp3info.txt".replace("//","/").replace(" ","%20"))
+            filename = "http://" + (dir + "/mp3info.txt".replace("//", "/").replace(" ", "%20"))
             response = requests.get(filename, verify=False)
-            lines=(response.content).split('/home/wieneke/FamilyLibrary/FamilyMusic/')
+            lines = (response.content).split('/home/wieneke/FamilyLibrary/FamilyMusic/')
             print (lines)
             del lines[0]
             del lines[0]
             for item in lines:
-              try:  
-                fname = item.split("=== ")[0]
-                self.music_controller.mc.add(fname)
-              except:
-                  pass
+                try:
+                    fname = item.split("=== ")[0]
+                    self.music_controller.mc.add(fname)
+                except:
+                    pass
+
         except:
             utils.Alert("Warning", "playlist not added")
 
@@ -1112,13 +1125,13 @@ class LoginScreen(BoxLayout):
         # print(self.music_controller.mc.list_files("/"))
 
     def list_smb_files(self, instance):
-      try:
-        self.selSmbAlbum.popupOpen = False
-        self.selSmbAlbum.display("/")
-      except:
-          utils.Alert("No action", "not implemented yet")
-          pass
-        # print(self.music_controller.mc.list_files("/"))
+        try:
+            self.selSmbAlbum.popupOpen = False
+            self.selSmbAlbum.display("/")
+        except:
+            utils.Alert("No action", "not implemented yet")
+            pass
+            # print(self.music_controller.mc.list_files("/"))
 
     def doAction(self, instance):
         # print ("action:")
