@@ -27,7 +27,7 @@ class Alert:
 
 
 class AlertError:
-    def __init__(self, title, message):
+    def __init__(self):
         e = sys.exc_info()[0]
         exc_type, exc_value, exc_traceback = sys.exc_info()
         Alert("Error", text=str(e) + "\n" + str(exc_value) + "\n" + str(exc_traceback))

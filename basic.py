@@ -2,7 +2,6 @@
 import os
 import random
 import sys
-import tempfile
 import traceback
 from time import sleep
 
@@ -431,35 +430,6 @@ class PopupBox(Popup):
 
     def update_pop_up_text(self, p_message):
         self.pop_up_text.text = p_message
-
-
-class SmbDir:
-    def __init__(self):
-        '''
-        self.conn = SMBConnection("wieneke", "wieneke", "client", "", use_ntlm_v2=True, is_direct_tcp=True)
-        assert self.conn.connect(SAMBA_SERVER, 445)'''
-
-        self.conn = SMBConnection("wieneke", "wieneke", "client", "", use_ntlm_v2=True)
-        assert self.conn.connect(SAMBA_SERVER, 445)#this was 139
-
-    def get_dir(self, dir):
-        pathlist = self.conn.listPath("FamilyLibrary", dir, search=55, pattern='*', timeout=60)
-        list = []
-        for path in pathlist:
-            if path.filename[:1] == ".":
-                continue
-            if path.isDirectory:
-                path.directory = path.filename
-                list.append({'filename': path.filename, 'directory': path.directory})
-            else:
-                list.append({'filename': path.filename})
-        return list
-
-    def get_content_file(self, filename):
-        file_obj = tempfile.NamedTemporaryFile()
-        with open('local_file', 'wb') as fp:
-            self.conn.retrieveFile('FamilyLibrary', filename, fp)
-        return [line.rstrip('\n') for line in open('local_file')]
 
 
 class SpotifyPlaylist:
