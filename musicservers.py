@@ -155,11 +155,10 @@ def contextMenu(buttons, instance, colors, text=None):
         title = "Menu"
     else:
         title = text
-    popup = Popup(title=title, content=menu, size=(Window.width / 2, (Window.height / 8 + 5) * len(buttons)),
-                  size_hint=(None, None))
+    popup = Popup(title=title, content=menu, size=(Window.width/2, (Window.height/8+5) * len(buttons)), size_hint=(None, None))
     for item1 in buttons:
         btn1 = Button(text=item1[0], id="0",
-                      background_color=random.choice(colors), size=(Window.width / 2 - 40, Window.height / 8))
+                      background_color=random.choice(colors), size=(Window.width/2-40, Window.height/8))
         btn1.bind(on_release=item1[1])
         btn1.item = instance
         btn1.popup = popup
@@ -199,43 +198,38 @@ class SelectMpdAlbum:
         self.popupSearch = popupSearch
         self.colors = colors
         self.sortlist = True
-        self.layout_popup = GridLayout(cols=1, spacing=10, size_hint_y=None, size=(Window.width / 2, Window.height))
+        self.layout_popup = GridLayout(cols=1, spacing=10, size_hint_y=None, size=(Window.width/2, Window.height))
         self.layout_popup.bind(minimum_height=self.layout_popup.setter('height'))
 
-        root = ScrollView(size_hint=(1, None), size=(Window.width / 2 - 40, Window.height - Window.height / 6),
-                          scroll_timeout=250)
+        root = ScrollView(size_hint=(1, None), size=(Window.width/2-40, Window.height -Window.height/6), scroll_timeout=250)
         root.add_widget(self.layout_popup)
         grid = BoxLayout(orientation='vertical', size=(
-            Window.width / 2 - 20,
-            Window.height - 20))  # (cols=1, spacing=10, size_hint_y=None, size=(400, Window.height))
+            Window.width/2-20, Window.height - 20))  # (cols=1, spacing=10, size_hint_y=None, size=(400, Window.height))
         grid.add_widget(root)
-        self.horizon = BoxLayout(orientation='horizontal', size=(Window.width / 2 - 40, Window.height / 8))
+        self.horizon = BoxLayout(orientation='horizontal', size=(Window.width/2-40, Window.height/8))
         self.horizons = []
         for i in range(5):
-            btn1 = Button(text="" + str(i * maxalbums), size=(Window.width / 2 - 60, Window.height / 8),
-                          background_color=random.choice(self.colors))
+            btn1 = Button(text="" + str(i * maxalbums), size=(Window.width/2-60, Window.height/8),background_color=random.choice(self.colors))
             btn1.bind(on_press=lambda x: self.onHorizon(x))
             self.horizons.append(btn1)
 
             self.horizon.add_widget(btn1)
         grid.add_widget(self.horizon)
         self.popup = Popup(title="", separator_height=0, content=grid, size_hint=(None, None),
-                           size=(Window.width / 2, Window.height))
+                           size=(Window.width/2, Window.height))
         i = 0
         self.buttons = []
         # self.dummies=[]
         for i in range(maxalbums):
-            btn1 = MeasureButtonOnTouch(text="", id=str(i), size_hint_y=None, valign='middle',
-                                        text_size=(Window.width / 2 - 100, None),
-                                        halign='left', size=(Window.width / 2 - 60, Window.height / 8),
+            btn1 = MeasureButtonOnTouch(text="", id=str(i), size_hint_y=None, valign='middle', text_size=(Window.width/2-100, None),
+                                        halign='left', size=(Window.width/2-60, Window.height/8), 
                                         padding_y=0, background_color=random.choice(self.colors))
             # btn1.bind(on_press=lambda x: self.onClick(x))
             btn1.onShortPress = self.onClick
             btn1.onLongPress = self.onLongClick
             self.buttons.append(btn1)
             # self.dummies.append(self.dummybutton(btn1))
-        self.close_button = Button(text="..", id="a", size_hint_y=None, size=(Window.width / 2, Window.height / 8),
-                                   on_press=self.goback,
+        self.close_button = Button(text="..", id="a", size_hint_y=None, size=(Window.width/2, Window.height/8), on_press=self.goback,
                                    background_color=random.choice(self.colors))
         # self.dummybutton=self.dummybutton()
 
@@ -300,11 +294,11 @@ class SelectMpdAlbum:
         self.addAndPlayAlbum(tempdir)
 
     def addAndPlayMpdAlbum(self, tempdir):
-        try:
-            song_pos = self.music_controller.get_length_playlist_mpd()
-            self.playDir(tempdir)
-            self.music_controller.select_and_play_mpd(song_pos)
-        except:
+      try:
+        song_pos = self.music_controller.get_length_playlist_mpd()
+        self.playDir(tempdir)
+        self.music_controller.select_and_play_mpd(song_pos)
+      except:
             try:
                 self.music_controller.select_and_play_mpd(0)
             except:
