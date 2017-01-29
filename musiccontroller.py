@@ -3,11 +3,10 @@ import json
 import utils
 
 try:
-  import mpd.base as mpd
+    import mpd.base as mpd
 except:
-  import mpd
+    import mpd
 
-  
 import requests.api as requests
 import difflib
 
@@ -189,17 +188,17 @@ class music_controller:
             response = self.get_mopidy_playlist()
             playlist = []
             for item in response:
-              try:
-                m, s = divmod(item['length'] / 1000, 60)
-                # track_no
-                t = item["track_no"]
-                text = '{t:02d}-{artist}-{title}({f:02d}:{s:02d})'.format(f=m, s=s, t=t,
-                                                                          artist=item["artists"][0]["name"].encode(
-                                                                              'utf-8'),
-                                                                          title=item["name"].encode('utf-8'))
-                playlist.append(text)
-              except:
-                  pass
+                try:
+                    m, s = divmod(item['length'] / 1000, 60)
+                    # track_no
+                    t = item["track_no"]
+                    text = '{t:02d}-{artist}-{title}({f:02d}:{s:02d})'.format(f=m, s=s, t=t,
+                                                                              artist=item["artists"][0]["name"].encode(
+                                                                                  'utf-8'),
+                                                                              title=item["name"].encode('utf-8'))
+                    playlist.append(text)
+                except:
+                    pass
             return playlist
 
     def do_mopidy_call(self, mopidyaction):
@@ -295,7 +294,7 @@ class music_controller:
         # no_integers = [x for x in s if len(x)>0]
         # print(no_integers)
         res = difflib.get_close_matches(search, self.listArtists, 25)
-        #print (res)
+        # print (res)
         find = res[0]
         for item in res:
             if search in item:
