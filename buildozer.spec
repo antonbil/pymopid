@@ -28,7 +28,7 @@ source.include_exts = py,png,jpg,kv,atlas
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 0.2
+version = 0.3
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
@@ -36,7 +36,7 @@ version = 0.2
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = simplejson,ehp,ConfigParser,openssl,requests,kivy,pysmb
+requirements =  simplejson,ehp,ConfigParser,openssl,requests,kivy,pysmb
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes

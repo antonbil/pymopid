@@ -25,12 +25,7 @@ from kivy.uix.listview import ListView, ListItemButton
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.textinput import TextInput
-try:
-    from smb.SMBConnection import SMBConnection
-except:
-    pass
 
-#import connectArduino
 import musiccontroller
 import musicservers
 import settings
@@ -455,11 +450,11 @@ class SmbDir:
         self.conn = SMBConnection("wieneke", "wieneke", "client", "", use_ntlm_v2=True, is_direct_tcp=True)
         assert self.conn.connect(SAMBA_SERVER, 445)'''
 
-        self.conn = SMBConnection("wieneke", "wieneke", "client", "")#, use_ntlm_v2=True)
-        assert self.conn.connect(SAMBA_SERVER, 139)
+        self.conn = SMBConnection("wieneke", "wieneke", "client", "", use_ntlm_v2=True)
+        assert self.conn.connect(SAMBA_SERVER, 445)#this was 139
 
     def get_dir(self, dir):
-        pathlist = self.conn.listPath("FamilyLibrary", dir, search=55, pattern='*', timeout=30)
+        pathlist = self.conn.listPath("FamilyLibrary", dir, search=55, pattern='*', timeout=60)
         list = []
         for path in pathlist:
             if path.filename[:1] == ".":
@@ -717,13 +712,6 @@ class LoginScreen(BoxLayout):
 
     def __init__(self, **kwargs):
         self.connected=False
-        try:
-            self.smb_dir = SmbDir()
-            self.smb_dir.get_dir("TotalMusic")
-        except:
-            #Alert("No action","not implemented yet")
-            pass
-
         self.music_controller = musiccontroller.music_controller()
         #self.arduino = connectArduino.ConnectArduino(self.music_controller)
         myconfig = settings.get_config()
@@ -793,10 +781,12 @@ class LoginScreen(BoxLayout):
                                                           currentdir="192.168.2.8/spotify/data",
                                                           addAndPlayAlbum=spotify_playlist.addAndPlaySpotifyAlbum)
         self.selSmbAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
-                                                       getdir=lambda x: self.smb_dir.get_dir(x),
-                                                       is_directory=lambda x: "directory" in x,
-                                                       playdir=lambda x: self.play_samba_dir(x),
-                                                       currentdir="TotalMusic")
+                                                          getdir=lambda x: spotify_playlist.get_mopify_playlist(x),
+                                                          is_directory=lambda x: "directory" in x,
+                                                          playdir=lambda x: self.play_mpd_playlist(x),
+                                                          currentdir="192.168.2.8/spotify/mpd",
+                                                          addAndPlayAlbum=self.add_and_play_mpd_playlist)
+
         self.selMopidyReleases = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
                                                              getdir=lambda x: spotify_playlist.browse_mopidy(x),
                                                              is_directory=lambda x: True,
@@ -835,6 +825,30 @@ class LoginScreen(BoxLayout):
     def list_spotify_files(self, instance):
         self.selMopidyAlbum.popupOpen = False
         self.selMopidyAlbum.display("/")
+
+    def add_and_play_mpd_playlist(self, dir):
+        try:
+            song_pos = self.music_controller.get_length_playlist_mpd()
+            self.play_mpd_playlist(dir)
+            self.music_controller.select_and_play_mpd(song_pos)
+        except:
+            self.music_controller.select_and_play_mpd(0)
+    
+    def play_mpd_playlist(self, dir):
+        try:
+            filename = "http://"+(dir + "/mp3info.txt".replace("//","/").replace(" ","%20"))
+            response = requests.get(filename, verify=False)
+            lines=(response.content).split('/home/wieneke/FamilyLibrary/FamilyMusic/')
+            del lines[0]
+            del lines[0]
+            for item in lines:
+              try:  
+                fname = item.split("=== ")[0]
+                self.music_controller.mc.add(fname)
+              except:
+                  pass
+        except:
+            Alert("Warning","playlist not added")
 
     def play_samba_dir(self, dir):
         filename = dir + "/mp3info.txt"
