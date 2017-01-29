@@ -502,7 +502,8 @@ class SpotifyPlaylist:
             text=link.text()
             #if "/" in link['href'] and not "Parent" in link.string:
             if "/" in href and not "Parent" in text:
-                list.append({'filename': text, 'directory': text})
+                item={'filename': utils.remove_slash_at_end(text), 'directory': utils.remove_slash_at_end(text)}
+                list.append(item)
         if len(list) == 0:
             #self.myurls = soup.findAll("div", {"class": "url"})
             #myartists = soup.findAll("div", {"class": "artist"})
@@ -799,6 +800,7 @@ class LoginScreen(BoxLayout):
             filename = "http://"+(dir + "/mp3info.txt".replace("//","/").replace(" ","%20"))
             response = requests.get(filename, verify=False)
             lines=(response.content).split('/home/wieneke/FamilyLibrary/FamilyMusic/')
+            print (lines)
             del lines[0]
             del lines[0]
             for item in lines:
