@@ -665,7 +665,7 @@ class LoginScreen(BoxLayout):
     mode_title = True
 
     def __init__(self, **kwargs):
-        try:
+      try:
         self.connected=False
         self.music_controller = musiccontroller.music_controller()
         #self.arduino = connectArduino.ConnectArduino(self.music_controller)
@@ -758,7 +758,7 @@ class LoginScreen(BoxLayout):
                                                           savePlaylist=self.musicPlaylister.savePlaylist)
 
         Clock.schedule_interval(self.update, 1)
-        except:
+      except:
             utils.AlertError()
 
     def settings(self, instance):
@@ -1115,7 +1115,7 @@ class LoginScreen(BoxLayout):
         self.selSmbAlbum.display("/")
       except:
           utils.Alert("No action", "not implemented yet")
-        pass
+          pass
         # print(self.music_controller.mc.list_files("/"))
 
     def doAction(self, instance):
