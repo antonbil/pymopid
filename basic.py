@@ -1129,6 +1129,10 @@ class LoginScreen(BoxLayout):
 class MyApp(App):
     def build(self):
         return LoginScreen()
+    def on_pause(self):
+        return True
+    def on_resume(self):
+        pass
 
 
 if __name__ == '__main__':
