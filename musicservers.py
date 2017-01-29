@@ -14,6 +14,8 @@ from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.treeview import TreeViewLabel, TreeView
 
+import utils
+
 # Remove the specified $song numbers (starting from 0) from the current playlist. No return value.
 
 Builder.load_string("""
@@ -314,9 +316,7 @@ class SelectMpdAlbum:
     def display(self, dir, start=None):
         """display dir, with start"""
         if start == None:
-            # self.popupOpen=False
             start = 0
-        # print(self.music_controller.mc.list_files(dir))
         tempdir = (self.currentdir + dir).replace("//", "/")
         playlist = self.getdir(tempdir)
         try:
@@ -324,7 +324,8 @@ class SelectMpdAlbum:
         except:
             numdirs = 0
         if numdirs == 0:
-            print("play:" + tempdir)
+            tempdir = utils.remove_slash_at_end(tempdir)
+
             self.playDir(tempdir)
             return
 
@@ -344,7 +345,9 @@ class SelectMpdAlbum:
         for item in playlist:
             if "directory" in item and i >= start and i < maxalbums + start:
                 index = i - start
-                self.buttons[index].text = item["directory"]
+                dir = item["directory"].split("/")
+                dir = dir[len(dir) - 1]
+                self.buttons[index].text = dir
                 self.buttons[index].background_color = random.choice(self.colors)
                 # self.dummies[index].background_color=random.choice(self.colors)
                 self.layout_popup.add_widget(self.buttons[index])

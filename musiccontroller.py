@@ -1,5 +1,7 @@
 import json
 
+import utils
+
 try:
   import mpd.base as mpd
 except:
@@ -83,7 +85,11 @@ class mpd_controller:
         return self.get_client().playlistinfo()
 
     def list_files(self, uri):
-        return self.get_client().listfiles(uri)
+        if len(uri) > 1:
+            uri = utils.remove_slash_at_end(uri)
+            uri = utils.remove_slash_at_start(uri)
+        result = self.get_client().lsinfo(uri)
+        return result
 
     def add(self, uri):
         return self.get_client().add(uri)
