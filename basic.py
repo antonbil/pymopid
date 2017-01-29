@@ -29,6 +29,7 @@ from kivy.uix.textinput import TextInput
 import musiccontroller
 import musicservers
 import settings
+import utils
 from musicservers import MeasureButtonOnTouch
 from settings import Settings
 
@@ -51,18 +52,6 @@ class IconButton(ButtonBehavior, AsyncImage):
 
 class LabelButton(ButtonBehavior, Label):
     pass
-
-
-class Alert:
-    def __init__(self, title,message):
-        e = sys.exc_info()[0]
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-
-        popup = Popup(title=title,pos_hint={'x': 10.0 / Window.width, 
-                            'y':10.0 /  Window.height},
-        content=Label(text=message),#text= str(e)+"\n"+str(exc_value)+"\n"+str(exc_traceback)),
-            size_hint=(None, None), size=(Window.width/2, Window.height/2))
-        popup.open()
 
 
 class PopList:
@@ -667,12 +656,7 @@ class MusicPlaylister(MopidyPlaylister):
                         pass
                 return list
             except:
-                e = sys.exc_info()[0]
-                print(e)
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                print repr(traceback.extract_tb(exc_traceback))
-                Alert("No action","not implemented yet")
-                pass
+                utils.Alert("No action", "not implemented yet")
 
     def playPlaylist(self, url):
         self.add_mopidy_playlist(url)
@@ -711,6 +695,7 @@ class LoginScreen(BoxLayout):
     mode_title = True
 
     def __init__(self, **kwargs):
+        try:
         self.connected=False
         self.music_controller = musiccontroller.music_controller()
         #self.arduino = connectArduino.ConnectArduino(self.music_controller)
@@ -803,6 +788,8 @@ class LoginScreen(BoxLayout):
                                                           savePlaylist=self.musicPlaylister.savePlaylist)
 
         Clock.schedule_interval(self.update, 1)
+        except:
+            utils.AlertError()
 
     def settings(self, instance):
         settings = Settings(self.change_settings)
@@ -832,7 +819,10 @@ class LoginScreen(BoxLayout):
             self.play_mpd_playlist(dir)
             self.music_controller.select_and_play_mpd(song_pos)
         except:
-            self.music_controller.select_and_play_mpd(0)
+            try:
+                self.music_controller.select_and_play_mpd(0)
+            except:
+                pass
     
     def play_mpd_playlist(self, dir):
         try:
@@ -848,7 +838,7 @@ class LoginScreen(BoxLayout):
               except:
                   pass
         except:
-            Alert("Warning","playlist not added")
+            utils.Alert("Warning", "playlist not added")
 
     def play_samba_dir(self, dir):
         filename = dir + "/mp3info.txt"
@@ -999,7 +989,7 @@ class LoginScreen(BoxLayout):
             # print(self.similarartists)
             self.similarArtistsPopup.display_tracks(artist)
         except:
-            Alert("Notification","not implemented yet")
+            utils.Alert("Notification", "not implemented yet")
 
     def addAlbum(self, instance):
         instance.popup.dismiss()
@@ -1154,7 +1144,7 @@ class LoginScreen(BoxLayout):
         self.selSmbAlbum.popupOpen = False
         self.selSmbAlbum.display("/")
       except:
-        Alert("No action","not implemented yet")
+          utils.Alert("No action", "not implemented yet")
         pass
         # print(self.music_controller.mc.list_files("/"))
 
@@ -1173,4 +1163,7 @@ if __name__ == '__main__':
     Config.set("kivy", "keyboard_mode", 'systemanddock')
     Config.write()
 
-    MyApp().run()
+    try:
+        MyApp().run()
+    except:
+        utils.AlertError()

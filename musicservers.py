@@ -294,9 +294,15 @@ class SelectMpdAlbum:
         self.addAndPlayAlbum(tempdir)
 
     def addAndPlayMpdAlbum(self, tempdir):
+        try:
         song_pos = self.music_controller.get_length_playlist_mpd()
         self.playDir(tempdir)
         self.music_controller.select_and_play_mpd(song_pos)
+        except:
+            try:
+                self.music_controller.select_and_play_mpd(0)
+            except:
+                pass
 
     def optionButton(self, instance):
         try:
