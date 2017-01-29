@@ -1188,6 +1188,12 @@ class MyApp(App):
     def build(self):
         return LoginScreen()
 
+    def on_pause(self):
+        return True
+
+    def on_resume(self):
+        # Here you can check if any data needs replacing (usually nothing)
+        pass
 
 if __name__ == '__main__':
     Config.set("kivy", "keyboard_mode", 'systemanddock')
