@@ -41,7 +41,7 @@ def ping(host):
     """
 
     # Ping parameters as function of OS
-    ping_param = "-n 1" if system_name().lower=="windows" else "-c 1"
+    ping_param =  "-c 3"
 
-    # Pinging
+    # Pinging ["ping", "-c", "3", hostname]
     return system_call("ping " + ping_param + " " + host) == 0
