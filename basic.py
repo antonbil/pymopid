@@ -682,9 +682,14 @@ class LoginScreen(BoxLayout):
             # self.arduino = connectArduino.ConnectArduino(self.music_controller)
             myconfig = settings.get_config()
             try:
-                self.set_server_ip(myconfig["mainserver"])
+                if not self.set_server_ip(myconfig["mainserver"]):
+                    print("try other server")
+                    server=settings.get_available_server()
+                    if not server==None:
+                        self.set_server_ip(server)
             except:
                 pass
+
 
             super(LoginScreen, self).__init__(**kwargs)
             self.orientation = "vertical"
@@ -790,10 +795,10 @@ class LoginScreen(BoxLayout):
             musiccontroller.mpdServerUrl = server
             self.music_controller.mc.connect_mpd()
             self.connected = True
-            return
+            return True
         except:
             self.connected = False
-            pass
+            return False
 
     def list_spotify_files(self, instance):
         self.selMopidyAlbum.popupOpen = False
