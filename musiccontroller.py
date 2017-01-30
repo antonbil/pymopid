@@ -247,12 +247,29 @@ class music_controller:
         else:
             # do nothing
             todo = self.mopidyswitcher[action]
-            response = self.do_mopidy_call("core.playback." + todo)
+            if todo=="previous":
+                pos=self.get_mopidy_index()
+                if pos==0:
+                    pos = self.get_length_playlist_mopidy()
+                pos=pos-1
+                self.select_and_play_mopidy(pos)
+            else:
+                if todo=="next":
+                    pos=self.get_mopidy_index()
+                    pos2 = self.get_length_playlist_mopidy()-1
+                    if pos==pos2:
+                        self.select_and_play_mopidy(0)
+                        return
+
+                response = self.do_mopidy_call("core.playback." + todo)
         return
 
     def get_mopidy_playlist(self):
         return self.do_mopidy_call("core.tracklist.get_tracks")
 
+    def get_mopidy_index(self):
+        return self.do_mopidy_call("core.tracklist.index")
+    
     def remove_track_mopidy(self, songpos):
         tracklist = self.get_mopidy_playlist()
         uri = tracklist[songpos]["uri"]
