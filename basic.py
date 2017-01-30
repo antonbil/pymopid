@@ -150,14 +150,13 @@ class MenuScreen(GridLayout):
         self.submenu = SubMenuScreen(self.main)
         self.addButton("Tracks", self.main.popupTracks.display_tracks)
         self.addButton("Tracks Clear", self.main.music_controller.clear_tracks)
-        self.addButton("Search Spotify", self.main.listArtistOpen)
-        self.addButton("Browse Mpd", self.main.list_files)
-        self.addButton("Mpd playlists", self.main.list_smb_files)
-        self.addButton("Mpd <--> Spotify", self.main.mpd_spotify)
+        self.addButton("Browse Disk", self.main.list_files)
+        self.addButton("Disk playlists", self.main.list_smb_files)
+        self.addButton("Disk <--> Spotify", self.main.mpd_spotify)
         self.addButton("Similar artists", self.main.similarForPlayingArtist)
-        self.addButton("New Releases", self.main.spotify_browse)  #
+        self.addButton("Search Spotify", self.main.listArtistOpen)
         self.addButton("Spotify SubMenu", self.submenu.open)
-        self.addButton("Settings", self.main.settings)
+        self.addButton("Server IP", self.main.settings)
         self.addButton("Quit", self.main.quit)
 
     def addButton(self, title, action):
@@ -184,6 +183,7 @@ class SubMenuScreen(MenuScreen):
         self.addButton("Browse Tree", self.main.display_tracks_tree)
         self.addButton("On Local Server", self.main.list_spotify_files)
         self.addButton("Users Playlists", self.main.spotify_users)
+        self.addButton("New Releases", self.main.spotify_browse)  #
         self.addButton("Main Directory", self.main.spotify_genres)
 
 
@@ -681,7 +681,10 @@ class LoginScreen(BoxLayout):
             self.music_controller = musiccontroller.music_controller()
             # self.arduino = connectArduino.ConnectArduino(self.music_controller)
             myconfig = settings.get_config()
-            self.set_server_ip(myconfig["mainserver"])
+            try:
+                self.set_server_ip(myconfig["mainserver"])
+            except:
+                pass
 
             super(LoginScreen, self).__init__(**kwargs)
             self.orientation = "vertical"
