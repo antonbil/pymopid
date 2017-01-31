@@ -792,10 +792,13 @@ class LoginScreen(BoxLayout):
     def set_server_ip(self, server):
         try:
             server = server.split("(")[0]
-            musiccontroller.mpdServerUrl = server
-            self.music_controller.mc.connect_mpd()
-            self.connected = True
-            return True
+            if utils.ping(server):
+                musiccontroller.mpdServerUrl = server
+                self.music_controller.mc.connect_mpd()
+                self.connected = True
+                return True
+            else:
+                return False
         except:
             self.connected = False
             return False
