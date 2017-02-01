@@ -251,7 +251,7 @@ class ListArtist(GridLayout):
         # print("find:" + value, self.parent)
         try:
             # print("find:"+value,self.parent.music_controller)
-            list, find = self.parent.music_controller.find_artist(value)
+            list, find = self.parent.music_controller.mc.find_artist(value)
             print (list)
             list.sort(key=lambda x: 0 if value in x else 1)
             # a if condition else b
@@ -1081,7 +1081,8 @@ class LoginScreen(BoxLayout):
         self.mode_title = not self.mode_title
 
     def update(self, dt):
-        if not self.connected:
+        if not self.connected or not self.music_controller.mc.connected:
+            print ("not connected")
             return
         # print("st1:"+self.music_controller.nl)
         try:
