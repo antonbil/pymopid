@@ -4,6 +4,7 @@ from kivy.lang import Builder
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.popup import Popup
 from kivy.core.window import Window
+import utils
 
 
 Builder.load_string("""
@@ -56,6 +57,7 @@ Builder.load_string("""
 
 path = 'pgp.ini'
 
+servers=('192.168.2.16', '192.168.2.9', '192.168.2.74', '192.168.2.12', '192.168.2.124')
 
 def get_config():
     config = ConfigParser.SafeConfigParser(
@@ -68,6 +70,12 @@ def get_config():
         pass
     return {"mainserver": main_server}
 
+def get_available_server():
+    for server in servers:
+        if utils.ping(server):
+            print("server active:"+server)
+            return server
+    return None
 
 class Settings(Popup):
     server_text = ObjectProperty()

@@ -1,4 +1,6 @@
 import sys
+from platform import system as system_name # Returns the system/OS name 
+from os import system as system_call # Execute a shell command
 
 from kivy.core.window import Window
 from kivy.uix.label import Label
@@ -31,3 +33,15 @@ class AlertError:
         e = sys.exc_info()[0]
         exc_type, exc_value, exc_traceback = sys.exc_info()
         Alert("Error", str(e) + "\n" + str(exc_value) + "\n" + str(exc_traceback))
+
+def ping(host):
+    """
+    Returns True if host (str) responds to a ping request.
+    Remember that some hosts may not respond to a ping request even if the host name is valid.
+    """
+
+    # Ping parameters as function of OS
+    ping_param =  "-c 3"
+
+    # Pinging ["ping", "-c", "3", hostname]
+    return system_call("ping " + ping_param + " " + host) == 0

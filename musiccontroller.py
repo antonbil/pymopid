@@ -15,13 +15,23 @@ mpdServerUrl = "192.168.2.74"
 
 class mpd_controller:
     def __init__(self):
+        self.listArtists = []
+        print("try connect mpd")
+        self.connected=False
         self.connect_mpd()
+        self.listArtists = self.getArtists()
+        print("end connect mpd")
 
     def connect_mpd(self):
         self.client = mpd.MPDClient()
         try:
             self.client.connect(mpdServerUrl, 6600)
-        except mpd.ConnectionError:
+            self.connected=True
+            if len(self.listArtists)==0:
+                print ("try to get list of artists")
+                self.listArtists = self.getArtists()
+        except :
+            self.connected=False
             pass
 
     def get_client(self):
@@ -97,16 +107,37 @@ class mpd_controller:
         return self.get_client().delete(songpos)
 
     def list_artists(self):
-        return self.get_client().list("artist")
+        if self.connected:
+            return self.get_client().list("artist")
+        else:
+            return []
         # $pl->delete( $song [, $song [...] ] );
+    def getArtists(self):
+        s = self.list_artists()
+        s = [item.lower() for item in s]
+        return s
+
+    def find_artist(self, search):
+        search = search.lower()
+        # no_integers = [x for x in s if len(x)>0]
+        # print(no_integers)
+        res = difflib.get_close_matches(search, self.listArtists, 25)
+        # print (res)
+        find = res[0]
+        for item in res:
+            if search in item:
+                find = item
+        return (res, find)
+
 
 
 class music_controller:
-    mc = mpd_controller()
 
     nl = "2"
 
     def __init__(self):
+        self.mc = mpd_controller()
+
         self.mpdswitcher = {
             0: self.mc.previous,
             1: self.mc.pause,
@@ -122,7 +153,6 @@ class music_controller:
         ]
 
         self.engine = "mpd"
-        self.listArtists = self.getArtists()
 
     def do_param_mopidy_call(self, method, params=None):
         data = {"jsonrpc": "2.0", "id": 1, "method": method}
@@ -247,12 +277,29 @@ class music_controller:
         else:
             # do nothing
             todo = self.mopidyswitcher[action]
-            response = self.do_mopidy_call("core.playback." + todo)
+            if todo=="previous":
+                pos=self.get_mopidy_index()
+                if pos==0:
+                    pos = self.get_length_playlist_mopidy()
+                pos=pos-1
+                self.select_and_play_mopidy(pos)
+            else:
+                if todo=="next":
+                    pos=self.get_mopidy_index()
+                    pos2 = self.get_length_playlist_mopidy()-1
+                    if pos==pos2:
+                        self.select_and_play_mopidy(0)
+                        return
+
+                response = self.do_mopidy_call("core.playback." + todo)
         return
 
     def get_mopidy_playlist(self):
         return self.do_mopidy_call("core.tracklist.get_tracks")
 
+    def get_mopidy_index(self):
+        return self.do_mopidy_call("core.tracklist.index")
+    
     def remove_track_mopidy(self, songpos):
         tracklist = self.get_mopidy_playlist()
         uri = tracklist[songpos]["uri"]
@@ -283,23 +330,6 @@ class music_controller:
         self.mc.stop()
         self.engine = 'mpd'
         self.mc.play(song_pos)
-
-    def getArtists(self):
-        s = self.mc.list_artists()
-        s = [item.lower() for item in s]
-        return s
-
-    def find_artist(self, search):
-        search = search.lower()
-        # no_integers = [x for x in s if len(x)>0]
-        # print(no_integers)
-        res = difflib.get_close_matches(search, self.listArtists, 25)
-        # print (res)
-        find = res[0]
-        for item in res:
-            if search in item:
-                find = item
-        return (res, find)
 
     def get_state(self):
         status = {}
