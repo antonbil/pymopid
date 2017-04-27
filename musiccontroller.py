@@ -195,7 +195,7 @@ class music_controller:
         if uri == "":
             uri = None
         res = self.do_param_mopidy_call("core.library.browse", {'uri': uri})
-        print(res)
+        # print(res)
         return res["result"]
 
     def get_length_playlist_mpd(self):

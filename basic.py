@@ -264,7 +264,7 @@ class ListArtist(GridLayout):
         try:
             # print("find:"+value,self.parent.music_controller)
             list, find = self.parent.music_controller.mc.find_artist(value)
-            print (list)
+            # print (list)
             list.sort(key=lambda x: 0 if value in x else 1)
             # a if condition else b
             self.suggestButton.text = find
@@ -483,7 +483,7 @@ class SpotifyPlaylist:
     def user_mopidy(self, uri=""):
         pass
 
-    def browse_mopidy(self, uri=""):
+    def browse_mopidy(self, uri="", forceUri=None):
         print("uri:" + uri)
         try:
             last = uri[-1:]
@@ -505,7 +505,10 @@ class SpotifyPlaylist:
                 # item chosen, play album
 
         self.mopidy_releases = {}
-        res = self.music_controller.browse_mopidy(self.parent.selMopidyReleases.startDir)  # "spotifytunigo:releases")
+        print ("startdir:", self.parent.selMopidyReleases.startDir)
+        if forceUri == None:
+            forceUri = self.parent.selMopidyReleases.startDir
+        res = self.music_controller.browse_mopidy(forceUri)  # "spotifytunigo:releases")
         i = 0
         list = []
         for release in res:
@@ -513,7 +516,7 @@ class SpotifyPlaylist:
             self.mopidy_releases[text] = release['uri']
             list.append({'filename': release['name'], 'directory': release['name'], "url": release['uri']})
             i += 1
-        return list
+        return list, playurl
 
     def get_mopify_playlist(self, url):
         response = requests.get("http://" + url, verify=False)
@@ -537,7 +540,7 @@ class SpotifyPlaylist:
             myartists = []
             myalbums = []
             for link in dom.find('div'):
-                print(link)
+                #print(link)
                 class Object(object):
                     pass
 
@@ -778,7 +781,8 @@ class LoginScreen(BoxLayout):
                                                            addAndPlayAlbum=self.add_and_play_mpd_playlist)
 
             self.selMopidyReleases = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
-                                                                 getdir=lambda x: spotify_playlist.browse_mopidy(x),
+                                                                 getdir=lambda x, y: spotify_playlist.browse_mopidy(x,
+                                                                                                                    forceUri=y),
                                                                  is_directory=lambda x: True,
                                                                  playdir=lambda x: spotify_playlist.add_mopidy_release(
                                                                      x),
@@ -838,7 +842,7 @@ class LoginScreen(BoxLayout):
             filename = "http://" + (dir + "/mp3info.txt".replace("//", "/").replace(" ", "%20"))
             response = requests.get(filename, verify=False)
             lines = (response.content).split(LIBRARY_FAMILY_MUSIC)
-            print (lines)
+            #print (lines)
             del lines[0]
             del lines[0]
             for item in lines:
@@ -1085,7 +1089,7 @@ class LoginScreen(BoxLayout):
     def getSearch(self):
         temp1 = self.music_controller.do_mopidy_search(self.popupSearch.artist)
         self.currentArtist = temp1[0]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
-        print(self.currentArtist)
+        #print(self.currentArtist)
         temp = temp1[0]["tracks"]
         out_list = []
         added = set()

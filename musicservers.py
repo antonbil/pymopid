@@ -189,8 +189,10 @@ class SelectMpdAlbum:
             self.currentdir = currentdir
         self.savePlaylist = savePlaylist
 
-        print(self.currentdir)
+        print("currentdir:", self.currentdir)
         self.is_directory = is_directory
+        self.dirs = []
+        self.curdirs = []
         self.playdir = playdir
         self.getdir = getdir
         self.parent = parent
@@ -244,12 +246,17 @@ class SelectMpdAlbum:
         self.playDir(self.currentdir)
 
     def goback(self, instance):
-        # print ("go back")
+        if self.currentdir.endswith("/"):
+            self.currentdir = self.currentdir[:-1]
+        print ("go back" + self.currentdir)
         head, tail = os.path.split(self.currentdir)
         head, tail = os.path.split(head)
-        print(head)
+        # print(head)
+        if len(self.dirs) > 1:
+            self.dirs.pop()
+            self.curdirs.pop()
         self.currentdir = head + "/"
-        self.display("")
+        self.display(self.dirs[-1], addtolist=False)
 
     def playDir(self, dir):
         if dir[-1:] == "/":
@@ -325,15 +332,28 @@ class SelectMpdAlbum:
         btn1.bind(on_press=lambda x: self.optionButton(x))
         return btn1
 
-    def display(self, dir, start=None):
+    def display(self, dir, start=None, addtolist=True):
         """display dir, with start"""
         if start == None:
             start = 0
-        print("tempdir")
+        #print("tempdir")
         tempdir = (self.currentdir + dir).replace("//", "/")
-        print(tempdir)
-        playlist = self.getdir(tempdir)
-        print(playlist)
+        # print(tempdir)
+        forcedir = None
+        if addtolist:
+            self.dirs.append(tempdir)
+        else:
+            tempdir = dir
+            forcedir = self.curdirs[-1]
+        print("dirs:", self.dirs)
+        print("dir:" + tempdir)
+        playlist, curdir = self.getdir(tempdir, forcedir)
+        if addtolist:
+            self.curdirs.append(curdir)
+        else:
+            tempdir = dir
+        print("curdirs:", self.curdirs)
+        print("playlist:", playlist)
         try:
             numdirs = sum(1 for x in playlist if self.is_directory(x))
         except:
