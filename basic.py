@@ -32,11 +32,15 @@ import utils
 from musicservers import MeasureButtonOnTouch
 from settings import Settings
 
+FAMILY_MUSIC_ = "FamilyMusic/"
+
+LIBRARY_FAMILY_MUSIC = "/home/wieneke/FamilyLibrary/" + FAMILY_MUSIC_
+
 FOLDER_JPG = "/folder.jpg"
 
-URI_FOR_IMAGE_OF_ALBUM = "http://192.168.2.8:8081/FamilyMusic/"
+URI_FOR_IMAGE_OF_ALBUM = "http://192.168.2.8:8081/" + FAMILY_MUSIC_
 
-MOPIDY_LIBRARY_FAMILY_MUSIC = "file:///home/wieneke/FamilyLibrary/FamilyMusic/"
+MOPIDY_LIBRARY_FAMILY_MUSIC = "file://" + LIBRARY_FAMILY_MUSIC
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -828,7 +832,7 @@ class LoginScreen(BoxLayout):
         try:
             filename = "http://" + (dir + "/mp3info.txt".replace("//", "/").replace(" ", "%20"))
             response = requests.get(filename, verify=False)
-            lines = (response.content).split('/home/wieneke/FamilyLibrary/FamilyMusic/')
+            lines = (response.content).split(LIBRARY_FAMILY_MUSIC)
             print (lines)
             del lines[0]
             del lines[0]
@@ -847,7 +851,7 @@ class LoginScreen(BoxLayout):
         lines = self.smb_dir.get_content_file(filename)
         del lines[0]
         for item in lines:
-            fname = item.split("=== ")[0].replace("/home/wieneke/FamilyLibrary/FamilyMusic/", "")
+            fname = item.split("=== ")[0].replace(LIBRARY_FAMILY_MUSIC, "")
             self.music_controller.mc.add(fname)
 
     def display_tracks_tree(self, instance=None):
