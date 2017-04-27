@@ -501,7 +501,7 @@ class SpotifyPlaylist:
             if len(playurl) > 0:
                 self.music_controller.playlist_add_mopidy(playurl)
                 # self.add_mopidy_release(uri)
-                return
+                return [], None
                 # item chosen, play album
 
         self.mopidy_releases = {}
