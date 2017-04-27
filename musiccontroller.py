@@ -350,6 +350,11 @@ class music_controller:
                     uri = result["album"]["uri"]
                 except:
                     uri = ""
+                if len(uri) == 0:
+                    try:
+                        uri = result["uri"]
+                    except:
+                        uri = ""
                 try:
                     totaltime = int(result["length"]) / 1000
                 except:

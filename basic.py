@@ -1,19 +1,15 @@
 # encoding=utf8
 import os
 import random
+import requests.api as requests
 import sys
 import traceback
-from time import sleep
-
-import requests.api as requests
-from ehp import *
 from kivy.adapters.dictadapter import ListAdapter
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.config import Config
 from kivy.core.window import Window
 from kivy.lang import Builder
-from kivy.properties import *
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
@@ -24,6 +20,10 @@ from kivy.uix.listview import ListView, ListItemButton
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.textinput import TextInput
+from time import sleep
+
+from ehp import *
+from kivy.properties import *
 
 import musiccontroller
 import musicservers
@@ -1076,7 +1076,7 @@ class LoginScreen(BoxLayout):
         try:
             status = self.music_controller.get_state()  # self.arduino.exchange()
 
-            # print("st:"+status)
+            print(status)
             m, s = divmod(status["elapsed"], 60)
             self.time.text = '{f:02d}:{s:02d}'.format(f=m, s=s)
             m, s = divmod(status["totaltime"], 60)  # track
@@ -1094,13 +1094,23 @@ class LoginScreen(BoxLayout):
                 self.get_image(img)
                 self.previousimage = img
             else:
+
+                # file:///home/wieneke/FamilyLibrary/
                 if self.previousimage != img:
                     try:
-                        url = "https://api.spotify.com/v1/albums/" + (img.rsplit(':', 2)[2])
-                        response = requests.get(url, verify=False)
-                        url = (response.json()["images"][0]["url"])
-                        self.get_image(url)
-                        self.previousimage = img
+                        if img.startswith("file"):
+                            himg = img[35:]
+                            himg = os.path.dirname(himg) + "/folder.jpg"
+                            img = ("http://192.168.2.8:8081/" + himg).replace(" ", "%20")
+                            print(img)
+                            self.get_image(img)
+                            self.previousimage = img
+                        else:
+                            url = "https://api.spotify.com/v1/albums/" + (img.rsplit(':', 2)[2])
+                            response = requests.get(url, verify=False)
+                            url = (response.json()["images"][0]["url"])
+                            self.get_image(url)
+                            self.previousimage = img
                     except:
                         pass
 
