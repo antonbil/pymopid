@@ -32,6 +32,8 @@ import utils
 from musicservers import MeasureButtonOnTouch
 from settings import Settings
 
+MOPIDY_LIBRARY_FAMILY_MUSIC = "file:///home/wieneke/FamilyLibrary/FamilyMusic/"
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 SAMBA_SERVER = "192.168.2.8"
@@ -1107,14 +1109,9 @@ class LoginScreen(BoxLayout):
                 # file:///home/wieneke/FamilyLibrary/
                 if self.previousimage != img:
                     try:
-                        if img.startswith("file"):
-                            img = img.replace("file:///home/wieneke/FamilyLibrary/FamilyMusic/", "")
-                            # print(img)
+                        if img.startswith(MOPIDY_LIBRARY_FAMILY_MUSIC):
+                            img = img.replace(MOPIDY_LIBRARY_FAMILY_MUSIC, "")
                             self.display_image_of_album_on_disk(img)
-                            """himg = os.path.dirname(himg) + "/folder.jpg"
-                            img = ("http://192.168.2.8:8081/" + himg).replace(" ", "%20")
-                            self.get_image(img)
-                            self.previousimage = img"""
                         else:
                             url = "https://api.spotify.com/v1/albums/" + (img.rsplit(':', 2)[2])
                             response = requests.get(url, verify=False)
