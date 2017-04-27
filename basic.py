@@ -1103,6 +1103,7 @@ class LoginScreen(BoxLayout):
                             himg = os.path.dirname(himg) + "/folder.jpg"
                             img = ("http://192.168.2.8:8081/" + himg).replace(" ", "%20")
                             print(img)
+                            # does not work yet
                             self.get_image(img)
                             self.previousimage = img
                         else:
