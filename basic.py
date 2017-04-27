@@ -484,7 +484,7 @@ class SpotifyPlaylist:
         pass
 
     def browse_mopidy(self, uri="", forceUri=None):
-        print("uri:" + uri)
+        print("uri: " + uri)
         try:
             last = uri[-1:]
             if last == "/":
