@@ -32,13 +32,13 @@ import utils
 from musicservers import MeasureButtonOnTouch
 from settings import Settings
 
-FAMILY_MUSIC_ = "FamilyMusic/"
+FAMILY_MUSIC = "FamilyMusic/"
 
-LIBRARY_FAMILY_MUSIC = "/home/wieneke/FamilyLibrary/" + FAMILY_MUSIC_
+LIBRARY_FAMILY_MUSIC = "/home/wieneke/FamilyLibrary/" + FAMILY_MUSIC
 
 FOLDER_JPG = "/folder.jpg"
 
-URI_FOR_IMAGE_OF_ALBUM = "http://192.168.2.8:8081/" + FAMILY_MUSIC_
+URI_FOR_IMAGE_OF_ALBUM = "http://192.168.2.8:8081/" + FAMILY_MUSIC
 
 MOPIDY_LIBRARY_FAMILY_MUSIC = "file://" + LIBRARY_FAMILY_MUSIC
 
