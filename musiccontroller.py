@@ -175,7 +175,13 @@ class music_controller:
 
     def playlist_add_mopidy(self, song):
         print ("add:" + song)
+        try:
+            if song == self.addedsong:
+                return
+        except:
+            pass
         self.do_param_mopidy_call("core.tracklist.add", {'uris': [song]})
+        self.addedsong = song
 
     def play(self, songpos):
         if self.engine == "mpd":

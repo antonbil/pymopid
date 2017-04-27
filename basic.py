@@ -196,6 +196,7 @@ class SubMenuScreen(MenuScreen):
         self.addButton("New Releases", self.main.spotify_browse)  # spotify_genres
         self.addButton("Main Directory", self.main.spotify_genres)
         self.addButton("Tune In", self.main.spotify_tunein)
+        self.addButton("Root", self.main.spotify_root)
 
 
 maxtracks = 30  # max number of tracks displayed in playlist
@@ -483,6 +484,7 @@ class SpotifyPlaylist:
         pass
 
     def browse_mopidy(self, uri=""):
+        print("uri:" + uri)
         try:
             last = uri[-1:]
             if last == "/":
@@ -491,7 +493,9 @@ class SpotifyPlaylist:
             playurl = self.mopidy_releases[l[len(l) - 1]]
         except:
             playurl = ""
-        if len(playurl) > 0 and (playurl.find("album") == -1 and playurl.find("playlist") == -1):
+        print("playurl:" + playurl)
+        if len(playurl) > 0 and (playurl.find("album") == -1 and playurl.find("playlist") == -1 and playurl.find(
+                "tunein:station") == -1 and not (playurl.find("file:///") > -1 and playurl.endswith(".mp3"))):  #
             self.parent.selMopidyReleases.startDir = playurl
         else:
             if len(playurl) > 0:
@@ -1048,6 +1052,13 @@ class LoginScreen(BoxLayout):
         self.selMopidyReleases.popupOpen = False
         self.selMopidyReleases.sortlist = False
         self.selMopidyReleases.startDir = "spotifytunigo:releases"  # "spotifytunigo:releases"
+        self.selMopidyReleases.display("")
+        # 'spotifytunigo:toplists','spotifytunigo:genres'
+
+    def spotify_root(self, instance=None):
+        self.selMopidyReleases.popupOpen = False
+        self.selMopidyReleases.sortlist = False
+        self.selMopidyReleases.startDir = ''  # "spotifytunigo:releases"
         self.selMopidyReleases.display("")
         # 'spotifytunigo:toplists','spotifytunigo:genres'
 
