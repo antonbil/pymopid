@@ -174,12 +174,12 @@ class music_controller:
             pass
 
     def playlist_add_mopidy(self, song):
-        print ("add:" + song)
         try:
             if song == self.addedsong:
                 return
         except:
             pass
+        print ("add:" + song)
         self.do_param_mopidy_call("core.tracklist.add", {'uris': [song]})
         self.addedsong = song
 
