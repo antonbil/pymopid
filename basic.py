@@ -193,8 +193,9 @@ class SubMenuScreen(MenuScreen):
         self.addButton("Browse Tree", self.main.display_tracks_tree)
         self.addButton("On Local Server", self.main.list_spotify_files)
         self.addButton("Users Playlists", self.main.spotify_users)
-        self.addButton("New Releases", self.main.spotify_browse)  #
+        self.addButton("New Releases", self.main.spotify_browse)  # spotify_genres
         self.addButton("Main Directory", self.main.spotify_genres)
+        self.addButton("Tune In", self.main.spotify_tunein)
 
 
 maxtracks = 30  # max number of tracks displayed in playlist
@@ -1047,6 +1048,13 @@ class LoginScreen(BoxLayout):
         self.selMopidyReleases.popupOpen = False
         self.selMopidyReleases.sortlist = False
         self.selMopidyReleases.startDir = "spotifytunigo:releases"  # "spotifytunigo:releases"
+        self.selMopidyReleases.display("")
+        # 'spotifytunigo:toplists','spotifytunigo:genres'
+
+    def spotify_tunein(self, instance=None):
+        self.selMopidyReleases.popupOpen = False
+        self.selMopidyReleases.sortlist = False
+        self.selMopidyReleases.startDir = 'tunein:root'  # "spotifytunigo:releases"
         self.selMopidyReleases.display("")
         # 'spotifytunigo:toplists','spotifytunigo:genres'
 

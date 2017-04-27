@@ -2,17 +2,17 @@ import os
 import random
 import subprocess
 from itertools import islice
-
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.lang import Builder
-from kivy.properties import ListProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.treeview import TreeViewLabel, TreeView
+
+from kivy.properties import ListProperty
 
 import utils
 
@@ -329,8 +329,11 @@ class SelectMpdAlbum:
         """display dir, with start"""
         if start == None:
             start = 0
+        print("tempdir")
         tempdir = (self.currentdir + dir).replace("//", "/")
+        print(tempdir)
         playlist = self.getdir(tempdir)
+        print(playlist)
         try:
             numdirs = sum(1 for x in playlist if self.is_directory(x))
         except:

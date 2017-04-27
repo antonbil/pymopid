@@ -184,7 +184,12 @@ class music_controller:
             self.play_mopidy(songpos)
 
     def browse_mopidy(self, uri):
+        # res = self.do_param_mopidy_call("core.library.browse", {'uri': None})
+        # print(res)
+        if uri == "":
+            uri = None
         res = self.do_param_mopidy_call("core.library.browse", {'uri': uri})
+        print(res)
         return res["result"]
 
     def get_length_playlist_mpd(self):
