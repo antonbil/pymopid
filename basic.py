@@ -1101,21 +1101,20 @@ class LoginScreen(BoxLayout):
                 self.label.text = "[b]" + status["album"] + " - " + status["title"] + "[/b]"
             img = status["file"]
             if status['mode'] == 'mpd':
-                img = os.path.dirname(img) + "/folder.jpg"
-                img = ("http://192.168.2.8:8081/FamilyMusic/" + img).replace(" ", "%20")
-                self.get_image(img)
-                self.previousimage = img
+                self.display_image_of_album_on_disk(img)
             else:
 
                 # file:///home/wieneke/FamilyLibrary/
                 if self.previousimage != img:
                     try:
                         if img.startswith("file"):
-                            himg = img[35:]
-                            himg = os.path.dirname(himg) + "/folder.jpg"
+                            img = img.replace("file:///home/wieneke/FamilyLibrary/FamilyMusic/", "")
+                            # print(img)
+                            self.display_image_of_album_on_disk(img)
+                            """himg = os.path.dirname(himg) + "/folder.jpg"
                             img = ("http://192.168.2.8:8081/" + himg).replace(" ", "%20")
                             self.get_image(img)
-                            self.previousimage = img
+                            self.previousimage = img"""
                         else:
                             url = "https://api.spotify.com/v1/albums/" + (img.rsplit(':', 2)[2])
                             response = requests.get(url, verify=False)
@@ -1132,6 +1131,12 @@ class LoginScreen(BoxLayout):
             exc_type, exc_value, exc_traceback = sys.exc_info()
             print repr(traceback.extract_tb(exc_traceback))
             self.time.text = '00:00'
+
+    def display_image_of_album_on_disk(self, img):
+        img = os.path.dirname(img) + "/folder.jpg"
+        img = ("http://192.168.2.8:8081/FamilyMusic/" + img).replace(" ", "%20")
+        self.get_image(img)
+        self.previousimage = img
 
     def get_image(self, img):
         if self.image_source != img:
