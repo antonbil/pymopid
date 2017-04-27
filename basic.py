@@ -32,6 +32,10 @@ import utils
 from musicservers import MeasureButtonOnTouch
 from settings import Settings
 
+FOLDER_JPG = "/folder.jpg"
+
+URI_FOR_IMAGE_OF_ALBUM = "http://192.168.2.8:8081/FamilyMusic/"
+
 MOPIDY_LIBRARY_FAMILY_MUSIC = "file:///home/wieneke/FamilyLibrary/FamilyMusic/"
 
 reload(sys)
@@ -1130,8 +1134,8 @@ class LoginScreen(BoxLayout):
             self.time.text = '00:00'
 
     def display_image_of_album_on_disk(self, img):
-        img = os.path.dirname(img) + "/folder.jpg"
-        img = ("http://192.168.2.8:8081/FamilyMusic/" + img).replace(" ", "%20")
+        img = os.path.dirname(img) + FOLDER_JPG
+        img = (URI_FOR_IMAGE_OF_ALBUM + img).replace(" ", "%20")
         self.get_image(img)
         self.previousimage = img
 
