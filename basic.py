@@ -1088,7 +1088,7 @@ class LoginScreen(BoxLayout):
         try:
             status = self.music_controller.get_state()  # self.arduino.exchange()
 
-            print(status)
+            # print(status)
             m, s = divmod(status["elapsed"], 60)
             self.time.text = '{f:02d}:{s:02d}'.format(f=m, s=s)
             m, s = divmod(status["totaltime"], 60)  # track
@@ -1114,8 +1114,6 @@ class LoginScreen(BoxLayout):
                             himg = img[35:]
                             himg = os.path.dirname(himg) + "/folder.jpg"
                             img = ("http://192.168.2.8:8081/" + himg).replace(" ", "%20")
-                            print(img)
-                            # does not work yet
                             self.get_image(img)
                             self.previousimage = img
                         else:
