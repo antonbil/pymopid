@@ -592,7 +592,7 @@ class SpotifyPlaylist:
                 list.append({'filename': text, 'directory': text, "url": self.myurls[i].text})
                 i += 1
         print("url:", 2)
-        return list, None
+        return list, url
 
     def addAndPlaySpotifyAlbum(self, tempdir):
         song_pos = self.music_controller.get_length_playlist_mopidy()
