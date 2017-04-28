@@ -98,7 +98,7 @@ class mpd_controller:
             uri = utils.remove_slash_at_end(uri)
             uri = utils.remove_slash_at_start(uri)
         result = self.get_client().lsinfo(uri)
-        return result
+        return result, None
 
     def add(self, uri):
         return self.get_client().add(uri)
