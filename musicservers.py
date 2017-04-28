@@ -273,7 +273,7 @@ class SelectMpdAlbum:
         cont = True
         if "url" in instance.item:
             if instance.item["url"].startswith("spotify:album:"):
-                print ("instance in:", instance.item["url"])
+                # print ("instance in:", instance.item["url"])
                 self.playdir(instance.item["url"])
                 cont = False
                 # return
@@ -344,7 +344,7 @@ class SelectMpdAlbum:
         """display dir, with start"""
         if start == None:
             start = 0
-        print("dir", dir)
+        #print("dir", dir)
         tempdir = (self.currentdir + dir).replace("//", "/")
         print(tempdir)
         forcedir = None
