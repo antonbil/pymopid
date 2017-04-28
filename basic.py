@@ -484,7 +484,7 @@ class SpotifyPlaylist:
         pass
 
     def browse_mopidy(self, uri="", forceUri=None):
-        print("uri: " + uri)
+        # print("uri: " + uri)
         try:
             last = uri[-1:]
             if last == "/":
@@ -506,7 +506,7 @@ class SpotifyPlaylist:
                 # item chosen, play album
 
         self.mopidy_releases = {}
-        print ("startdir:", self.parent.selMopidyReleases.startDir)
+        #print ("startdir:", self.parent.selMopidyReleases.startDir)
         if forceUri == None:
             forceUri = self.parent.selMopidyReleases.startDir
         res = self.music_controller.browse_mopidy(forceUri)  # "spotifytunigo:releases")

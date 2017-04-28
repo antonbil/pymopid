@@ -227,17 +227,23 @@ class music_controller:
             return playlist
         else:
             response = self.get_mopidy_playlist()
+            # print(response)
             playlist = []
             for item in response:
+                #print("item",item)
                 try:
-                    m, s = divmod(item['length'] / 1000, 60)
+                    try:
+                        m, s = divmod(item['length'] / 1000, 60)
+                        t = item["track_no"]
+                    except:
+                        m, s, t = 0, 0,0
                     # track_no
-                    t = item["track_no"]
                     text = '{t:02d}-{artist}-{title}({f:02d}:{s:02d})'.format(f=m, s=s, t=t,
                                                                               artist=item["artists"][0]["name"].encode(
                                                                                   'utf-8'),
                                                                               title=item["name"].encode('utf-8'))
                     playlist.append(text)
+                    #print("print(response)",text)
                 except:
                     pass
             return playlist
