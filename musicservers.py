@@ -272,8 +272,9 @@ class SelectMpdAlbum:
     def onClick(self, instance):
         cont = True
         if "url" in instance.item:
-            if instance.item["url"].startswith("spotify:album:"):
-                # print ("instance in:", instance.item["url"])
+            print ("instance in:", instance.item["url"])
+            if instance.item["url"].startswith("spotify:album:") or instance.item["url"].find("playlist:") > -1:
+                #
                 self.playdir(instance.item["url"])
                 cont = False
                 # return
