@@ -463,9 +463,13 @@ class SpotifyPlaylist:
         SavePlaylist(instance.item.text, self.mopidy_releases[instance.item.text]).open()
 
     def play_mopidy_playlist(self, url):
-        parts = url.split("/")
-        last = parts[len(parts) - 1]
-        self.music_controller.playlist_add_mopidy(self.mopidy_playlists[last])
+        print ("addurl", url)
+        try:
+            parts = url.split("/")
+            last = parts[len(parts) - 1]
+            self.music_controller.playlist_add_mopidy(self.mopidy_playlists[last])
+        except:
+            self.music_controller.playlist_add_mopidy(url)
 
     def play_mopidy_release(self, url):
         song_pos = self.music_controller.get_length_playlist_mopidy()
@@ -494,9 +498,21 @@ class SpotifyPlaylist:
         except:
             playurl = ""
         print("playurl:" + playurl)
-        if len(playurl) > 0 and (playurl.find("album") == -1 and playurl.find("playlist") == -1 and playurl.find(
+        playForSureList = ["spotify:track:"]
+        playForSure = False
+        for l in playForSureList:
+            if playurl.find(l) > -1:
+                playForSure = True
+        preferred = False
+        listPreferred = ["spotify:top", "local:directory?type=album"]
+        for l in listPreferred:
+            if playurl.find(l) > -1:
+                preferred = True
+        if not playForSure and len(playurl) > 0 and (
+            preferred or (playurl.find("album") == -1 and playurl.find("playlist") == -1 and playurl.find(
                 "tunein:station") == -1 and not (
-                playurl.find("file:///") > -1 and playurl.endswith(".mp3"))) or playurl.find("spotifyweb:") > -1:  #
+                        playurl.find("file:///") > -1 and playurl.endswith(".mp3")))) or playurl.find(
+            "spotifyweb:") > -1:  #
             self.parent.selMopidyReleases.startDir = playurl
         else:
             if len(playurl) > 0:
@@ -519,20 +535,28 @@ class SpotifyPlaylist:
             i += 1
         return list, playurl
 
-    def get_mopify_playlist(self, url):
+    def get_mopify_playlist(self, url, y=None):
+        print("url:", url)
         response = requests.get("http://" + url, verify=False)
         html = Html()
         dom = html.feed(response.content)
+        print("url:", 1)
         #soup = bs(response.content)
         list = []
         #for link in soup.findAll('a'):
         for link in dom.find('a'):
             href = link.attr['href']
             text = link.text()
-            #if "/" in link['href'] and not "Parent" in link.string:
-            if "/" in href and not "Parent" in text:
-                item = {'filename': utils.remove_slash_at_end(text), 'directory': utils.remove_slash_at_end(text)}
+            # print ("link:", href,text)
+            if ("/" in href and not "Parent" in text) or text.endswith(".mp3"):
+                # if not "Parent" in text:
+                if text.endswith(".mp3"):
+                    item = {'filename': utils.remove_slash_at_end(text)}
+                else:
+
+                    item = {'filename': utils.remove_slash_at_end(text), 'directory': utils.remove_slash_at_end(text)}
                 list.append(item)
+                print ("item:", item)
         if len(list) == 0:
             # self.myurls = soup.findAll("div", {"class": "url"})
             # myartists = soup.findAll("div", {"class": "artist"})
@@ -567,7 +591,8 @@ class SpotifyPlaylist:
                 self.mopidy_playlists[text] = self.myurls[i].text
                 list.append({'filename': text, 'directory': text, "url": self.myurls[i].text})
                 i += 1
-        return list
+        print("url:", 2)
+        return list, None
 
     def addAndPlaySpotifyAlbum(self, tempdir):
         song_pos = self.music_controller.get_length_playlist_mopidy()
@@ -606,7 +631,7 @@ class MusicPlaylister(MopidyPlaylister):
         return uri
 
     # main functions
-    def getUserPlaylists(self, dir=""):
+    def getUserPlaylists(self, dir="", y=None):
         if len(dir) < 2:
             list = []
             self.urls = {}
@@ -614,7 +639,7 @@ class MusicPlaylister(MopidyPlaylister):
                 self.urls[user[1]] = self.getUserPlaylist(user[0])
                 list.append({'filename': user[1], 'directory': user[1]})
 
-            return list
+            return list, None
         else:
             try:
                 url = self.getKey(dir)
@@ -654,7 +679,7 @@ class MusicPlaylister(MopidyPlaylister):
                             list.append({'filename': name, 'directory': name})
                     except:
                         pass
-                return list
+                return list, None
             except:
                 utils.Alert("No action", "not implemented yet")
 
@@ -763,19 +788,20 @@ class LoginScreen(BoxLayout):
             # list to select albums to play
             self.musicPlaylister = MusicPlaylister(self)
             self.selAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
-                                                        getdir=lambda x: self.music_controller.mc.list_files(x),
+                                                        getdir=lambda x, y: self.music_controller.mc.list_files(x),
                                                         is_directory=lambda x: "directory" in x,
                                                         playdir=lambda x: self.music_controller.mc.add(x[1:]))
             spotify_playlist = SpotifyPlaylist(self.music_controller, self)
             self.selMopidyAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
-                                                              getdir=lambda x: spotify_playlist.get_mopify_playlist(x),
+                                                              getdir=lambda x, y: spotify_playlist.get_mopify_playlist(
+                                                                  x),
                                                               is_directory=lambda x: "directory" in x,
                                                               playdir=lambda x: spotify_playlist.play_mopidy_playlist(
                                                                   x),
                                                               currentdir="192.168.2.8/spotify/data",
                                                               addAndPlayAlbum=spotify_playlist.addAndPlaySpotifyAlbum)
             self.selSmbAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
-                                                           getdir=lambda x: spotify_playlist.get_mopify_playlist(x),
+                                                           getdir=lambda x, y: spotify_playlist.get_mopify_playlist(x),
                                                            is_directory=lambda x: "directory" in x,
                                                            playdir=lambda x: self.play_mpd_playlist(x),
                                                            currentdir="192.168.2.8/spotify/mpd",
@@ -791,7 +817,8 @@ class LoginScreen(BoxLayout):
                                                                  addAndPlayAlbum=spotify_playlist.play_mopidy_release,
                                                                  savePlaylist=spotify_playlist.savePlaylist)
             self.selMopidyUsers = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
-                                                              getdir=lambda x: self.musicPlaylister.getUserPlaylists(x),
+                                                              getdir=lambda x, y: self.musicPlaylister.getUserPlaylists(
+                                                                  x),
                                                               is_directory=lambda x: True,
                                                               playdir=lambda x: self.musicPlaylister.playPlaylist(x),
                                                               currentdir="",

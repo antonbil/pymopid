@@ -270,7 +270,15 @@ class SelectMpdAlbum:
         self.display("", int(instance.text))
 
     def onClick(self, instance):
-        self.display(instance.text + "/")
+        cont = True
+        if "url" in instance.item:
+            if instance.item["url"].startswith("spotify:album:"):
+                print ("instance in:", instance.item["url"])
+                self.playdir(instance.item["url"])
+                cont = False
+                # return
+        if cont:
+            self.display(instance.text + "/")
 
     def onLongClick(self, instance):
         buttons = [["Add", self.addAlbum], ["Add and Play", self.addAndPlayAlbumCall], ["Spotify", self.albumSpotify],
@@ -336,14 +344,14 @@ class SelectMpdAlbum:
         """display dir, with start"""
         if start == None:
             start = 0
-        #print("tempdir")
+        print("dir", dir)
         tempdir = (self.currentdir + dir).replace("//", "/")
-        # print(tempdir)
+        print(tempdir)
         forcedir = None
         if addtolist:
             pass
         else:
-            tempdir = dir
+            #tempdir = dir
             forcedir = self.curdirs[-1]
         # print("dirs:", self.dirs)
         # print("dir:" + tempdir)
@@ -351,8 +359,8 @@ class SelectMpdAlbum:
         if addtolist and not (curdir == None):
             self.dirs.append(tempdir)
             self.curdirs.append(curdir)
-        else:
-            tempdir = dir
+        # else:
+        #    tempdir = dir
         # print("curdirs:", self.curdirs)
         #print("playlist:", playlist)
         try:
@@ -384,6 +392,7 @@ class SelectMpdAlbum:
                 dir = item["directory"].split("/")
                 dir = dir[len(dir) - 1]
                 self.buttons[index].text = dir
+                self.buttons[index].item = item
                 self.buttons[index].background_color = random.choice(self.colors)
                 # self.dummies[index].background_color=random.choice(self.colors)
                 self.layout_popup.add_widget(self.buttons[index])

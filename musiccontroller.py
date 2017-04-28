@@ -179,7 +179,12 @@ class music_controller:
                 return
         except:
             pass
+        # song=song.replace("spotify:user:","")
         print ("add:" + song)
+        if song.startswith("local:directory"):
+            song = song.split("local:album")[1]
+            song = "local:album" + song.split("&")[0]
+            print ("add:" + song)
         self.do_param_mopidy_call("core.tracklist.add", {'uris': [song]})
         self.addedsong = song
 
