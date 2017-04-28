@@ -344,7 +344,7 @@ class SelectMpdAlbum:
         """display dir, with start"""
         if start == None:
             start = 0
-        #print("dir", dir)
+        print("dir", dir)
         tempdir = (self.currentdir + dir).replace("//", "/")
         print(tempdir)
         forcedir = None
