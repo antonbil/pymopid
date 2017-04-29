@@ -536,7 +536,7 @@ class SpotifyPlaylist:
         return list, playurl
 
     def get_mopify_playlist(self, url, y=None):
-        print("url:", url)
+        # print("url:", url)
         response = requests.get("http://" + url, verify=False)
         html = Html()
         dom = html.feed(response.content)
