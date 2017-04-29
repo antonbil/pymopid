@@ -1034,7 +1034,7 @@ class LoginScreen(BoxLayout):
     def displaySimilarArtists(self, artist):
         try:
             self.similarartists = self.music_controller.do_mopidy_similar(artist)
-            # print(self.similarartists)
+            print(self.similarartists)
             self.similarArtistsPopup.display_tracks(artist)
         except:
             utils.Alert("Notification", "not implemented yet")
@@ -1069,9 +1069,15 @@ class LoginScreen(BoxLayout):
 
     def onSelectsimilarArtistsPopup(self, instance, start):
         # self.popupSearch.popup.dismiss()
-        temp = self.similarartists["artists"][start]["name"]
-        self.popupSearch.artist = temp
-        self.popupSearch.display_tracks(temp)
+        print("instance:", instance.item)
+        temp = instance.item["name"]
+        print("temp:", temp)
+        # self.similarArtistsPopup.display_tracks(temp)
+        try:
+            self.popupSearch.artist = temp
+            self.popupSearch.display_tracks(temp)
+        except:
+            pass
 
     def onLongpresssimilarArtistsPopup(self, instance, pos):
         pass
@@ -1114,10 +1120,17 @@ class LoginScreen(BoxLayout):
         # 'spotifytunigo:toplists','spotifytunigo:genres'
 
     def similarForPlayingArtist(self, instance=None):
-        temp1 = self.music_controller.do_mopidy_search(self.currentPlayingArtist)
-        self.currentArtist = temp1[0]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
-        self.displaySimilarArtists(self.currentArtist)
-        # following necessary for popupSearch
+        try:
+            print("search:")
+            temp1 = self.music_controller.do_mopidy_search(self.currentPlayingArtist)
+            # print("search2:",temp1[1])
+            self.currentArtist = temp1[1]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
+            print("search2:")
+            self.displaySimilarArtists(self.currentArtist)
+            print("search3:")
+            # following necessary for popupSearch
+        except:
+            pass
 
     def getSearch(self):
         temp1 = self.music_controller.do_mopidy_search(self.popupSearch.artist)
