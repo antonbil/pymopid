@@ -354,7 +354,7 @@ class SelectMpdAlbum:
             #tempdir = dir
             forcedir = self.curdirs[-1]
             tempdir = forcedir
-        # print("dirs:", self.dirs)
+        print("dirs:", self.dirs)
         print("dir:" + tempdir)
         try:
             playlist, curdir = self.getdir(tempdir, forcedir)
