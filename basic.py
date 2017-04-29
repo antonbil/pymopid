@@ -867,7 +867,6 @@ class LoginScreen(BoxLayout):
 
     def add_and_play_mpd_playlist(self, dir):
         try:
-            # todo:make fit for mopidy
             # song_pos = self.music_controller.get_length_playlist_mpd()
             # self.play_mpd_playlist(dir)
             # self.music_controller.select_and_play_mpd(song_pos)
