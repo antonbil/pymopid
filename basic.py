@@ -1034,7 +1034,7 @@ class LoginScreen(BoxLayout):
     def displaySimilarArtists(self, artist):
         try:
             self.similarartists = self.music_controller.do_mopidy_similar(artist)
-            print(self.similarartists)
+            # print(self.similarartists)
             self.similarArtistsPopup.display_tracks(artist)
         except:
             utils.Alert("Notification", "not implemented yet")
@@ -1047,7 +1047,7 @@ class LoginScreen(BoxLayout):
         # print(instance.item["uri"])
         instance.popup.dismiss()
         song_pos = self.music_controller.get_length_playlist_mopidy()
-        print("instance:", instance.item)
+        #print("instance:", instance.item)
         self.music_controller.playlist_add_mopidy((instance.item.item["album"]["uri"]))
         sleep(1)
         self.music_controller.select_and_play_mopidy(song_pos)
@@ -1069,9 +1069,9 @@ class LoginScreen(BoxLayout):
 
     def onSelectsimilarArtistsPopup(self, instance, start):
         # self.popupSearch.popup.dismiss()
-        print("instance:", instance.item)
+        #print("instance:", instance.item)
         temp = instance.item["name"]
-        print("temp:", temp)
+        #print("temp:", temp)
         # self.similarArtistsPopup.display_tracks(temp)
         try:
             self.popupSearch.artist = temp
