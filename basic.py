@@ -882,7 +882,7 @@ class LoginScreen(BoxLayout):
     def play_mpd_playlist(self, dir):
         try:
             filename = "http://" + (dir + "/mp3info.txt".replace("//", "/").replace(" ", "%20"))
-            print("filename:", filename)
+            # print("filename:", filename)
             response = requests.get(filename, verify=False)
             lines = (response.content).split(LIBRARY_FAMILY_MUSIC)
             #print (lines)
@@ -891,7 +891,7 @@ class LoginScreen(BoxLayout):
             for item in lines:
                 try:
                     fname = item.split("=== ")[0]
-                    print ("add-mpd:", fname)
+                    #print ("add-mpd:", fname)
                     # self.music_controller.mc.add(fname)
                     self.music_controller.playlist_add_mopidy(MOPIDY_LIBRARY_FAMILY_MUSIC + fname)
                 except:
