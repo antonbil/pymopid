@@ -546,18 +546,19 @@ class SpotifyPlaylist:
         #for link in soup.findAll('a'):
         for link in dom.find('a'):
             try:
-            href = link.attr['href']
-            text = link.text()
-            print ("link:", href, text)
-            if ("/" in href and not "Parent" in text) or text.endswith(".mp3"):
-                # if not "Parent" in text:
-                if text.endswith(".mp3"):
-                    item = {'filename': utils.remove_slash_at_end(text)}
-                else:
+                href = link.attr['href']
+                text = link.text()
+                print ("link:", href, text)
+                if ("/" in href and not "Parent" in text) or text.endswith(".mp3"):
+                    # if not "Parent" in text:
+                    if text.endswith(".mp3"):
+                        item = {'filename': utils.remove_slash_at_end(text)}
+                    else:
 
-                    item = {'filename': utils.remove_slash_at_end(text), 'directory': utils.remove_slash_at_end(text)}
-                list.append(item)
-                print ("item:", item)
+                        item = {'filename': utils.remove_slash_at_end(text),
+                                'directory': utils.remove_slash_at_end(text)}
+                    list.append(item)
+                    print ("item:", item)
             except:
                 pass
         # print("url:", "1a")
