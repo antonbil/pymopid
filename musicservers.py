@@ -356,7 +356,11 @@ class SelectMpdAlbum:
             tempdir = forcedir
         # print("dirs:", self.dirs)
         print("dir:" + tempdir)
-        playlist, curdir = self.getdir(tempdir, forcedir)
+        try:
+            playlist, curdir = self.getdir(tempdir, forcedir)
+        except:
+            playlist = []
+            curdir = None
         if addtolist and not (curdir == None):
             self.dirs.append(tempdir)
             self.curdirs.append(curdir)
