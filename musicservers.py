@@ -272,7 +272,7 @@ class SelectMpdAlbum:
     def onClick(self, instance):
         cont = True
         if "url" in instance.item:
-            # print ("instance in:", instance.item["url"])
+            print ("instance in:", instance.item["url"])
             # check for playable url's
             if instance.item["url"].startswith("spotify:album:") or instance.item["url"].find("playlist:") > -1:
                 self.playdir(instance.item["url"])
@@ -316,9 +316,12 @@ class SelectMpdAlbum:
 
     def addAndPlayMpdAlbum(self, tempdir):
         try:
-            song_pos = self.music_controller.get_length_playlist_mpd()
+            # song_pos = self.music_controller.get_length_playlist_mpd()
+            # self.playDir(tempdir)
+            # self.music_controller.select_and_play_mpd(song_pos)
+            song_pos = self.music_controller.get_length_playlist_mopidy()
             self.playDir(tempdir)
-            self.music_controller.select_and_play_mpd(song_pos)
+            self.music_controller.select_and_play_mopidy(song_pos)
         except:
             try:
                 self.music_controller.select_and_play_mpd(0)

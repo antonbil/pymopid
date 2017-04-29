@@ -32,19 +32,22 @@ import utils
 from musicservers import MeasureButtonOnTouch
 from settings import Settings
 
+SAMBA_SERVER = "192.168.2.8"
+URL_OF_IMAGES_SERVER = SAMBA_SERVER + ":8081/"
+
 FAMILY_MUSIC = "FamilyMusic/"
 
 LIBRARY_FAMILY_MUSIC = "/home/wieneke/FamilyLibrary/" + FAMILY_MUSIC
 
 FOLDER_JPG = "/folder.jpg"
 
-URI_FOR_IMAGE_OF_ALBUM = "http://192.168.2.8:8081/" + FAMILY_MUSIC
+URI_FOR_IMAGE_OF_ALBUM = "http://" + URL_OF_IMAGES_SERVER + FAMILY_MUSIC
 
 MOPIDY_LIBRARY_FAMILY_MUSIC = "file://" + LIBRARY_FAMILY_MUSIC
 
 reload(sys)
 sys.setdefaultencoding('utf8')
-SAMBA_SERVER = "192.168.2.8"
+
 
 red = [1, 0, 0, 1]
 green = [0, 1, 0, 1]
@@ -795,7 +798,10 @@ class LoginScreen(BoxLayout):
             self.selAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
                                                         getdir=lambda x, y: self.music_controller.mc.list_files(x),
                                                         is_directory=lambda x: "directory" in x,
-                                                        playdir=lambda x: self.music_controller.mc.add(x[1:]))
+                                                        # playdir=lambda x: self.music_controller.mc.add(MOPIDY_LIBRARY_FAMILY_MUSIC+x[1:])
+                                                        playdir=lambda x: self.play_mpd_playlist(
+                                                            URL_OF_IMAGES_SERVER + FAMILY_MUSIC + x[1:])
+                                                        )
             spotify_playlist = SpotifyPlaylist(self.music_controller, self)
             self.selMopidyAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
                                                               getdir=lambda x, y: spotify_playlist.get_mopify_playlist(
@@ -861,9 +867,13 @@ class LoginScreen(BoxLayout):
 
     def add_and_play_mpd_playlist(self, dir):
         try:
-            song_pos = self.music_controller.get_length_playlist_mpd()
+            # todo:make fit for mopidy
+            # song_pos = self.music_controller.get_length_playlist_mpd()
+            # self.play_mpd_playlist(dir)
+            # self.music_controller.select_and_play_mpd(song_pos)
+            song_pos = self.music_controller.get_length_playlist_mopidy()
             self.play_mpd_playlist(dir)
-            self.music_controller.select_and_play_mpd(song_pos)
+            self.music_controller.select_and_play_mopidy(song_pos)
         except:
             try:
                 self.music_controller.select_and_play_mpd(0)
@@ -873,6 +883,7 @@ class LoginScreen(BoxLayout):
     def play_mpd_playlist(self, dir):
         try:
             filename = "http://" + (dir + "/mp3info.txt".replace("//", "/").replace(" ", "%20"))
+            print("filename:", filename)
             response = requests.get(filename, verify=False)
             lines = (response.content).split(LIBRARY_FAMILY_MUSIC)
             #print (lines)
@@ -881,7 +892,9 @@ class LoginScreen(BoxLayout):
             for item in lines:
                 try:
                     fname = item.split("=== ")[0]
-                    self.music_controller.mc.add(fname)
+                    print ("add-mpd:", fname)
+                    # self.music_controller.mc.add(fname)
+                    self.music_controller.playlist_add_mopidy(MOPIDY_LIBRARY_FAMILY_MUSIC + fname)
                 except:
                     pass
 
@@ -1147,7 +1160,10 @@ class LoginScreen(BoxLayout):
         return out_list
 
     def mpd_spotify(self, instance):
-        self.music_controller.switch()
+        try:
+            self.music_controller.switch()
+        except:
+            pass
 
     def processSearch(self, item):
         # item an be changed if it is an object

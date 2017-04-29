@@ -102,7 +102,8 @@ class mpd_controller:
         return result, uri
 
     def add(self, uri):
-        return self.get_client().add(uri)
+        # return self.get_client().add(uri)
+        return self.play_mpd_playlist(uri)
 
     def remove_track(self, songpos):
         return self.get_client().delete(songpos)
