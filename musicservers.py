@@ -370,9 +370,13 @@ class SelectMpdAlbum:
         except:
             numdirs = 0
         if numdirs == 0:
-            tempdir = utils.remove_slash_at_end(tempdir)
+            try:
+                tempdir = utils.remove_slash_at_end(tempdir)
 
-            self.playDir(tempdir)
+                self.playDir(tempdir)
+            except:
+                print("no things to play")
+                pass
             return
 
         self.currentdir = tempdir

@@ -545,9 +545,10 @@ class SpotifyPlaylist:
         list = []
         #for link in soup.findAll('a'):
         for link in dom.find('a'):
+            try:
             href = link.attr['href']
             text = link.text()
-            # print ("link:", href,text)
+            print ("link:", href, text)
             if ("/" in href and not "Parent" in text) or text.endswith(".mp3"):
                 # if not "Parent" in text:
                 if text.endswith(".mp3"):
@@ -557,6 +558,9 @@ class SpotifyPlaylist:
                     item = {'filename': utils.remove_slash_at_end(text), 'directory': utils.remove_slash_at_end(text)}
                 list.append(item)
                 print ("item:", item)
+            except:
+                pass
+        # print("url:", "1a")
         if len(list) == 0:
             # self.myurls = soup.findAll("div", {"class": "url"})
             # myartists = soup.findAll("div", {"class": "artist"})
@@ -565,7 +569,7 @@ class SpotifyPlaylist:
             myartists = []
             myalbums = []
             for link in dom.find('div'):
-                #print(link)
+                print(link)
                 class Object(object):
                     pass
 
@@ -583,7 +587,7 @@ class SpotifyPlaylist:
                 if "album" in mclass:
                     myalbums.append(a)
             if len(myalbums) == 0:
-                return []
+                return [], url
             i = 0
             self.mopidy_playlists = {}
             for artist in myartists:
