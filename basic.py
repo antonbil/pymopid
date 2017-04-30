@@ -480,11 +480,18 @@ class SpotifyPlaylist:
         self.music_controller.select_and_play_mopidy(song_pos)
 
     def add_mopidy_release(self, release):
+        print("play:", release)
         last = release[-1:]
         if last == "/":
             release = release[:-1]
         l = release.split("/")
         url = self.mopidy_releases[l[len(l) - 1]]
+        if release.startswith("Files/"):
+            url = url.replace("file:///home/wieneke/FamilyLibrary/TotalMusic", "192.168.2.8/spotify/mpd")
+            print("url:", url)
+            self.parent.play_mpd_playlist(
+                url)
+            return
         self.music_controller.playlist_add_mopidy(url)
 
     def user_mopidy(self, uri=""):
@@ -888,7 +895,7 @@ class LoginScreen(BoxLayout):
     def play_mpd_playlist(self, dir):
         try:
             filename = "http://" + (dir + "/mp3info.txt".replace("//", "/").replace(" ", "%20"))
-            # print("filename:", filename)
+            print("filename:", filename)
             response = requests.get(filename, verify=False)
             lines = (response.content).split(LIBRARY_FAMILY_MUSIC)
             #print (lines)
