@@ -242,22 +242,25 @@ class SelectMpdAlbum:
                                    background_color=random.choice(self.colors))
         # self.dummybutton=self.dummybutton()
 
-    def onLongClick(self, instance):  # cab be removed double declaration
+    """def onLongClick(self, instance):  # cab be removed double declaration
         # print("longclick"+instance.text)
-        self.playDir(self.currentdir)
+        self.playDir(self.currentdir)"""
 
     def goback(self, instance):
-        if self.currentdir.endswith("/"):
-            self.currentdir = self.currentdir[:-1]
-        print ("go back" + self.currentdir)
-        head, tail = os.path.split(self.currentdir)
-        head, tail = os.path.split(head)
-        # print(head)
-        if len(self.dirs) > 1:
-            self.dirs.pop()
-            self.curdirs.pop()
-        self.currentdir = head + "/"
-        self.display(self.dirs[-1], addtolist=False)
+        try:
+            if self.currentdir.endswith("/"):
+                self.currentdir = self.currentdir[:-1]
+            print ("go back" + self.currentdir)
+            head, tail = os.path.split(self.currentdir)
+            head, tail = os.path.split(head)
+            # print(head)
+            if len(self.dirs) > 1:
+                self.dirs.pop()
+                self.curdirs.pop()
+            self.currentdir = head + "/"
+            self.display(self.dirs[-1], addtolist=False)
+        except:
+            pass
 
     def playDir(self, dir):
         if dir[-1:] == "/":
@@ -289,31 +292,43 @@ class SelectMpdAlbum:
         contextMenu(buttons, instance, self.colors)
 
     def similarSpotify(self, instance):
-        instance.popup.dismiss()
-        temp = instance.item.text
-        temp = temp.split("-")[0].strip().lower()
-        temp1 = self.music_controller.do_mopidy_search(temp)
-        temp = temp1[0]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
-        self.parent.displaySimilarArtists(temp)
+        try:
+            instance.popup.dismiss()
+            temp = instance.item.text
+            temp = temp.split("-")[0].strip().lower()
+            temp1 = self.music_controller.do_mopidy_search(temp)
+            temp = temp1[0]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
+            self.parent.displaySimilarArtists(temp)
+        except:
+            pass
 
     def albumSpotify(self, instance):
-        instance.popup.dismiss()
-        # print ("add",instance.item.text)
-        temp = instance.item.text
-        temp = temp.split("-")[0].strip().lower()
-        self.popupSearch.artist = temp
-        self.popupSearch.display_tracks(temp)
+        try:
+            instance.popup.dismiss()
+            # print ("add",instance.item.text)
+            temp = instance.item.text
+            temp = temp.split("-")[0].strip().lower()
+            self.popupSearch.artist = temp
+            self.popupSearch.display_tracks(temp)
+        except:
+            pass
 
     def addAlbum(self, instance):
-        instance.popup.dismiss()
-        # print ("add",instance.item.text)
-        tempdir = self.currentdir + instance.item.text
-        self.playDir(tempdir)
+        try:
+            instance.popup.dismiss()
+            # print ("add",instance.item.text)
+            tempdir = self.currentdir + instance.item.text
+            self.playDir(tempdir)
+        except:
+            pass
 
     def addAndPlayAlbumCall(self, instance):
-        instance.popup.dismiss()
-        tempdir = self.currentdir + instance.item.text
-        self.addAndPlayAlbum(tempdir)
+        try:
+            instance.popup.dismiss()
+            tempdir = self.currentdir + instance.item.text
+            self.addAndPlayAlbum(tempdir)
+        except:
+            pass
 
     def addAndPlayMpdAlbum(self, tempdir):
         try:
