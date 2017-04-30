@@ -14,6 +14,7 @@ from kivy.uix.treeview import TreeViewLabel, TreeView
 
 from kivy.properties import ListProperty
 
+import musiccontroller
 import utils
 
 # Remove the specified $song numbers (starting from 0) from the current playlist. No return value.
@@ -316,12 +317,14 @@ class SelectMpdAlbum:
 
     def addAndPlayMpdAlbum(self, tempdir):
         try:
-            # song_pos = self.music_controller.get_length_playlist_mpd()
-            # self.playDir(tempdir)
-            # self.music_controller.select_and_play_mpd(song_pos)
-            song_pos = self.music_controller.get_length_playlist_mopidy()
-            self.playDir(tempdir)
-            self.music_controller.select_and_play_mopidy(song_pos)
+            if musiccontroller.PLAY_MPD:
+                song_pos = self.music_controller.get_length_playlist_mpd()
+                self.playDir(tempdir)
+                self.music_controller.select_and_play_mpd(song_pos)
+            else:
+                song_pos = self.music_controller.get_length_playlist_mopidy()
+                self.playDir(tempdir)
+                self.music_controller.select_and_play_mopidy(song_pos)
         except:
             try:
                 self.music_controller.select_and_play_mpd(0)

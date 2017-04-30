@@ -11,6 +11,8 @@ import requests.api as requests
 import difflib
 
 mpdServerUrl = "192.168.2.74"
+# set to true if tracks must be added to mpd-playlist
+PLAY_MPD = False
 
 
 class mpd_controller:
@@ -102,8 +104,10 @@ class mpd_controller:
         return result, uri
 
     def add(self, uri):
-        # return self.get_client().add(uri)
-        return self.play_mpd_playlist(uri)
+        if PLAY_MPD:
+            return self.get_client().add(uri)
+        else:
+            return self.play_mpd_playlist(uri)
 
     def remove_track(self, songpos):
         return self.get_client().delete(songpos)

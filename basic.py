@@ -795,12 +795,16 @@ class LoginScreen(BoxLayout):
             self.add_widget(h_layout1)
             # list to select albums to play
             self.musicPlaylister = MusicPlaylister(self)
+            if musiccontroller.PLAY_MPD:
+                playdirmpd = lambda x: self.music_controller.mc.add(x[1:])
+            else:
+                playdirmpd = lambda x: self.play_mpd_playlist(
+                    URL_OF_IMAGES_SERVER + FAMILY_MUSIC + x[1:])
+
             self.selAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
                                                         getdir=lambda x, y: self.music_controller.mc.list_files(x),
                                                         is_directory=lambda x: "directory" in x,
-                                                        # playdir=lambda x: self.music_controller.mc.add(MOPIDY_LIBRARY_FAMILY_MUSIC+x[1:])
-                                                        playdir=lambda x: self.play_mpd_playlist(
-                                                            URL_OF_IMAGES_SERVER + FAMILY_MUSIC + x[1:])
+                                                        playdir=playdirmpd
                                                         )
             spotify_playlist = SpotifyPlaylist(self.music_controller, self)
             self.selMopidyAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
@@ -867,12 +871,14 @@ class LoginScreen(BoxLayout):
 
     def add_and_play_mpd_playlist(self, dir):
         try:
-            # song_pos = self.music_controller.get_length_playlist_mpd()
-            # self.play_mpd_playlist(dir)
-            # self.music_controller.select_and_play_mpd(song_pos)
-            song_pos = self.music_controller.get_length_playlist_mopidy()
-            self.play_mpd_playlist(dir)
-            self.music_controller.select_and_play_mopidy(song_pos)
+            if musiccontroller.PLAY_MPD:
+                song_pos = self.music_controller.get_length_playlist_mpd()
+                self.play_mpd_playlist(dir)
+                self.music_controller.select_and_play_mpd(song_pos)
+            else:
+                song_pos = self.music_controller.get_length_playlist_mopidy()
+                self.play_mpd_playlist(dir)
+                self.music_controller.select_and_play_mopidy(song_pos)
         except:
             try:
                 self.music_controller.select_and_play_mpd(0)
@@ -892,8 +898,10 @@ class LoginScreen(BoxLayout):
                 try:
                     fname = item.split("=== ")[0]
                     #print ("add-mpd:", fname)
-                    # self.music_controller.mc.add(fname)
-                    self.music_controller.playlist_add_mopidy(MOPIDY_LIBRARY_FAMILY_MUSIC + fname)
+                    if musiccontroller.PLAY_MPD:
+                        self.music_controller.mc.add(fname)
+                    else:
+                        self.music_controller.playlist_add_mopidy(MOPIDY_LIBRARY_FAMILY_MUSIC + fname)
                 except:
                     pass
 
