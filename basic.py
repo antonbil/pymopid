@@ -1141,13 +1141,13 @@ class LoginScreen(BoxLayout):
 
     def similarForPlayingArtist(self, instance=None):
         try:
-            print("search:")
+            # print("search:")
             temp1 = self.music_controller.do_mopidy_search(self.currentPlayingArtist)
             # print("search2:",temp1[1])
             self.currentArtist = temp1[1]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
-            print("search2:")
+            # print("search2:")
             self.displaySimilarArtists(self.currentArtist)
-            print("search3:")
+            # print("search3:")
             # following necessary for popupSearch
         except:
             pass
