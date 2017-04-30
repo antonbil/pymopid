@@ -488,7 +488,7 @@ class SpotifyPlaylist:
         url = self.mopidy_releases[l[len(l) - 1]]
         if release.startswith("Files/"):
             url = url.replace("file:///home/wieneke/FamilyLibrary/TotalMusic", "192.168.2.8/spotify/mpd")
-            print("url:", url)
+            # print("url:", url)
             self.parent.play_mpd_playlist(
                 url)
             return
