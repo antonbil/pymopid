@@ -365,7 +365,7 @@ class SelectMpdAlbum:
         """display dir, with start"""
         if start == None:
             start = 0
-        print("dir", dir)
+        # print("dir", dir)
         tempdir = (self.currentdir + dir).replace("//", "/")
         # print(tempdir)
         forcedir = None
@@ -375,8 +375,8 @@ class SelectMpdAlbum:
             #tempdir = dir
             forcedir = self.curdirs[-1]
             tempdir = forcedir
-        print("dirs:", self.dirs)
-        print("dir:" + tempdir)
+        # print("dirs:", self.dirs)
+        #print("dir:" + tempdir)
         try:
             playlist, curdir = self.getdir(tempdir, forcedir)
         except:
@@ -387,8 +387,8 @@ class SelectMpdAlbum:
             self.curdirs.append(curdir)
         # else:
         #    tempdir = dir
-        print("curdirs:", self.curdirs)
-        print("dirs:", self.dirs)
+        # print("curdirs:", self.curdirs)
+        #print("dirs:", self.dirs)
         #print("playlist:", playlist)
         try:
             numdirs = sum(1 for x in playlist if self.is_directory(x))
