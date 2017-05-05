@@ -28,7 +28,7 @@ source.include_exts = py,png,jpg,kv,atlas
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 0.3
+version = 0.4
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
@@ -81,7 +81,7 @@ android.permissions = INTERNET
 #android.minapi = 9
 
 # (int) Android SDK version to use
-#android.sdk = 20
+android.sdk = 23
 
 # (str) Android NDK version to use
 #android.ndk = 9c
@@ -177,7 +177,7 @@ android.p4a_whitelist = lib-dynload/termios.so
 [buildozer]
 
 # (int) Log level (0 = error only, 1 = info, 2 = debug (with command output))
-log_level = 1
+log_level = 2
 
 # (int) Display warning if buildozer is run as root (0 = False, 1 = True)
 warn_on_root = 1
