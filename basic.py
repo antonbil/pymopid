@@ -491,7 +491,7 @@ class SpotifyPlaylist:
             url = url.replace("file:///home/wieneke/FamilyLibrary/TotalMusic", "192.168.2.8/spotify/mpd")
             if url.endswith(".mp3"):
                 url = os.path.dirname(url)
-            # print("url:", url)
+            # print("url:", url)2
             self.parent.play_mpd_playlist(
                 url)
         else:
