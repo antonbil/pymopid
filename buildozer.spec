@@ -36,7 +36,7 @@ version = 0.4
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements =  simplejson,ehp,ConfigParser,openssl,requests,kivy,pysmb
+requirements =  python-mpd2,simplejson,ehp,ConfigParser,openssl,requests,kivy,pysmb
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -72,16 +72,16 @@ orientation = landscape
 fullscreen = 1
 
 # (list) Permissions
-android.permissions = INTERNET
+android.permissions = INTERNET,ACCESS_WIFI_STATE,READ_PHONE_STATE,ACCESS_NETWORK_STATE
 
 # (int) Android API to use
-#android.api = 19
+android.api = 19
 
 # (int) Minimum API required
 #android.minapi = 9
 
 # (int) Android SDK version to use
-android.sdk = 23
+android.sdk = 20
 
 # (str) Android NDK version to use
 #android.ndk = 9c
@@ -154,7 +154,7 @@ android.p4a_whitelist = lib-dynload/termios.so
 #android.library_references =
 
 # (str) Android logcat filters to use
-#android.logcat_filters = *:S python:D
+android.logcat_filters = *:S python:D
 
 # (bool) Copy library instead of making a libpymodules.so
 #android.copy_libs = 1

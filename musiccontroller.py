@@ -109,6 +109,10 @@ class mpd_controller:
         else:
             return self.play_mpd_playlist(uri)
 
+    def play_mpd_playlist(self, dir):
+        utils.Alert("Warning", "not implemented yet," + dir + "playlist not added")
+        return []
+
     def remove_track(self, songpos):
         return self.get_client().delete(songpos)
 

@@ -196,10 +196,10 @@ class SubMenuScreen(MenuScreen):
         self.addButton("Browse Tree", self.main.display_tracks_tree)
         self.addButton("On Local Server", self.main.list_spotify_files)
         self.addButton("Users Playlists", self.main.spotify_users)
-        self.addButton("New Releases", self.main.spotify_browse)  # spotify_genres
-        self.addButton("Main Directory", self.main.spotify_genres)
         self.addButton("Tune In", self.main.spotify_tunein)
         self.addButton("Root", self.main.spotify_root)
+        self.addButton("New Releases", self.main.spotify_browse)  # spotify_genres
+        self.addButton("Main Directory", self.main.spotify_genres)
 
 
 maxtracks = 30  # max number of tracks displayed in playlist
@@ -486,13 +486,16 @@ class SpotifyPlaylist:
             release = release[:-1]
         l = release.split("/")
         url = self.mopidy_releases[l[len(l) - 1]]
-        if release.startswith("Files/"):
+        if (release.startswith("Files/") or release.startswith("file:///home/wieneke/FamilyLibrary")) and not (
+            "/TuneIn/" in release):
             url = url.replace("file:///home/wieneke/FamilyLibrary/TotalMusic", "192.168.2.8/spotify/mpd")
-            # print("url:", url)
+            if url.endswith(".mp3"):
+                url = os.path.dirname(url)
+            print("url:", url)
             self.parent.play_mpd_playlist(
                 url)
-            return
-        self.music_controller.playlist_add_mopidy(url)
+        else:
+            self.music_controller.playlist_add_mopidy(url)
 
     def user_mopidy(self, uri=""):
         pass
@@ -526,13 +529,14 @@ class SpotifyPlaylist:
             self.parent.selMopidyReleases.startDir = playurl
         else:
             if len(playurl) > 0:
-                self.music_controller.playlist_add_mopidy(playurl)
+                if not playurl.endswith(".mp3"):
+                    self.music_controller.playlist_add_mopidy(playurl)
                 # self.add_mopidy_release(uri)
                 return [], None
                 # item chosen, play album
 
         self.mopidy_releases = {}
-        #print ("startdir:", self.parent.selMopidyReleases.startDir)
+        print ("startdir:", self.parent.selMopidyReleases.startDir)
         if forceUri == None:
             forceUri = self.parent.selMopidyReleases.startDir
         res = self.music_controller.browse_mopidy(forceUri)  # "spotifytunigo:releases")
