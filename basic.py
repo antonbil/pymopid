@@ -1183,7 +1183,7 @@ class LoginScreen(BoxLayout):
 
     def getSearch(self):
         temp1 = self.music_controller.do_mopidy_search(self.popupSearch.artist)
-        # print ("temp1:")
+        # print ("temp1:")2
         # print (temp1)
         # print ("temp1[0]:")
         # print (temp1[1])
