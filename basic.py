@@ -1183,14 +1183,11 @@ class LoginScreen(BoxLayout):
 
     def getSearch(self):
         temp1 = self.music_controller.do_mopidy_search(self.popupSearch.artist)
-        print ("temp1:")
-        print (temp1)
-        print ("temp1[0]:")
-        print (temp1[1])
-        try:
-            self.currentArtist = temp1[1]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
-        except:
-            pass
+        # print ("temp1:")
+        # print (temp1)
+        # print ("temp1[0]:")
+        # print (temp1[1])
+        self.currentArtist = temp1[1]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
         #print(self.currentArtist)
         temp = temp1[1]["tracks"]
         out_list = []
