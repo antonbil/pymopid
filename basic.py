@@ -58,6 +58,13 @@ colors = [red, green, blue, purple]
 buttons = [["1", "<<"], ["2", "||"], ["3", ">"], ["4", ">>"], ["5", "Menu"], ]
 
 
+def printError():
+    e = sys.exc_info()[0]
+    print(e)
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    print repr(traceback.extract_tb(exc_traceback))
+
+
 class IconButton(ButtonBehavior, AsyncImage):
     pass
 
@@ -480,22 +487,26 @@ class SpotifyPlaylist:
         self.music_controller.select_and_play_mopidy(song_pos)
 
     def add_mopidy_release(self, release):
-        print("play:", release)
-        last = release[-1:]
-        if last == "/":
-            release = release[:-1]
-        l = release.split("/")
-        url = self.mopidy_releases[l[len(l) - 1]]
-        if (release.startswith("Files/") or release.startswith("file:///home/wieneke/FamilyLibrary")) and not (
-            "/TuneIn/" in release):
-            url = url.replace("file:///home/wieneke/FamilyLibrary/TotalMusic", "192.168.2.8/spotify/mpd")
-            if url.endswith(".mp3"):
-                url = os.path.dirname(url)
-            # print("url:", url)
-            self.parent.play_mpd_playlist(
-                url)
-        else:
-            self.music_controller.playlist_add_mopidy(url)
+        try:
+            print("play:", release)
+            last = release[-1:]
+            if last == "/":
+                release = release[:-1]
+            l = release.split("/")
+            url = self.mopidy_releases[l[len(l) - 1]]
+            if (release.startswith("Files/") or (release.startswith("spotify:")) or release.startswith(
+                    "file:///home/wieneke/FamilyLibrary")) and not (
+                        "/TuneIn/" in release):
+                url = url.replace("file:///home/wieneke/FamilyLibrary/TotalMusic", "192.168.2.8/spotify/mpd")
+                if url.endswith(".mp3"):
+                    url = os.path.dirname(url)
+                # print("url:", url)
+                self.parent.play_mpd_playlist(
+                    url)
+            else:
+                self.music_controller.playlist_add_mopidy(url)
+        except:
+            self.music_controller.playlist_add_mopidy(release)  # .replace("spotify:user:","user:")''')
 
     def user_mopidy(self, uri=""):
         pass
@@ -1105,12 +1116,13 @@ class LoginScreen(BoxLayout):
         # self.popupSearch.popup.dismiss()
         #print("instance:", instance.item)
         temp = instance.item["name"]
-        #print("temp:", temp)
+        print("temp:", temp)
         # self.similarArtistsPopup.display_tracks(temp)
         try:
             self.popupSearch.artist = temp
             self.popupSearch.display_tracks(temp)
         except:
+            printError()
             pass
 
     def onLongpresssimilarArtistsPopup(self, instance, pos):
@@ -1158,22 +1170,29 @@ class LoginScreen(BoxLayout):
 
     def similarForPlayingArtist(self, instance=None):
         try:
-            # print("search:")
+            print("search:")
             temp1 = self.music_controller.do_mopidy_search(self.currentPlayingArtist)
-            # print("search2:",temp1[1])
+            print("search2:", temp1[1])
             self.currentArtist = temp1[1]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
-            # print("search2:")
+            print("search2:")
             self.displaySimilarArtists(self.currentArtist)
-            # print("search3:")
+            print("search3:")
             # following necessary for popupSearch
         except:
             pass
 
     def getSearch(self):
         temp1 = self.music_controller.do_mopidy_search(self.popupSearch.artist)
-        self.currentArtist = temp1[0]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
+        print ("temp1:")
+        print (temp1)
+        print ("temp1[0]:")
+        print (temp1[1])
+        try:
+            self.currentArtist = temp1[1]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
+        except:
+            pass
         #print(self.currentArtist)
-        temp = temp1[0]["tracks"]
+        temp = temp1[1]["tracks"]
         out_list = []
         added = set()
         for item in temp:
@@ -1215,9 +1234,10 @@ class LoginScreen(BoxLayout):
             self.tracknr.text = '{f:02d}'.format(f=status["track"])
             self.currentPlayingArtist = status["artist"]
             if self.mode_title:
-                self.label.text = "[b]" + self.currentPlayingArtist + " - " + status["title"] + "[/b]"
+                self.label.text = self.currentPlayingArtist + " - " + status["title"]
             else:
-                self.label.text = "[b]" + status["album"] + " - " + status["title"] + "[/b]"
+                self.label.text = status["album"] + " - " + status["title"]
+            self.label.text = "[b]" + self.label.text + "[/b]"
             img = status["file"]
             if status['mode'] == 'mpd':
                 self.display_image_of_album_on_disk(img)
@@ -1240,10 +1260,7 @@ class LoginScreen(BoxLayout):
 
 
         except:  # catch *all* exceptions
-            e = sys.exc_info()[0]
-            print(e)
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            print repr(traceback.extract_tb(exc_traceback))
+            printError()
             self.time.text = '00:00'
 
     def display_image_of_album_on_disk(self, img):

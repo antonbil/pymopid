@@ -36,7 +36,7 @@ version = 0.4
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements =  python-mpd2,simplejson,ehp,ConfigParser,openssl,requests,kivy,pysmb
+requirements =  simplejson,ehp,ConfigParser,openssl,requests,kivy,pysmb,python-mpd2
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -72,7 +72,8 @@ orientation = landscape
 fullscreen = 1
 
 # (list) Permissions
-android.permissions = INTERNET,ACCESS_WIFI_STATE,READ_PHONE_STATE,ACCESS_NETWORK_STATE
+android.permissions = INTERNET,ACCESS_WIFI_STATE,READ_PHONE_STATE,ACCESS_NETWORK_STATE,WRITE_EXTERNAL_STORAGE
+
 
 # (int) Android API to use
 android.api = 19
