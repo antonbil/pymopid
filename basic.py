@@ -516,6 +516,8 @@ class SpotifyPlaylist:
         for l in playForSureList:
             if playurl.find(l) > -1:
                 playForSure = True
+        if playurl.endswith(".mp3"):
+            playForSure = True
         preferred = False
         listPreferred = ["spotify:top", "local:directory?type=album"]
         for l in listPreferred:
@@ -758,7 +760,7 @@ class LoginScreen(BoxLayout):
             self.orientation = "vertical"
 
             h_layout0 = BoxLayout(padding=10, size_hint=(1.0, 0.2))
-            for i in range(5):
+            for i in range(len(buttons)):
                 btn = Button(text=buttons[i][1], id=buttons[i][0],
                              background_color=random.choice(colors), size=(100, Window.height / 8)
                              )
@@ -791,6 +793,7 @@ class LoginScreen(BoxLayout):
             h_layout1.add_widget(v_layout)
             # sudo kate  /usr/lib/python2.7/dist-packages/kivy/core/image/img_pil.py regel 86, verander img_tmp.mode.lower(), img_tmp.tostring()) , tostring()in tobytes()
             self.image_source = IconButton(allow_stretch=True)
+            self.image_source.bind(on_release=self.spotify_root)
 
             h_layout1.add_widget(self.image_source)
             self.time = Label(font_size='45sp')
@@ -1130,8 +1133,11 @@ class LoginScreen(BoxLayout):
         # 'spotifytunigo:toplists','spotifytunigo:genres'
 
     def spotify_root(self, instance=None):
+        print("root:")
         self.selMopidyReleases.popupOpen = False
+        print("root:")
         self.selMopidyReleases.sortlist = False
+        print("root:")
         self.selMopidyReleases.startDir = ''  # "spotifytunigo:releases"
         self.selMopidyReleases.display("")
         # 'spotifytunigo:toplists','spotifytunigo:genres'
@@ -1270,7 +1276,9 @@ class LoginScreen(BoxLayout):
     def doAction(self, instance):
         # print ("action:")
         # print(instance.id)
-        self.music_controller.do_action(int(instance.id) - 1)
+        id = int(instance.id) - 1
+        if (id < 4):
+            self.music_controller.do_action(id)
 
 
 class MyApp(App):
