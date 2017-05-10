@@ -498,9 +498,6 @@ class SpotifyPlaylist:
                     release.startswith("Files/") or (release.startswith("spotify:")) or release.startswith(
                     "file:///home/wieneke/FamilyLibrary")) and not (
                         "/TuneIn/" in release):
-                url = url.replace("file:///home/wieneke/FamilyLibrary/TotalMusic", "192.168.2.8/spotify/mpd")
-                if url.endswith(".mp3"):
-                    url = os.path.dirname(url)
                 # print("url:", url)
                 self.parent.play_mpd_playlist(
                     url)
@@ -543,6 +540,7 @@ class SpotifyPlaylist:
             self.parent.selMopidyReleases.startDir = playurl
         else:
             if len(playurl) > 0:
+                # mp3 files are handled elsewhere, do not take action
                 if not playurl.endswith(".mp3"):
                     self.music_controller.playlist_add_mopidy(playurl)
                 # self.add_mopidy_release(uri)
@@ -912,6 +910,11 @@ class LoginScreen(BoxLayout):
                 pass
 
     def play_mpd_playlist(self, dir):
+        print("filename1:", dir)
+        # todo: chack if following line can be modified using URL_OF_IMAGES_SERVER
+        dir = dir.replace("file:///home/wieneke/FamilyLibrary/TotalMusic", "192.168.2.8/spotify/mpd")
+        if dir.endswith(".mp3"):
+            url = os.path.dirname(dir)
         try:
             filename = "http://" + (dir + "/mp3info.txt".replace("//", "/").replace(" ", "%20"))
             # family_music = "FamilyMusic"
