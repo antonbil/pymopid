@@ -494,7 +494,8 @@ class SpotifyPlaylist:
                 release = release[:-1]
             l = release.split("/")
             url = self.mopidy_releases[l[len(l) - 1]]
-            if (release.startswith("Files/") or (release.startswith("spotify:")) or release.startswith(
+            if (url.endswith(".mp3")) or (
+                    release.startswith("Files/") or (release.startswith("spotify:")) or release.startswith(
                     "file:///home/wieneke/FamilyLibrary")) and not (
                         "/TuneIn/" in release):
                 url = url.replace("file:///home/wieneke/FamilyLibrary/TotalMusic", "192.168.2.8/spotify/mpd")
@@ -913,6 +914,9 @@ class LoginScreen(BoxLayout):
     def play_mpd_playlist(self, dir):
         try:
             filename = "http://" + (dir + "/mp3info.txt".replace("//", "/").replace(" ", "%20"))
+            if "FamilyMusic" in filename:
+                ffname = filename.split("FamilyMusic")
+                filename = "http://192.168.2.8:8081/FamilyMusic/" + ffname[1]
             print("filename:", filename)
             response = requests.get(filename, verify=False)
             lines = (response.content).split(LIBRARY_FAMILY_MUSIC)
@@ -935,6 +939,7 @@ class LoginScreen(BoxLayout):
 
     def play_samba_dir(self, dir):
         filename = dir + "/mp3info.txt"
+        print ("filename:" + filename)
         lines = self.smb_dir.get_content_file(filename)
         del lines[0]
         for item in lines:
@@ -1263,6 +1268,7 @@ class LoginScreen(BoxLayout):
     def display_image_of_album_on_disk(self, img):
         img = os.path.dirname(img) + FOLDER_JPG
         img = (URI_FOR_IMAGE_OF_ALBUM + img).replace(" ", "%20")
+        print("img:" + img)
         self.get_image(img)
         self.previousimage = img
 
