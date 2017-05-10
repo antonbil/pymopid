@@ -510,7 +510,7 @@ class SpotifyPlaylist:
         pass
 
     def browse_mopidy(self, uri="", forceUri=None):
-        # print("uri: " + uri)
+        print("uri: " + uri)
         try:
             last = uri[-1:]
             if last == "/":
@@ -529,6 +529,7 @@ class SpotifyPlaylist:
             playForSure = True
         preferred = False
         listPreferred = ["spotify:top", "local:directory?type=album"]
+        # listPreferred = ["spotify:top", "local:directory?type=album","spotifyweb:","tunein:station","playlist","album"]
         for l in listPreferred:
             if playurl.find(l) > -1:
                 preferred = True
@@ -538,8 +539,10 @@ class SpotifyPlaylist:
                         playurl.find("file:///") > -1 and playurl.endswith(".mp3")))) or playurl.find(
             "spotifyweb:") > -1:  #
             self.parent.selMopidyReleases.startDir = playurl
+            print("dosomething with url:")
         else:
             if len(playurl) > 0:
+                print ("other:")
                 # mp3 files are handled elsewhere, do not take action
                 if not playurl.endswith(".mp3"):
                     self.music_controller.playlist_add_mopidy(playurl)
