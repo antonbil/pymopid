@@ -520,7 +520,7 @@ class SpotifyPlaylist:
         except:
             playurl = ""
         print("playurl:" + playurl)
-        playForSureList = ["spotify:track:"]
+        playForSureList = ["spotify:track:", "tunein:station"]
         playForSure = False
         for l in playForSureList:
             if playurl.find(l) > -1:
@@ -534,8 +534,7 @@ class SpotifyPlaylist:
             if playurl.find(l) > -1:
                 preferred = True
         if not playForSure and len(playurl) > 0 and (
-            preferred or (playurl.find("album") == -1 and playurl.find("playlist") == -1 and playurl.find(
-                "tunein:station") == -1 and not (
+                    preferred or (playurl.find("album") == -1 and playurl.find("playlist") == -1 and not (
                         playurl.find("file:///") > -1 and playurl.endswith(".mp3")))) or playurl.find(
             "spotifyweb:") > -1:  #
             self.parent.selMopidyReleases.startDir = playurl
