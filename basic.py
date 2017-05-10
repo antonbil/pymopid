@@ -538,10 +538,10 @@ class SpotifyPlaylist:
                         playurl.find("file:///") > -1 and playurl.endswith(".mp3")))) or playurl.find(
             "spotifyweb:") > -1:  #
             self.parent.selMopidyReleases.startDir = playurl
-            print("dosomething with url:")
+            # print("dosomething with url:")
         else:
             if len(playurl) > 0:
-                print ("other:")
+                #print ("other:")
                 # mp3 files are handled elsewhere, do not take action
                 if not playurl.endswith(".mp3"):
                     self.music_controller.playlist_add_mopidy(playurl)
