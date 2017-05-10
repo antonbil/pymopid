@@ -914,10 +914,11 @@ class LoginScreen(BoxLayout):
     def play_mpd_playlist(self, dir):
         try:
             filename = "http://" + (dir + "/mp3info.txt".replace("//", "/").replace(" ", "%20"))
-            if "FamilyMusic" in filename:
-                ffname = filename.split("FamilyMusic")
-                filename = "http://192.168.2.8:8081/FamilyMusic/" + ffname[1]
-            # print("filename:", filename)
+            # family_music = "FamilyMusic"
+            if FAMILY_MUSIC in filename:
+                ffname = filename.split(FAMILY_MUSIC)
+                filename = URL_OF_IMAGES_SERVER + FAMILY_MUSIC + ffname[1]
+            print("filename:", filename)
             response = requests.get(filename, verify=False)
             lines = (response.content).split(LIBRARY_FAMILY_MUSIC)
             #print (lines)
