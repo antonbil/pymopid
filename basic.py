@@ -917,7 +917,7 @@ class LoginScreen(BoxLayout):
             if "FamilyMusic" in filename:
                 ffname = filename.split("FamilyMusic")
                 filename = "http://192.168.2.8:8081/FamilyMusic/" + ffname[1]
-            print("filename:", filename)
+            # print("filename:", filename)
             response = requests.get(filename, verify=False)
             lines = (response.content).split(LIBRARY_FAMILY_MUSIC)
             #print (lines)
@@ -1268,7 +1268,7 @@ class LoginScreen(BoxLayout):
     def display_image_of_album_on_disk(self, img):
         img = os.path.dirname(img) + FOLDER_JPG
         img = (URI_FOR_IMAGE_OF_ALBUM + img).replace(" ", "%20")
-        print("img:" + img)
+        #print("img:" + img)
         self.get_image(img)
         self.previousimage = img
 
