@@ -1194,7 +1194,7 @@ class LoginScreen(BoxLayout):
             self.currentArtist = temp1[0]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
             print("search2:" + self.currentArtist)
             self.displaySimilarArtists(self.currentArtist)
-            print("search3:")
+            # print("search3:")
             # following necessary for popupSearch
         except:
             pass
