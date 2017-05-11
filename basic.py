@@ -1204,7 +1204,7 @@ class LoginScreen(BoxLayout):
         # print ("temp1:")2
         # print (temp1)
         # print ("temp1[0]:")
-        print (temp1)
+        # print (temp1)
         self.currentArtist = temp1[0]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
         #print(self.currentArtist)
         temp = temp1[0]["tracks"]
