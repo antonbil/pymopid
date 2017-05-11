@@ -123,6 +123,7 @@ class PopList:
             self.onLongPress(instance, instance.nr)
 
     def display_tracks(self, instance, start=None):
+        print("here1")
         if start == None:
             self.popupOpened = False
             start = 0
@@ -131,6 +132,7 @@ class PopList:
         self.horizon.clear_widgets()
 
         playlist = self.getList()
+        print("here2")
         for i in range(len(playlist) / self.maxlist + 1):
             try:
                 self.horizon.add_widget(self.horizons[i])
@@ -495,9 +497,10 @@ class SpotifyPlaylist:
             l = release.split("/")
             url = self.mopidy_releases[l[len(l) - 1]]
             if (url.endswith(".mp3")) or (
-                    release.startswith("Files/") or (release.startswith("spotify:")) or release.startswith(
+                                release.startswith("/Files/") or release.startswith("Files/") or (
+                        release.startswith("spotify:")) or release.startswith(
                     "file:///home/wieneke/FamilyLibrary")) and not (
-                        "/TuneIn/" in release):
+                                "/TuneIn/" in release or "/Spotify/" in release or "/Spotify Browse/" in release):
                 # print("url:", url)
                 self.parent.play_mpd_playlist(
                     url)
@@ -893,7 +896,7 @@ class LoginScreen(BoxLayout):
 
     def list_spotify_files(self, instance):
         self.selMopidyAlbum.popupOpen = False
-        self.selMopidyAlbum.display("/")
+        self.selMopidyAlbum.display("/", id="0")
 
     def add_and_play_mpd_playlist(self, dir):
         try:
@@ -916,17 +919,21 @@ class LoginScreen(BoxLayout):
         # todo: chack if following line can be modified using URL_OF_IMAGES_SERVER
         dir = dir.replace("file:///home/wieneke/FamilyLibrary/TotalMusic", "192.168.2.8/spotify/mpd")
         if dir.endswith(".mp3"):
-            url = os.path.dirname(dir)
+            dir = os.path.dirname(dir)
         try:
             filename = "http://" + (dir + "/mp3info.txt".replace("//", "/").replace(" ", "%20"))
             # family_music = "FamilyMusic"
-            if FAMILY_MUSIC in filename:
-                ffname = filename.split(FAMILY_MUSIC)
-                filename = URL_OF_IMAGES_SERVER + FAMILY_MUSIC + ffname[1]
+            for item in [FAMILY_MUSIC, "TotalMusic"]:
+                if item in filename:
+                    ffname = filename.split(item)
+                    filename = "http://" + URL_OF_IMAGES_SERVER + item + ffname[1]
+                    break
+
             print("filename:", filename)
             response = requests.get(filename, verify=False)
+            print ("response:", response)
             lines = (response.content).split(LIBRARY_FAMILY_MUSIC)
-            #print (lines)
+            print ("lines:", lines)
             del lines[0]
             del lines[0]
             for item in lines:
@@ -1084,13 +1091,13 @@ class LoginScreen(BoxLayout):
     def similar(self, instance):
         instance.popup.dismiss()
         self.popupSearch.popup.dismiss()
-        # print(self.currentArtist)
+        print(self.currentArtist)
         self.displaySimilarArtists(self.currentArtist)
 
     def displaySimilarArtists(self, artist):
         try:
             self.similarartists = self.music_controller.do_mopidy_similar(artist)
-            # print(self.similarartists)
+            print(self.similarartists)
             self.similarArtistsPopup.display_tracks(artist)
         except:
             utils.Alert("Notification", "not implemented yet")
@@ -1146,13 +1153,13 @@ class LoginScreen(BoxLayout):
         self.selMopidyUsers.popupOpen = False
         self.selMopidyUsers.sortlist = False
         self.selMopidyUsers.startDir = "spotifytunigo:releases"  # "spotifytunigo:releases"
-        self.selMopidyUsers.display("")
+        self.selMopidyUsers.display("", id="2")
 
     def spotify_browse(self, instance=None):
         self.selMopidyReleases.popupOpen = False
         self.selMopidyReleases.sortlist = False
         self.selMopidyReleases.startDir = "spotifytunigo:releases"  # "spotifytunigo:releases"
-        self.selMopidyReleases.display("")
+        self.selMopidyReleases.display("", id="3")
         # 'spotifytunigo:toplists','spotifytunigo:genres'
 
     def spotify_root(self, instance=None):
@@ -1162,30 +1169,30 @@ class LoginScreen(BoxLayout):
         self.selMopidyReleases.sortlist = False
         print("root:")
         self.selMopidyReleases.startDir = ''  # "spotifytunigo:releases"
-        self.selMopidyReleases.display("")
+        self.selMopidyReleases.display("", id="4")
         # 'spotifytunigo:toplists','spotifytunigo:genres'
 
     def spotify_tunein(self, instance=None):
         self.selMopidyReleases.popupOpen = False
         self.selMopidyReleases.sortlist = False
         self.selMopidyReleases.startDir = 'tunein:root'  # "spotifytunigo:releases"
-        self.selMopidyReleases.display("")
+        self.selMopidyReleases.display("", id="5")
         # 'spotifytunigo:toplists','spotifytunigo:genres'
 
     def spotify_genres(self, instance=None):
         self.selMopidyReleases.popupOpen = False
         self.selMopidyReleases.sortlist = False
         self.selMopidyReleases.startDir = 'spotifytunigo:directory'  # "spotifytunigo:releases"
-        self.selMopidyReleases.display("")
+        self.selMopidyReleases.display("", id="6")
         # 'spotifytunigo:toplists','spotifytunigo:genres'
 
     def similarForPlayingArtist(self, instance=None):
         try:
-            print("search:")
+            print("search:" + self.currentPlayingArtist)
             temp1 = self.music_controller.do_mopidy_search(self.currentPlayingArtist)
-            print("search2:", temp1[1])
-            self.currentArtist = temp1[1]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
-            print("search2:")
+            print("search2:", temp1)
+            self.currentArtist = temp1[0]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
+            print("search2:" + self.currentArtist)
             self.displaySimilarArtists(self.currentArtist)
             print("search3:")
             # following necessary for popupSearch
@@ -1197,10 +1204,10 @@ class LoginScreen(BoxLayout):
         # print ("temp1:")2
         # print (temp1)
         # print ("temp1[0]:")
-        # print (temp1[1])
-        self.currentArtist = temp1[1]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
+        print (temp1)
+        self.currentArtist = temp1[0]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
         #print(self.currentArtist)
-        temp = temp1[1]["tracks"]
+        temp = temp1[0]["tracks"]
         out_list = []
         added = set()
         for item in temp:
@@ -1287,13 +1294,13 @@ class LoginScreen(BoxLayout):
 
     def list_files(self, instance):
         self.selAlbum.popupOpen = False
-        self.selAlbum.display("/")
+        self.selAlbum.display("/", id="7")
         # print(self.music_controller.mc.list_files("/"))
 
     def list_smb_files(self, instance):
         try:
             self.selSmbAlbum.popupOpen = False
-            self.selSmbAlbum.display("/")
+            self.selSmbAlbum.display("/", id="8")
         except:
             utils.Alert("No action", "not implemented yet")
             pass

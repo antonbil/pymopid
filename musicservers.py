@@ -189,8 +189,9 @@ class SelectMpdAlbum:
         if not currentdir == None:
             self.currentdir = currentdir
         self.savePlaylist = savePlaylist
+        self.basedir = currentdir
 
-        print("currentdir:", self.currentdir)
+        # print("currentdir:", self.currentdir)
         self.is_directory = is_directory
         self.dirs = []
         self.curdirs = []
@@ -254,11 +255,15 @@ class SelectMpdAlbum:
             head, tail = os.path.split(self.currentdir)
             head, tail = os.path.split(head)
             # print(head)
+            self.currentdir = head + "/"
             if len(self.dirs) > 1:
                 self.dirs.pop()
                 self.curdirs.pop()
-            self.currentdir = head + "/"
-            self.display(self.dirs[-1], addtolist=False)
+                """if len(self.dirs[-1])>len(self.currentdir):
+                    print("two up:",self.dirs[-1],self.currentdir)
+                    self.dirs.pop()
+                    self.curdirs.pop()"""
+            self.display(self.dirs[-1] + "/", addtolist=False)
         except:
             pass
 
@@ -325,7 +330,7 @@ class SelectMpdAlbum:
     def addAndPlayAlbumCall(self, instance):
         try:
             instance.popup.dismiss()
-            tempdir = self.currentdir + instance.item.text
+            tempdir = self.currentdir + "/" + instance.item.text
             self.addAndPlayAlbum(tempdir)
         except:
             pass
@@ -361,14 +366,26 @@ class SelectMpdAlbum:
         btn1.bind(on_press=lambda x: self.optionButton(x))
         return btn1
 
-    def display(self, dir, start=None, addtolist=True):
+    def display(self, dir, start=None, addtolist=True, id="1"):
         """display dir, with start"""
         if start == None:
             start = 0
-        # print("dir", dir)
-        tempdir = (self.currentdir + dir).replace("//", "/")
-        # print(tempdir)
+        try:
+            if not (id == "1" or id == self.previd):
+                print("id:" + id)
+                self.currentdir = self.basedir
+                self.previd = id
+        except:
+            pass
+
+        print("dir:", dir)
+        try:
+            tempdir = (self.currentdir + "/" + dir).replace("//", "/")
+        except:
+            tempdir = dir
+        print("tempdir:", tempdir)
         forcedir = None
+
         if addtolist:
             pass
         else:
