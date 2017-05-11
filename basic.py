@@ -1190,7 +1190,7 @@ class LoginScreen(BoxLayout):
         try:
             print("search:" + self.currentPlayingArtist)
             temp1 = self.music_controller.do_mopidy_search(self.currentPlayingArtist)
-            print("search2:", temp1)
+            # print("search2:", temp1)
             self.currentArtist = temp1[0]['tracks'][0]['artists'][0]['uri'].replace("spotify:artist:", "")
             print("search2:" + self.currentArtist)
             self.displaySimilarArtists(self.currentArtist)
