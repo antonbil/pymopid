@@ -123,7 +123,6 @@ class PopList:
             self.onLongPress(instance, instance.nr)
 
     def display_tracks(self, instance, start=None):
-        print("here1")
         if start == None:
             self.popupOpened = False
             start = 0
@@ -132,7 +131,6 @@ class PopList:
         self.horizon.clear_widgets()
 
         playlist = self.getList()
-        print("here2")
         for i in range(len(playlist) / self.maxlist + 1):
             try:
                 self.horizon.add_widget(self.horizons[i])
