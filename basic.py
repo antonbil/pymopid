@@ -521,7 +521,7 @@ class SpotifyPlaylist:
             l = uri.split("/")
             playurl = self.mopidy_releases[l[len(l) - 1]]
         except:
-            playurl = ""
+            playurl = uri
         print("playurl:" + playurl)
         playForSureList = ["spotify:track:", "tunein:station"]
         playForSure = False
@@ -579,7 +579,7 @@ class SpotifyPlaylist:
             try:
                 href = link.attr['href']
                 text = link.text()
-                print ("link:", href, text)
+                # print ("link:", href, text)
                 if ("/" in href and not "Parent" in text) or text.endswith(".mp3"):
                     # if not "Parent" in text:
                     if text.endswith(".mp3"):
@@ -589,7 +589,7 @@ class SpotifyPlaylist:
                         item = {'filename': utils.remove_slash_at_end(text),
                                 'directory': utils.remove_slash_at_end(text)}
                     list.append(item)
-                    print ("item:", item)
+                    #print ("item:", item)
             except:
                 pass
         # print("url:", "1a")
@@ -921,7 +921,7 @@ class LoginScreen(BoxLayout):
         if dir.endswith(".mp3"):
             dir = os.path.dirname(dir)
         try:
-            filename = "http://" + (dir + "/mp3info.txt".replace("//", "/").replace(" ", "%20"))
+            filename = "http://" + ((dir + "/mp3info.txt").replace("//", "/").replace(" ", "%20"))
             # family_music = "FamilyMusic"
             for item in [FAMILY_MUSIC, "TotalMusic"]:
                 if item in filename:

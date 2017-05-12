@@ -406,9 +406,16 @@ class SelectMpdAlbum:
         #    tempdir = dir
         # print("curdirs:", self.curdirs)
         #print("dirs:", self.dirs)
-        #print("playlist:", playlist)
         try:
             numdirs = sum(1 for x in playlist if self.is_directory(x))
+            try:
+                for x in playlist:
+                    if x["filename"].endswith(".mp3"):
+                        tempdir += x["filename"]
+                        numdirs = 0
+                        break
+            except:
+                pass
         except:
             numdirs = 0
         if numdirs == 0:
