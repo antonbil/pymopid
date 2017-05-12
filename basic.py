@@ -569,7 +569,7 @@ class SpotifyPlaylist:
         response = requests.get("http://" + url, verify=False)
         html = Html()
         dom = html.feed(response.content)
-        print("url:", 1)
+        # print("url:", 1)
         #soup = bs(response.content)
         list = []
         #for link in soup.findAll('a'):
@@ -599,7 +599,7 @@ class SpotifyPlaylist:
             myartists = []
             myalbums = []
             for link in dom.find('div'):
-                print(link)
+                #print(link)
                 class Object(object):
                     pass
 
