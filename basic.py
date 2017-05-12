@@ -933,7 +933,7 @@ class LoginScreen(BoxLayout):
             response = requests.get(filename, verify=False)
             print ("response:", response)
             lines = (response.content).split(LIBRARY_FAMILY_MUSIC)
-            print ("lines:", lines)
+            # print ("lines:", lines)
             del lines[0]
             del lines[0]
             for item in lines:
