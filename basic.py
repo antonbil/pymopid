@@ -827,7 +827,7 @@ class LoginScreen(BoxLayout):
             else:
                 playdirmpd = lambda x: self.play_mpd_playlist(
                     # URL_OF_IMAGES_SERVER + FAMILY_MUSIC + x[1:])
-                    "/FamilyMusic/" + x[1:])
+                    FAMILY_MUSIC + x[1:])
 
             self.selAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
                                                         getdir=lambda x, y: self.music_controller.mc.list_files(x),
@@ -917,8 +917,8 @@ class LoginScreen(BoxLayout):
         print("filename12:", dir)
         if dir.endswith(".mp3"):
             dir = os.path.dirname(dir)
-        if not musiccontroller.PLAY_MPD and dir.startswith("/FamilyMusic"):
-            result, b = self.music_controller.mc.list_files(dir.replace("/FamilyMusic", "").replace("//", "/"))
+        if not musiccontroller.PLAY_MPD and dir.startswith(FAMILY_MUSIC):
+            result, b = self.music_controller.mc.list_files(dir.replace(FAMILY_MUSIC, "").replace("//", "/"))
             for x in result:
                 filename = x["file"]
                 self.music_controller.playlist_add_mopidy(MOPIDY_LIBRARY_FAMILY_MUSIC + filename)
