@@ -380,7 +380,7 @@ class SelectMpdAlbum:
 
         print("dir:", dir)
         try:
-            tempdir = (self.currentdir + "/" + dir).replace("//", "/")
+            tempdir = (self.currentdir + "/" + dir).replace("//", "/").replace("//", "/")
         except:
             tempdir = dir
         print("tempdir:", tempdir)

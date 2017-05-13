@@ -826,7 +826,8 @@ class LoginScreen(BoxLayout):
                 playdirmpd = lambda x: self.music_controller.mc.add(x[1:])
             else:
                 playdirmpd = lambda x: self.play_mpd_playlist(
-                    URL_OF_IMAGES_SERVER + FAMILY_MUSIC + x[1:])
+                    # URL_OF_IMAGES_SERVER + FAMILY_MUSIC + x[1:])
+                    "/FamilyMusic/" + x[1:])
 
             self.selAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
                                                         getdir=lambda x, y: self.music_controller.mc.list_files(x),
@@ -913,40 +914,46 @@ class LoginScreen(BoxLayout):
                 pass
 
     def play_mpd_playlist(self, dir):
-        print("filename1:", dir)
-        # todo: chack if following line can be modified using URL_OF_IMAGES_SERVER
-        dir = dir.replace("file:///home/wieneke/FamilyLibrary/TotalMusic", "192.168.2.8/spotify/mpd")
+        print("filename12:", dir)
         if dir.endswith(".mp3"):
             dir = os.path.dirname(dir)
-        try:
-            filename = "http://" + ((dir + "/mp3info.txt").replace("//", "/").replace(" ", "%20"))
-            # family_music = "FamilyMusic"
-            for item in [FAMILY_MUSIC, "TotalMusic"]:
-                if item in filename:
-                    ffname = filename.split(item)
-                    filename = "http://" + URL_OF_IMAGES_SERVER + item + ffname[1]
-                    break
+        if not musiccontroller.PLAY_MPD and dir.startswith("/FamilyMusic"):
+            result, b = self.music_controller.mc.list_files(dir.replace("/FamilyMusic", "").replace("//", "/"))
+            for x in result:
+                filename = x["file"]
+                self.music_controller.playlist_add_mopidy(MOPIDY_LIBRARY_FAMILY_MUSIC + filename)
+        else:
+            # todo: chack if following line can be modified using URL_OF_IMAGES_SERVER
+            dir = dir.replace("file:///home/wieneke/FamilyLibrary/TotalMusic", "192.168.2.8/spotify/mpd")
+            try:
+                filename = "http://" + ((dir + "/mp3info.txt").replace("//", "/").replace(" ", "%20"))
+                # family_music = "FamilyMusic"
+                for item in [FAMILY_MUSIC, "TotalMusic"]:
+                    if item in filename:
+                        ffname = filename.split(item)
+                        filename = "http://" + URL_OF_IMAGES_SERVER + item + ffname[1]
+                        break
 
-            print("filename:", filename)
-            response = requests.get(filename, verify=False)
-            print ("response:", response)
-            lines = (response.content).split(LIBRARY_FAMILY_MUSIC)
-            # print ("lines:", lines)
-            del lines[0]
-            del lines[0]
-            for item in lines:
-                try:
-                    fname = item.split("=== ")[0]
-                    #print ("add-mpd:", fname)
-                    if musiccontroller.PLAY_MPD:
-                        self.music_controller.mc.add(fname)
-                    else:
-                        self.music_controller.playlist_add_mopidy(MOPIDY_LIBRARY_FAMILY_MUSIC + fname)
-                except:
-                    pass
+                print("filename:", filename)
+                response = requests.get(filename, verify=False)
+                # print ("response:", response)
+                lines = (response.content).split(LIBRARY_FAMILY_MUSIC)
+                # print ("lines:", lines)
+                del lines[0]
+                del lines[0]
+                for item in lines:
+                    try:
+                        fname = item.split("=== ")[0]
+                        # print ("add-mpd:", fname)
+                        if musiccontroller.PLAY_MPD:
+                            self.music_controller.mc.add(fname)
+                        else:
+                            self.music_controller.playlist_add_mopidy(MOPIDY_LIBRARY_FAMILY_MUSIC + fname)
+                    except:
+                        pass
 
-        except:
-            utils.Alert("Warning", "playlist not added")
+            except:
+                utils.Alert("Warning", "playlist not added")
 
     def play_samba_dir(self, dir):
         filename = dir + "/mp3info.txt"
