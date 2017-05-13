@@ -396,6 +396,7 @@ class SelectMpdAlbum:
         #print("dir:" + tempdir)
         try:
             playlist, curdir = self.getdir(tempdir, forcedir)
+            print("curdir:", curdir)
         except:
             playlist = []
             curdir = None

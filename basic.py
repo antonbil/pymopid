@@ -827,7 +827,7 @@ class LoginScreen(BoxLayout):
             else:
                 playdirmpd = lambda x: self.play_mpd_playlist(
                     # URL_OF_IMAGES_SERVER + FAMILY_MUSIC + x[1:])
-                    FAMILY_MUSIC + x[1:])
+                    FAMILY_MUSIC + x)
 
             self.selAlbum = musicservers.SelectMpdAlbum(self.music_controller, colors, self.popupSearch, self,
                                                         getdir=lambda x, y: self.music_controller.mc.list_files(x),
