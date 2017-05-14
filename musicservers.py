@@ -371,7 +371,8 @@ class SelectMpdAlbum:
         if start == None:
             start = 0
         try:
-            if not (id == "1" or id == self.previd):
+            print("id:" + id)
+            if not (id == "1" or id == "4" or id == self.previd):
                 print("id:" + id)
                 self.currentdir = self.basedir
                 self.previd = id
