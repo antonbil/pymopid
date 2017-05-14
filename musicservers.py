@@ -290,7 +290,8 @@ class SelectMpdAlbum:
             self.display(instance.text + "/")
 
     def onLongClick(self, instance):
-        buttons = [["Add", self.addAlbum], ["Add and Play", self.addAndPlayAlbumCall], ["Spotify", self.albumSpotify],
+        buttons = [["Add", self.addAlbum], ["Add and Play", self.addAndPlayAlbumCall],
+                   ["Replace and Play", self.replaceAndPlayAlbumCall], ["Spotify", self.albumSpotify],
                    ["Similar", self.similarSpotify]]
         if not self.savePlaylist == None:
             buttons.append(["Save Playlist", self.savePlaylist])
@@ -324,6 +325,15 @@ class SelectMpdAlbum:
             # print ("add",instance.item.text)
             tempdir = self.currentdir + instance.item.text
             self.playDir(tempdir)
+        except:
+            pass
+
+    def replaceAndPlayAlbumCall(self, instance):
+        try:
+            instance.popup.dismiss()
+            self.parent.music_controller.clear_tracks()
+            tempdir = self.currentdir + "/" + instance.item.text
+            self.addAndPlayAlbum(tempdir)
         except:
             pass
 
@@ -372,8 +382,11 @@ class SelectMpdAlbum:
             start = 0
         try:
             print("id:" + id)
-            if not (id == "1" or id == "4" or id == self.previd):
+            if id == "4" or not (id == self.previd):
                 print("id:" + id)
+                self.dirs = []
+                self.curdirs = []
+
                 self.currentdir = self.basedir
                 self.previd = id
         except:

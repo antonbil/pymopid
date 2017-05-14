@@ -483,7 +483,14 @@ class SpotifyPlaylist:
 
     def play_mopidy_release(self, url):
         song_pos = self.music_controller.get_length_playlist_mopidy()
-        self.add_mopidy_release(url)
+        print("tur:", url)
+        if not url.startswith("file:/home/wieneke/FamilyLibrary/TotalMusic"):
+            self.add_mopidy_release(url)
+        else:
+            self.parent.play_mpd_playlist(
+                url.replace("//", "/").replace("file:/home/wieneke/FamilyLibrary/TotalMusic/FamilyMusic",
+                                               "192.168.2.8:8081/FamilyMusic"))
+
         self.music_controller.select_and_play_mopidy(song_pos)
 
     def add_mopidy_release(self, release):
