@@ -421,6 +421,9 @@ class SelectMpdAlbum:
             numdirs = 0
         if numdirs == 0:
             try:
+                self.dirs.pop()
+                self.curdirs.pop()
+
                 tempdir = utils.remove_slash_at_end(tempdir)
 
                 self.playDir(tempdir)
