@@ -259,13 +259,15 @@ class SelectMpdAlbum:
             if len(self.dirs) > 1:
                 self.dirs.pop()
                 self.curdirs.pop()
-                """if len(self.dirs[-1])>len(self.currentdir):
-                    print("two up:",self.dirs[-1],self.currentdir)
-                    self.dirs.pop()
-                    self.curdirs.pop()"""
+
+            print ("dirs:", self.dirs, self.curdirs)
+            self.startDir = self.curdirs[-1]
             self.display(self.dirs[-1] + "/", addtolist=False)
         except:
-            pass
+            self.dirs = []
+            self.curdirs = []
+            self.currentdir = self.basedir
+            self.display(self.basedir, addtolist=False)
 
     def playDir(self, dir):
         if dir[-1:] == "/":
