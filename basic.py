@@ -664,6 +664,8 @@ class MusicPlaylister(MopidyPlaylister):
             ['nederlandse_top_40', 'Nederlandse Top 40'],
             ['billboard.com', 'Billboard'],
             ['dominorecords', 'Domino Recording Company'],
+            ['file:///Years', 'Years'],
+            ['file:///2017', '2017'],
             ['spinninrecordsofficial', 'Spinnin Records'],
             ['ulyssestone', 'Ulysses Classical'],
             ['seaninsound', 'Drowned in Sound'],
@@ -690,8 +692,16 @@ class MusicPlaylister(MopidyPlaylister):
         else:
             try:
                 url = self.getKey(dir)
+                print ("url:", url)
                 if ":playlist" in url:
                     self.parent.music_controller.playlist_add_mopidy(url)
+                    return
+                if "file:///" in url:
+                    url = url.split("file:///")[1]
+                    print ("url:", url)
+                    self.parent.selSmbAlbum.popupOpen = False
+                    self.parent.selSmbAlbum.display(url)
+
                     return
 
                 response = requests.get(url, verify=False)

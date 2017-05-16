@@ -412,7 +412,7 @@ class SelectMpdAlbum:
         #print("dir:" + tempdir)
         try:
             playlist, curdir = self.getdir(tempdir, forcedir)
-            print("curdir:", curdir)
+            print("curdir:", curdir, playlist)
         except:
             playlist = []
             curdir = None
@@ -421,10 +421,11 @@ class SelectMpdAlbum:
             self.curdirs.append(curdir)
         # else:
         #    tempdir = dir
-        # print("curdirs in SelectMpdAlbum:", self.curdirs)
-        # print("dirs in SelectMpdAlbum:", self.dirs)
+        print("curdirs in SelectMpdAlbum:", self.curdirs)
+        print("dirs in SelectMpdAlbum:", self.dirs)
         try:
             numdirs = sum(1 for x in playlist if self.is_directory(x))
+            print("numdirs:", numdirs)
             try:
                 for x in playlist:
                     if x["filename"].endswith(".mp3"):
@@ -474,6 +475,7 @@ class SelectMpdAlbum:
                 # self.layout_popup.add_widget(self.dummies[index])
             i += 1
 
+        print("open menu")
         if not self.popupOpen:
             self.popup.open()
         self.popupOpen = True
