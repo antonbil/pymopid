@@ -421,8 +421,8 @@ class SelectMpdAlbum:
             self.curdirs.append(curdir)
         # else:
         #    tempdir = dir
-        # print("curdirs:", self.curdirs)
-        #print("dirs:", self.dirs)
+        # print("curdirs in SelectMpdAlbum:", self.curdirs)
+        # print("dirs in SelectMpdAlbum:", self.dirs)
         try:
             numdirs = sum(1 for x in playlist if self.is_directory(x))
             try:

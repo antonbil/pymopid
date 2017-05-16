@@ -501,11 +501,13 @@ class SpotifyPlaylist:
                 release = release[:-1]
             l = release.split("/")
             url = self.mopidy_releases[l[len(l) - 1]]
-            if (url.endswith(".mp3")) or (
-                                release.startswith("/Files/") or release.startswith("Files/") or (
-                        release.startswith("spotify:")) or release.startswith(
-                    "file:///home/wieneke/FamilyLibrary")) and not (
-                                "/TuneIn/" in release or "/Spotify/" in release or "/Spotify Browse/" in release):
+            starts = ["/Files/", "Files/", "file:root/", "spotify:", "file:///home/wieneke/FamilyLibrary"]
+            startswith = False
+            for f in starts:
+                if release.startswith(f):
+                    startswith = True
+            if (url.endswith(".mp3")) or (startswith) and not (
+                                    "/TuneIn/" in release or "/Spotify/" in release or "/Spotify Browse/" in release or "spotify:" in release):
                 # print("url:", url)
                 self.parent.play_mpd_playlist(
                     url)
