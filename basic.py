@@ -658,21 +658,22 @@ class MusicPlaylister(MopidyPlaylister):
         # super(MusicPlaylister,self).__init__()
         self.userURIs = [
             # 0 is url, #1 = description
-            ['spotify', 'Spotify'],
-            ['bbc_playlister', 'BBC Music Playlists'],
-            ['filtr', 'filtr'],
-            ['nederlandse_top_40', 'Nederlandse Top 40'],
-            ['billboard.com', 'Billboard'],
-            ['dominorecords', 'Domino Recording Company'],
+            # ['spotify', 'Spotify'],
+            # ['bbc_playlister', 'BBC Music Playlists'],
+            # ['filtr', 'filtr'],
+            # ['nederlandse_top_40', 'Nederlandse Top 40'],
+            # ['billboard.com', 'Billboard'],
+            # ['dominorecords', 'Domino Recording Company'],
             ['file:///Years', 'Years'],
+            ['file:///Music/p/Prince', 'Prince'],
             ['file:///2017', '2017'],
-            ['spinninrecordsofficial', 'Spinnin Records'],
-            ['ulyssestone', 'Ulysses Classical'],
-            ['seaninsound', 'Drowned in Sound'],
-            ['lemonheadboy', 'Michael Alan Perry'],
-            ['pontus_white', u'Simon Theßeling'],
-            ['ga8', 'ga8'],
-            ['progreport', 'progreport']
+            # ['spinninrecordsofficial', 'Spinnin Records'],
+            # ['ulyssestone', 'Ulysses Classical'],
+            # ['seaninsound', 'Drowned in Sound'],
+            # ['lemonheadboy', 'Michael Alan Perry'],
+            # ['pontus_white', u'Simon Theßeling'],
+            # ['ga8', 'ga8'],
+            #['progreport', 'progreport']
         ]
 
     def getUserPlaylist(self, url):
