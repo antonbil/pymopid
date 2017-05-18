@@ -11,6 +11,7 @@ import requests.api as requests
 import difflib
 
 mpdServerUrl = "192.168.2.74"
+linkAlbums = []
 # set to true if tracks must be added to mpd-playlist
 PLAY_MPD = False
 

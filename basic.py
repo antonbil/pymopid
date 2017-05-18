@@ -655,6 +655,9 @@ class MopidyPlaylister:
 class MusicPlaylister(MopidyPlaylister):
     def __init__(self, parent):
         self.parent = parent
+        self.createList()
+
+    def createList(self):
         # super(MusicPlaylister,self).__init__()
         self.userURIs = [
             # 0 is url, #1 = description
@@ -675,6 +678,13 @@ class MusicPlaylister(MopidyPlaylister):
             # ['ga8', 'ga8'],
             #['progreport', 'progreport']
         ]
+        for la in musiccontroller.linkAlbums:
+            print("la:", la)
+            la1 = la.split("/")
+            disp = la1[len(la1) - 1]
+            print("disp:", disp)
+            self.userURIs.append([la, disp])
+        print("useruri's:", self.userURIs)
 
     def getUserPlaylist(self, url):
         uri = "https://open.spotify.com/user/" + url
@@ -1182,6 +1192,8 @@ class LoginScreen(BoxLayout):
         self.selMopidyUsers.popupOpen = False
         self.selMopidyUsers.sortlist = False
         self.selMopidyUsers.startDir = "spotifytunigo:releases"  # "spotifytunigo:releases"
+        # print("linkAlbums", musiccontroller.linkAlbums)
+        self.musicPlaylister.createList()
         self.selMopidyUsers.display("", id="2")
 
     def spotify_browse(self, instance=None):

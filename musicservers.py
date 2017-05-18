@@ -30,7 +30,6 @@ Builder.load_string("""
       size: self.size
 """)
 
-
 class TreeViewLabelB(TreeViewLabel):
     bcolor = ListProperty([1, 1, 1, 1])
 
@@ -293,7 +292,8 @@ class SelectMpdAlbum:
 
     def onLongClick(self, instance):
         buttons = [["Add", self.addAlbum], ["Add and Play", self.addAndPlayAlbumCall],
-                   ["Replace and Play", self.replaceAndPlayAlbumCall], ["Spotify", self.albumSpotify],
+                   ["Replace and Play", self.replaceAndPlayAlbumCall], ["Create Link", self.createLinkAlbumCall],
+                   ["Spotify", self.albumSpotify],
                    ["Similar", self.similarSpotify]]
         if not self.savePlaylist == None:
             buttons.append(["Save Playlist", self.savePlaylist])
@@ -327,6 +327,24 @@ class SelectMpdAlbum:
             # print ("add",instance.item.text)
             tempdir = self.currentdir + instance.item.text
             self.playDir(tempdir)
+        except:
+            pass
+
+    def createLinkAlbumCall(self, instance):
+        try:
+            instance.popup.dismiss()
+            tempdir = (self.currentdir + "/" + instance.item.text).replace("//", "/")
+            print("linkAlbums add", tempdir)
+            links = ["/Spotify/", "/Files"]
+            music = True
+            for l in links:
+                if tempdir.startswith(l):
+                    music = False
+            if music:
+                tempdir = "Music/" + tempdir
+            tempdir = "file:///" + tempdir
+            musiccontroller.linkAlbums.append(tempdir)
+            print("linkAlbums", musiccontroller.linkAlbums)
         except:
             pass
 
@@ -429,7 +447,7 @@ class SelectMpdAlbum:
             try:
                 for x in playlist:
                     if x["filename"].endswith(".mp3"):
-                        tempdir += x["filename"]
+                        tempdir += "/" + x["filename"]
                         numdirs = 0
                         break
             except:
