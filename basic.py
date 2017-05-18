@@ -682,7 +682,7 @@ class MusicPlaylister(MopidyPlaylister):
             print("la:", la)
             la1 = la.split("/")
             disp = la1[len(la1) - 1]
-            print("disp:", disp)
+            # print("disp:", disp)
             self.userURIs.append([la, disp])
         print("useruri's:", self.userURIs)
 
